@@ -1,5 +1,5 @@
 """
-python ./eddy_feedback/EPflux/nakamura_plot.py
+python /home/links/ct715/eddy_feedback/EPflux/nakamura_plot.py
 """
 
 
@@ -9,11 +9,11 @@ import seaborn as sns
 import numpy as np
 
 import sys
-sys.path.append('/home/links/ct715/reanalysis_data')
-from aos.aos_functions import PlotEPfluxArrows
+sys.path.append('/home/links/ct715/eddy_feedback')
+from functions.aos_functions import PlotEPfluxArrows
 
 # pull in dataset
-ds = xr.open_mfdataset('/home/links/ct715/reanalysis_data/eddy_feedback/daily_datasets/jra55_djb_ep.nc')
+ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
 
 #---------------------------------------------------------------------------------------------------------
 
@@ -57,5 +57,5 @@ plt.title('Winter Months (DJF)')
 PlotEPfluxArrows(x, y, u, v,
                 fig, ax, pivot='mid', yscale='log')
 
-plt.savefig('/home/links/ct715/reanalysis_data/eddy_feedback/EPflux/nakamura_reproduce.png')
-# plt.show()
+plt.savefig('/home/links/ct715/eddy_feedback/EPflux/nakamura_jra55.png')
+plt.show()

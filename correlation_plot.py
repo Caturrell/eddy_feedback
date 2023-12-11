@@ -1,50 +1,53 @@
 """
-python /home/links/ct715/reanalysis_data/eddy_feedback/correlation_plot.py
+python /home/links/ct715/eddy_feedback/correlation_plot.py
 """
 
 
 import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
-import pdb
+import functions.eddy_feedback as ef
 
 # import dataset
-ds = xr.open_mfdataset('/home/links/ct715/reanalysis_data/eddy_feedback/daily_datasets/jra55_djb_ep.nc')
+ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+
+# NH subset
+ds = ds.isel(lat=slice(0, 37))
+
+#------------------------------------------------------------------------------------------
 
 # define variables as same shape
-ubar = ds.u.mean()
-div1 = ds.div1.mean(('time'))
-div2 = ds.div2.mean(('time'))
+ubar = ds.u.mean(('lon'))
+div1 = ds.div1
+div2 = ds.div2
 
-# define function
-def correlation_array(da1, da2): 
-    
-    """
-    Input: two Xarray DataArrays of same shape
-    
-    Output: a NumPy array of correlation coefficients,
-            of same shape the input DataArrays
-    """
-    
-    # create array of desired shape
-    da_corr = np.zeros((len(da1[:,0]), len(da1[0,:])))
-    
-    pdb.set_trace()
-    
-    # loop through each variable
-    # on each row, do each column entry
-    for row in range(len(da1[:,0])):
-        for col in range(len(da1[0,:])):
-            
-            # calculate correlation coefficient
-            corr = xr.corr(da1[row, col], da2[row, col])
-            
-            pdb.set_trace()
-            
-            # save coefficient to respective data point
-            da_corr[row, col] = corr
-            
-    return da_corr
+# separate time into annual means
+# and use .load() to force the calculation now
+ubar = ubar.groupby('time.year').mean('time').load()
+div1 = div1.groupby('time.year').mean('time').load()
+div2 = div2.groupby('time.year').mean('time').load()
 
-dac = correlation_array(ubar, div1)
+corr = ef.correlation_array(ubar, div1)
+
+#------------------------------------------------------------------------------------------
+
+# choose colour palette
+coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+
+# plot figure
+plt.figure()
+
+plt.contourf(ds.lat.values, ds.level.values, corr, cmap=coolwarm, levels=10)
+plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75,
+             label='correlation', extend='both')
+plt.yscale('log')
+plt.gca().invert_yaxis()
+
+plt.xlabel('Latitude $(^\\circ N)$')
+plt.ylabel('Log pressure (hPa)')
+plt.title('(a) $Corr(\\bar{u}, \\nabla_{\\phi} F_{\\phi})$')
+
+plt.savefig('/home/links/ct715/eddy_feedback/corr_plot_jra55.png')
+plt.show()
