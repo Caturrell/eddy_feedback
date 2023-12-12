@@ -8,12 +8,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-import sys
-sys.path.append('/home/links/ct715/eddy_feedback')
-from functions.aos_functions import PlotEPfluxArrows
+#---------------------------------------------------------------------------------------------------------
 
+# # IF ON MATHS2 (JRA55 DATA):
+# import sys
+# sys.path.append('/home/links/ct715/eddy_feedback')
+# from functions.aos_functions import PlotEPfluxArrows
+# # pull in dataset
+# ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+
+
+# IF ON JASMIN (ERA5 DATA):
+import sys
+sys.path.append('/home/users/cturrell/documents/eddy_feedback')
+from functions.aos_functions import PlotEPfluxArrows
 # pull in dataset
-ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5_djf_uvt_ep.nc')
 
 #---------------------------------------------------------------------------------------------------------
 
@@ -57,5 +67,7 @@ plt.title('Winter Months (DJF)')
 PlotEPfluxArrows(x, y, u, v,
                 fig, ax, pivot='mid', yscale='log')
 
-plt.savefig('/home/links/ct715/eddy_feedback/EPflux/nakamura_jra55.png')
+# plt.savefig('/home/links/ct715/eddy_feedback/EPflux/nakamura_jra55.png')
+plt.savefig('/home/links/ct715/eddy_feedback/EPflux/nakamura_era5.png')
+
 plt.show()
