@@ -6,28 +6,28 @@ import xarray as xr
 import functions.aos_functions as aos
 
 
-def zonal_mean_zonal_wind(ds, yscale='log', levels=15, yincrease=False, figsize=(8,5)):
+def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yincrease=False, figsize=(8,5)):
     
     """
-    Input: Xarray dataset containing u=u(lon,lat,level,time)
+    Input: Xarray dataArray containing ubar
     
     Output: Countour plot showing zonal-mean zonal wind
     """
-    
-    # calculate zonal-mean zonal wind
-    ubar = ds.u.mean(('time', 'lon'))
+
     
     # import custom colour map
-    import seaborn as sns
-    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+    if cmap == 'sns.coolwarm':
+        import seaborn as sns
+        coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+        cmap = coolwarm
     
     # plot it
     plt.figure(figsize=figsize)
     
-    plt.contourf(ds.lat.values, ds.level.values, ubar,
-                 cmap=coolwarm, levels=levels, extend='both')
+    plt.contourf(ubar.lat.values, ubar.level.values, ubar,
+                 cmap=cmap, levels=levels)
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', extend='both', ticks=[-40, -20, 0, 20, 40])
+             label='Wind speed (m/s)')
     
     plt.yscale(yscale)
     
@@ -36,7 +36,7 @@ def zonal_mean_zonal_wind(ds, yscale='log', levels=15, yincrease=False, figsize=
     
     plt.xlabel('Latitude ($^\\circ$N)')
     plt.ylabel('Log pressure (hPa)')
-    plt.title('DJF zonal-mean zonal wind')
+    plt.title('Zonal-mean zonal wind')
     plt.show()
 
 
