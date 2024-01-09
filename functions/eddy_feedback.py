@@ -6,7 +6,7 @@ import xarray as xr
 import functions.aos_functions as aos
 
 
-def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yincrease=False, figsize=(8,5)):
+def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yincrease=False, figsize=(8,5), winter=True):
     
     """
     Input: Xarray dataArray containing ubar
@@ -23,10 +23,16 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
     # plot it
     plt.figure(figsize=figsize)
     
-    plt.contourf(ubar.lat.values, ubar.level.values, ubar,
+    if winter == True:
+        plt.contourf(ubar.lat.values, ubar.level.values, ubar,
                  cmap=cmap, levels=levels, extend='both')
-    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
+        plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
              label='Wind speed (m/s)', ticks=[-45, -30, -15, 0, 15, 30, 45], extend='both')
+    else:
+        plt.contourf(ubar.lat.values, ubar.level.values, ubar,
+                 cmap=cmap, levels=levels, extend='both', vmin=-45, vmax=45)
+        plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
+             label='Wind speed (m/s)', extend='both')
     
     plt.yscale(yscale)
     
@@ -34,13 +40,18 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
         plt.gca().invert_yaxis()
     
     plt.xlabel('Latitude ($^\\circ$N)')
-    plt.ylabel('Log pressure (hPa)')
+    
+    if yscale == 'log':
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.ylabel('Pressure (hPa)')
+    
     plt.title('Zonal-mean zonal wind')
     plt.show()
 
 
 # Reproduce Nakamura plot with EP flux arrows and zonal-mean zonal wind
-def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2):
+def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2, yscale='log'):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -90,8 +101,8 @@ def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2):
              label='Wind speed (m/s)')
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
-                     fig, ax, pivot='mid', yscale='log')
-    plt.title(f'{label} daily data')
+                     fig, ax, pivot='mid', yscale=yscale)
+    plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     plt.ylabel('Log pressure (hPa)')
     plt.show()
