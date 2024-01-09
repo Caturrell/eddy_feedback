@@ -13,7 +13,6 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
     
     Output: Countour plot showing zonal-mean zonal wind
     """
-
     
     # import custom colour map
     if cmap == 'sns.coolwarm':
@@ -25,9 +24,9 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
     plt.figure(figsize=figsize)
     
     plt.contourf(ubar.lat.values, ubar.level.values, ubar,
-                 cmap=cmap, levels=levels)
+                 cmap=cmap, levels=levels, extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)')
+             label='Wind speed (m/s)', ticks=[-45, -30, -15, 0, 15, 30, 45], extend='both')
     
     plt.yscale(yscale)
     
