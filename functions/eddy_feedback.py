@@ -6,7 +6,7 @@ import xarray as xr
 import functions.aos_functions as aos
 
 
-def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yincrease=False, figsize=(8,5), winter=True):
+def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=21, yincrease=False, figsize=(8,5), winter=True):
     
     """
     Input: Xarray dataArray containing ubar
@@ -32,7 +32,7 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
         plt.contourf(ubar.lat.values, ubar.level.values, ubar,
                  cmap=cmap, levels=levels, extend='both', vmin=-45, vmax=45)
         plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', extend='both')
+             label='Wind speed (m/s)')
     
     plt.yscale(yscale)
     
@@ -51,7 +51,7 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=20, yi
 
 
 # Reproduce Nakamura plot with EP flux arrows and zonal-mean zonal wind
-def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2, yscale='log'):
+def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=2, yscale='log'):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -96,7 +96,7 @@ def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2, yscale='
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, ubar,
-              cmap=coolwarm, levels=15)
+              cmap=coolwarm, levels=levels)
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
              label='Wind speed (m/s)')
 
@@ -104,7 +104,12 @@ def nakamura_plot_DJF(ds, label, do_ubar=True, skip_lat=8, skip_pres=2, yscale='
                      fig, ax, pivot='mid', yscale=yscale)
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
-    plt.ylabel('Log pressure (hPa)')
+    
+    if yscale=='log':
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.ylabel('Pressure (hPa)')
+        
     plt.show()
     
 
