@@ -112,6 +112,51 @@ def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=
         
     plt.show()
     
+# plot EP fluxes and northward divergence
+def plot_epfluxes(ds, no_strat=True, levels=21, skip_lat=3, skip_pres=1, yscale='linear'):
+    
+    ds = ds.isel( dict( lat=slice(4, 69) ) )
+    
+    # exclude stratosphere-ish
+    if no_strat == True:
+        ds = ds.isel(dict( level=slice(10,37) ))
+    
+    # Set divergence of div1
+    div1 = ds.div1.mean(('time'))
+    div1 = div1.where(abs(div1) < 1e5)
+    
+    # skip variables
+    skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
+
+    #    set variables
+    lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
+    p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
+    Fphi = ds.ep1.mean(('time')).isel(skip)
+    Fp = ds.ep2.mean(('time')).isel(skip)
+    
+    fig, ax = plt.subplots(figsize=(9,5))
+
+    import seaborn as sns
+    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+
+    plt.contourf(ds.lat.values, ds.level.values, div1,
+              cmap=coolwarm, levels=levels)
+    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
+             label='Wind speed (m/s)')
+
+    aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
+                     fig, ax, pivot='mid', yscale=yscale)
+    plt.title('EP flux and northward divergence of EP Flux')
+    plt.xlabel('Latitude ($^\\circ$N)')
+    
+    if yscale=='log':
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.ylabel('Pressure (hPa)')
+        
+    plt.show()
+
+
 
 
 #-----------------------------------------------------------------------------------
@@ -165,7 +210,7 @@ def correlation_array(da1, da2, show_progress=False):
     return da_corr 
 
 
-def correlation_contourf(ds, show_div2=False, logscale=True):
+def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
     
     """"
     Input: dataset that contains ep fluxes data
@@ -173,10 +218,8 @@ def correlation_contourf(ds, show_div2=False, logscale=True):
     
     Output: contourf plot matching Fig.6 in Smith et al., 2022
     """
-    
-    # check if ubar is a variable, if not then calculate
-    if not isinstance(ds['ubar'], xr.DataArray):
-        ds['ubar'] = ds.u.mean(('lon'))
+        
+    ds = ds.isel(dict( level=slice(10,37) ))
         
     # set variables and save them
     ubar = ds.u.mean(('lon'))
@@ -215,8 +258,9 @@ def correlation_contourf(ds, show_div2=False, logscale=True):
     plt.ylabel('Log pressure (hPa)')
     plt.title('(a) $Corr(\\bar{{u}}, {0})$'.format(title_name))
 
-    rect = patches.Rectangle((25., 600.), 50, -400, 
+    if show_rect == True:
+        rect = patches.Rectangle((25., 600.), 50, -400, 
                          fill=False, linewidth=2)
-    plt.gca().add_patch(rect)
+        plt.gca().add_patch(rect)
 
     plt.show()

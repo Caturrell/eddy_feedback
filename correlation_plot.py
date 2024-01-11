@@ -10,11 +10,14 @@ import seaborn as sns
 
 import functions.eddy_feedback as ef
 
-# import dataset
-ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+# import dataset on MATHS SERVER
+# ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+
+# Import dataset on JASMIN
+ds = xr.open_mfdataset('/home/users/cturrell/documents/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
 
 # NH subset
-ds = ds.isel(lat=slice(0, 37))
+# ds = ds.isel(lat=slice(0, 37))
 
 #------------------------------------------------------------------------------------------
 
@@ -42,12 +45,12 @@ plt.figure()
 plt.contourf(ds.lat.values, ds.level.values, corr, cmap=coolwarm, levels=10)
 plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75,
              label='correlation', extend='both')
-plt.yscale('log')
+# plt.yscale('log')
 plt.gca().invert_yaxis()
 
 plt.xlabel('Latitude $(^\\circ N)$')
 plt.ylabel('Log pressure (hPa)')
 plt.title('(a) $Corr(\\bar{u}, \\nabla_{\\phi} F_{\\phi})$')
 
-plt.savefig('/home/links/ct715/eddy_feedback/corr_plot_jra55.png')
+plt.savefig('/home/users/cturrell/documents/eddy_feedback/corr_linear_whole.png')
 plt.show()
