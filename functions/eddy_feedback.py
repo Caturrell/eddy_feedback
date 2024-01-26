@@ -253,6 +253,7 @@ def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
     
     if logscale==True:
         plt.yscale('log')
+        
 
     plt.xlabel('Latitude $(^\\circ N)$')
     plt.ylabel('Log pressure (hPa)')
