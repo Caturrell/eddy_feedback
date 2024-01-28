@@ -100,7 +100,8 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', levels=21, yincrease=False, yscale='linear', figsize=(8,5)):
+def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', 
+              levels=21, yincrease=False, yscale='linear', figsize=(8,5)):
     
     """
     Input: Xarray dataset
@@ -152,7 +153,8 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', levels=21,
 
 
 # Plot zonal-mean zonal wind with EP flux arrows
-def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
+def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', 
+                     levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -211,18 +213,27 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', levels
 
     
 # plot EP fluxes and northward divergence
-def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', no_strat=True, levels=21, skip_lat=1, skip_pres=1, yscale='linear'):
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', latitude='both', top_atmos=100., 
+                      levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
+    
+    # Check to see if EP fluxes are in DataSet
+    if not 'ep1' in ds:
+        ds = calculate_epfluxes_ubar(ds, primitive=primitive)
     
     
-    ds = ds.isel( dict( lat=slice(4, 69) ) )
+    # default is both hemispheres
+    if latitude == 'NH':
+        ds = ds.where( ds.lat >= 0., drop=True )
+    elif latitude == 'SH':
+        ds = ds.where( ds.lat <= 0., drop=True ) 
     
     # exclude stratosphere-ish
-    if no_strat == True:
-        ds = ds.isel(dict( level=slice(10,37) )) 
+    ds = ds.where( ds.level >= top_atmos, drop=True ) 
     
-    # Set divergence of div1
+    
+    # Set divergence of div1 and remove outliers
     div1 = ds.div1.mean(('time'))
-    div1 = div1.where(abs(div1) < 1e5)
+    div1 = div1.where(abs(div1) < 1e2) 
     
     # skip variables
     skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
@@ -239,9 +250,9 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', n
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, div1,
-              cmap=coolwarm, levels=levels)
+              cmap=coolwarm, levels=levels, extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)')
+             label='Wind speed (m/s)', extend='both')
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
