@@ -133,7 +133,7 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', 
+def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='both', top_atmos=0.,
               levels=21, yincrease=False, yscale='linear', figsize=(8,5)):
     
     """
@@ -143,9 +143,19 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm',
     Output: Countour plot showing zonal-mean zonal wind
     """
     
+    
     # Check to see if EP fluxes are in DataSet
     if not 'ubar' in ds:
         ds = calculate_ubar(ds)
+        
+    # default is both hemispheres
+    if latitude == 'NH':
+        ds = ds.where( ds.lat >= 0., drop=True )
+    elif latitude == 'SH':
+        ds = ds.where( ds.lat <= 0., drop=True ) 
+    
+    # exclude stratosphere-ish
+    ds = ds.where( ds.level >= top_atmos, drop=True )
     
     # define ubar dataArray
     ubar = ds.ubar
@@ -186,7 +196,7 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm',
 
 
 # Plot zonal-mean zonal wind with EP flux arrows
-def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', 
+def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitude='both', top_atmos=100.,
                      levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
     
     """
@@ -200,6 +210,15 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux',
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
         ds = calculate_epfluxes_ubar(ds, primitive=primitive)
+        
+    # default is both hemispheres
+    if latitude == 'NH':
+        ds = ds.where( ds.lat >= 0., drop=True )
+    elif latitude == 'SH':
+        ds = ds.where( ds.lat <= 0., drop=True ) 
+    
+    # exclude stratosphere-ish
+    ds = ds.where( ds.level >= top_atmos, drop=True )
         
         
     ## PLOTTING TIME
@@ -301,8 +320,11 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
 
 
 
+#======================================================================================================================================
 
-#-----------------------------------------------------------------------------------
+#-------------------- 
+# CORRELATION PLOTS
+#--------------------
 
 # correlation on a grid function
 def correlation_array(da1, da2, show_progress=False):
@@ -351,6 +373,8 @@ def correlation_array(da1, da2, show_progress=False):
         
             
     return da_corr 
+
+#--------------------------------------------------------------------------------------------------------------------------------
 
 
 def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
