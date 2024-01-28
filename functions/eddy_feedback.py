@@ -5,34 +5,132 @@ import xarray as xr
 
 import functions.aos_functions as aos
 
+#======================================================================================================================================
 
-def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=21, yincrease=False, figsize=(8,5), winter=True):
+#------------------
+# DATASET RENAMING
+#------------------
+
+# Rename dimensions in Isca to suit my function needs
+def rename_isca_variables(ds):
     
     """
-    Input: Xarray dataArray containing ubar
+    Input: Xarray DataSet produced by Isca simulation
+            - dimensions: (time, lon, lat, pfull)
+            - variables: ucomp, vcomp, temp
+    
+    Output: Xarray DataSet with required name changes
+            - dimensions: (time, lon, lat, level)
+            - variables: u,v,t
+    """
+    
+    # Set renaming dict
+    rename = {'pfull': 'level', 'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
+    
+    ds = ds.rename(rename)
+    
+    return ds
+
+
+
+#======================================================================================================================================
+
+#----------------------
+# DATASET CALCULATIONS
+#----------------------
+
+
+# Calculate zonal-mean zonal wind
+def calculate_ubar(ds):
+    
+    """
+    Input: Xarray dataset
+            - dim labels: (time, lon, lat, level)
+            - variable: u
+            
+    Output: Xarray dataset with zonal-mean zonal wind 
+            calculated and added as variable
+    """
+    
+    if 'pfull' in ds:
+        ds = rename_isca_variables(ds)
+    
+    # Calculate 
+    ds['ubar'] = ds.u.mean(('time', 'lon'))
+    
+    return ds
+
+# Calculate EP fluxes
+def calculate_epfluxes_ubar(ds, primitive=True):
+    
+    """
+    Input: Xarray dataset
+            - dim labels: (time, lon, lat, level)
+            - variable: u,v,t
+            
+    Output: Xarray dataset with EP fluxes calculated
+            and optional calculate ubar
+    """
+
+    # ensure variables are named correctly
+    if 'pfull' in ds:
+        ds = rename_isca_variables(ds)    
+    
+    # check if ubar is in dataset also
+    if not 'ubar' in ds:
+        ds = calculate_ubar(ds)
+        
+    
+    import functions.aos_functions as aos
+    
+    ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ds.u, ds.v, ds.t, do_ubar=primitive)
+    
+    ds['ep1'] = (ep1.dims, ep1.values)
+    ds['ep2'] = (ep2.dims, ep2.values)
+    ds['div1'] = (div1.dims, div1.values)
+    ds['div2'] = (div2.dims, div2.values)
+    
+    return ds
+
+
+#======================================================================================================================================
+
+#---------------------------
+# PLOTTING MERIDIONAL PLANE
+#---------------------------
+
+# Plot zonal-mean zonal wind on meridional plane
+def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', levels=21, yincrease=False, yscale='linear', figsize=(8,5)):
+    
+    """
+    Input: Xarray dataset
+            - dim labels: (time, lon, lat, level)
     
     Output: Countour plot showing zonal-mean zonal wind
     """
+    
+    # Check to see if EP fluxes are in DataSet
+    if not 'ubar' in ds:
+        ds = calculate_ubar(ds)
+    
+    # define ubar dataArray
+    ubar = ds.ubar
     
     # import custom colour map
     if cmap == 'sns.coolwarm':
         import seaborn as sns
         coolwarm = sns.color_palette("coolwarm", as_cmap=True)
         cmap = coolwarm
+        
+    # calculate max value
     
     # plot it
     plt.figure(figsize=figsize)
     
-    if winter == True:
-        plt.contourf(ubar.lat.values, ubar.level.values, ubar,
+    plt.contourf(ubar.lat.values, ubar.level.values, ubar,
                  cmap=cmap, levels=levels, extend='both')
-        plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', ticks=[-45, -30, -15, 0, 15, 30, 45], extend='both')
-    else:
-        plt.contourf(ubar.lat.values, ubar.level.values, ubar,
-                 cmap=cmap, levels=levels, extend='both', vmin=-45, vmax=45)
-        plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)')
+    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
+             label='Wind speed (m/s)', extend='both')
     
     plt.yscale(yscale)
     
@@ -46,12 +144,15 @@ def zonal_mean_zonal_wind(ubar, cmap='sns.coolwarm', yscale='log', levels=21, yi
     else:
         plt.ylabel('Pressure (hPa)')
     
-    plt.title('Zonal-mean zonal wind')
+    plt.title(f'{label}')
     plt.show()
+    
+    
+#--------------------------------------------------------------------------------------------------------------------------------
 
 
-# Reproduce Nakamura plot with EP flux arrows and zonal-mean zonal wind
-def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=2, yscale='log'):
+# Plot zonal-mean zonal wind with EP flux arrows
+def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -61,23 +162,12 @@ def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=
             and EP flux arrows
     """
     
-    # check for EP fluxes in dataset
-    if not isinstance(ds['ep1'], xr.DataArray):
-        ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ds.u, ds.v, ds.t, 
-                                                        lon='lon', lat='lat', pres='level', time='time', 
-                                                        do_ubar=do_ubar)
+    # Check to see if EP fluxes are in DataSet
+    if not 'ep1' in ds:
+        ds = calculate_epfluxes_ubar(ds, primitive=primitive)
         
-        ds['ep1'] = (ep1.dims, ep1.values)
-        ds['ep2'] = (ep2.dims, ep2.values)
-        ds['div1'] = (div1.dims, div1.values)
-        ds['div2'] = (div2.dims, div2.values)
-    
-    # check for ubar in dataset
-    if not isinstance(ds['ubar'], xr.DataArray):
-        ds['ubar'] = ds.u.mean(('lon', 'time'))
         
     ## PLOTTING TIME
-    
     
     # skip variables
     skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
@@ -88,8 +178,11 @@ def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=
     Fphi = ds.ep1.mean(('time')).isel(skip)
     Fp = ds.ep2.mean(('time')).isel(skip)
     
+    # define ubar
     ubar = ds.ubar
 
+
+    # Set figure
     fig, ax = plt.subplots(figsize=(9,5))
 
     import seaborn as sns
@@ -112,14 +205,21 @@ def nakamura_plot_DJF(ds, label, levels=21, do_ubar=True, skip_lat=8, skip_pres=
         
     plt.show()
     
+    
+#--------------------------------------------------------------------------------------------------------------------------------
+
+
+    
 # plot EP fluxes and northward divergence
-def plot_epfluxes(ds, no_strat=True, levels=21, skip_lat=3, skip_pres=1, yscale='linear'):
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', no_strat=True, levels=21, skip_lat=1, skip_pres=1, yscale='linear'):
+    
+    
     
     ds = ds.isel( dict( lat=slice(4, 69) ) )
     
     # exclude stratosphere-ish
     if no_strat == True:
-        ds = ds.isel(dict( level=slice(10,37) ))
+        ds = ds.isel(dict( level=slice(10,37) )) 
     
     # Set divergence of div1
     div1 = ds.div1.mean(('time'))
@@ -146,7 +246,7 @@ def plot_epfluxes(ds, no_strat=True, levels=21, skip_lat=3, skip_pres=1, yscale=
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
-    plt.title('EP flux and northward divergence of EP Flux')
+    plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
     if yscale=='log':
