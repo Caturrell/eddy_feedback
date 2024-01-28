@@ -11,11 +11,38 @@ import functions.aos_functions as aos
 # DATASET RENAMING
 #------------------
 
-# Rename dimensions in Isca to suit my function needs
-def rename_isca_variables(ds):
+# Rename dimensions in Dataset and check if ds contains Isca variable notation
+def find_rename_variables(ds):
     
     """
-    Input: Xarray DataSet produced by Isca simulation
+    Input: Xarray Dataset with variety of dimension labels
+            - searches for 4 in particular. Look at aos function
+               for more details
+    
+    Output: Xarray Dataset with required variable name changes
+            - Checks for Isca labelling
+    """
+    
+    if 'ucomp' or 'ua' in ds:
+        ds = rename_variables(ds)
+    
+    # search for dimension labels
+    dims = aos.FindCoordNames(ds)
+    
+    # rename variables usinf dict
+    rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'}
+    
+    # rename dataset
+    ds = ds.rename(rename)
+    
+    return ds
+
+
+# Rename dimensions in Isca to suit my function needs
+def rename_variables(ds):
+    
+    """
+    Input: Xarray Dataset produced by Isca simulation
             - dimensions: (time, lon, lat, pfull)
             - variables: ucomp, vcomp, temp
     
@@ -24,14 +51,20 @@ def rename_isca_variables(ds):
             - variables: u,v,t
     """
     
-    # Set renaming dict
-    rename = {'pfull': 'level', 'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
+    if 'ucomp' in ds:
+        # Set renaming dict
+        rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
+        
+    if 'ua' in ds:
+        # Set renaming dict
+        rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
     
+    # apply changes
     ds = ds.rename(rename)
     
     return ds
-
-
+    
+    
 
 #======================================================================================================================================
 
@@ -52,8 +85,8 @@ def calculate_ubar(ds):
             calculated and added as variable
     """
     
-    if 'pfull' in ds:
-        ds = rename_isca_variables(ds)
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)
     
     # Calculate 
     ds['ubar'] = ds.u.mean(('time', 'lon'))
@@ -73,8 +106,8 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     """
 
     # ensure variables are named correctly
-    if 'pfull' in ds:
-        ds = rename_isca_variables(ds)    
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)   
     
     # check if ubar is in dataset also
     if not 'ubar' in ds:
