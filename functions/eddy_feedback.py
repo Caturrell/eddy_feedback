@@ -189,9 +189,9 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', levels
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, ubar,
-              cmap=coolwarm, levels=levels)
+              cmap=coolwarm, levels=levels, extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)')
+             label='Wind speed (m/s)', extend='both')
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
@@ -212,7 +212,6 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', levels
     
 # plot EP fluxes and northward divergence
 def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', no_strat=True, levels=21, skip_lat=1, skip_pres=1, yscale='linear'):
-    
     
     
     ds = ds.isel( dict( lat=slice(4, 69) ) )
