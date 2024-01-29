@@ -51,10 +51,12 @@ def rename_variables(ds):
             - variables: u,v,t
     """
     
+    # if-statement for Isca data
     if 'ucomp' in ds:
         # Set renaming dict
         rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
-        
+    
+    # if-statement for PAMIP data    
     if 'ua' in ds:
         # Set renaming dict
         rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
@@ -143,8 +145,12 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='
     Output: Countour plot showing zonal-mean zonal wind
     """
     
+    # ensure variables are named correctly
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)  
     
-    # Check to see if EP fluxes are in DataSet
+    
+    # Check to see if ubar is in DataSet
     if not 'ubar' in ds:
         ds = calculate_ubar(ds)
         
@@ -207,6 +213,10 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
             and EP flux arrows
     """
     
+    # ensure variables are named correctly
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)  
+    
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
         ds = calculate_epfluxes_ubar(ds, primitive=primitive)
@@ -267,6 +277,18 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
 # plot EP fluxes and northward divergence
 def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', latitude='both', top_atmos=100., 
                       levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
+    
+    """
+    Input: Xarray Dataset containing u,v,t
+    
+    Output: Plot of EP flux vector arrows and
+            divergence as contour plot
+    """
+    
+    
+    # ensure variables are named correctly
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)  
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
