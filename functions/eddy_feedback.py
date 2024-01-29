@@ -135,8 +135,10 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='both', top_atmos=0.,
-              levels=21, yincrease=False, yscale='linear', figsize=(8,5)):
+def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, top_atmos=0.,
+              orientation='horizontal', location='bottom', extend='both', shrink=0.5,
+              levels=21, yincrease=False, yscale='linear', round_sf=-1, savefig=False, fig_label=None):
+              
     
     """
     Input: Xarray dataset
@@ -145,10 +147,11 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='
     Output: Countour plot showing zonal-mean zonal wind
     """
     
+    ## CONDITIONS
+    
     # ensure variables are named correctly
     if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
         ds = find_rename_variables(ds)  
-    
     
     # Check to see if ubar is in DataSet
     if not 'ubar' in ds:
@@ -157,44 +160,74 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='
     # default is both hemispheres
     if latitude == 'NH':
         ds = ds.where( ds.lat >= 0., drop=True )
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+        shrink=0.8
     elif latitude == 'SH':
         ds = ds.where( ds.lat <= 0., drop=True ) 
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+        shrink=0.8
     
     # exclude stratosphere-ish
     ds = ds.where( ds.level >= top_atmos, drop=True )
     
+    
+    #-------------------------------------------------------------------
+    
+    ## PRE-PLOTTING STUFF
+    
     # define ubar dataArray
     ubar = ds.ubar
     
-    # import custom colour map
-    if cmap == 'sns.coolwarm':
-        import seaborn as sns
-        coolwarm = sns.color_palette("coolwarm", as_cmap=True)
-        cmap = coolwarm
-        
-    # calculate max value
+    # calculate mean absolute value of max and min
+    max_value = np.nanmax(ds.ubar.values)
+    min_value = np.nanmin(ds.ubar.values)
+    value = (abs(max_value) + abs(min_value)) / 2
+    value = round(value, round_sf)
     
-    # plot it
+    # set linspace levels
+    lvl = np.linspace(-value, value, levels)
+    ticks = [-value, -value/2, 0, value/2, value]
+    
+    
+    # set cmap for plotting
+    import seaborn as sns
+    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+
+    
+    #-------------------------------------------------------------------
+    
+    ## PLOTTING TIME
+    
+    # set figure
     plt.figure(figsize=figsize)
     
     plt.contourf(ubar.lat.values, ubar.level.values, ubar,
-                 cmap=cmap, levels=levels, extend='both')
-    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', extend='both')
+                 cmap=coolwarm, levels=lvl, extend=extend)
+    plt.colorbar(location=location, orientation=orientation, shrink=shrink,
+             label='Wind speed (m/s)', extend=extend, ticks=ticks) 
     
+    plt.title(f'{label}')
+    plt.xlabel('Latitude ($^\\circ$N)')
     plt.yscale(yscale)
     
+    # set direction of y-axis
     if yincrease == False:
         plt.gca().invert_yaxis()
     
-    plt.xlabel('Latitude ($^\\circ$N)')
-    
+    # set log or linear scale
     if yscale == 'log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
     
-    plt.title(f'{label}')
+    # save figure, if required
+    if savefig == True:
+        plt.savefig(f'./plots/{fig_label}.png')
+    
     plt.show()
     
     
@@ -202,8 +235,10 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', cmap='sns.coolwarm', latitude='
 
 
 # Plot zonal-mean zonal wind with EP flux arrows
-def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitude='both', top_atmos=100.,
-                     levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
+def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5), latitude=None, top_atmos=0.,
+                     orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
+                     skip_lat=1, skip_pres=1, yscale='linear', primitive=True,
+                     round_sf=-1, savefig=False, fig_label=None):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -213,6 +248,8 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
             and EP flux arrows
     """
     
+    ## CONDITIONS
+    
     # ensure variables are named correctly
     if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
         ds = find_rename_variables(ds)  
@@ -221,17 +258,38 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
     if not 'ep1' in ds:
         ds = calculate_epfluxes_ubar(ds, primitive=primitive)
         
-    # default is both hemispheres
+    ## default is both hemispheres
     if latitude == 'NH':
         ds = ds.where( ds.lat >= 0., drop=True )
+        orientation='vertical'
+        location='right'
+        shrink=0.8
     elif latitude == 'SH':
         ds = ds.where( ds.lat <= 0., drop=True ) 
+        orientation='vertical'
+        location='right' 
+        shrink=0.8
     
     # exclude stratosphere-ish
     ds = ds.where( ds.level >= top_atmos, drop=True )
+    
+    #-------------------------------------------------------------------
         
-        
-    ## PLOTTING TIME
+    ## PRE-PLOTTING STUFF
+    
+    # define ubar
+    ubar = ds.ubar
+    
+    # calculate mean absolute value of max and min
+    max_value = np.nanmax(ds.ubar.values)
+    min_value = np.nanmin(ds.ubar.values)
+    value = (abs(max_value) + abs(min_value)) / 2
+    value = round(value, round_sf)
+    
+    # set linspace levels
+    lvl = np.linspace(-value, value, levels)
+    ticks = [-value, -value/2, 0, value/2, value]
+    
     
     # skip variables
     skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
@@ -242,30 +300,37 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
     Fphi = ds.ep1.mean(('time')).isel(skip)
     Fp = ds.ep2.mean(('time')).isel(skip)
     
-    # define ubar
-    ubar = ds.ubar
-
+    
+    #-------------------------------------------------------------------
+    
+    ## PLOTTING TIME
 
     # Set figure
-    fig, ax = plt.subplots(figsize=(9,5))
+    fig, ax = plt.subplots(figsize=figsize)
 
+    # set cmap from seaborn
     import seaborn as sns
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, ubar,
-              cmap=coolwarm, levels=levels, extend='both')
-    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', extend='both')
+              cmap=coolwarm, levels=lvl, extend=extend)
+    plt.colorbar(location=location, orientation=orientation, shrink=shrink,
+             label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
+    # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
+    
+    # save figure if required
+    if savefig == True:
+        plt.savefig(f'./plots/{fig_label}.png')
         
     plt.show()
     
@@ -275,8 +340,10 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
 
     
 # plot EP fluxes and northward divergence
-def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', latitude='both', top_atmos=100., 
-                      levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True):
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', figsize=(9,5), yscale='linear', primitive=True, 
+                      latitude=None, lat_slice=slice(None,None), top_atmos=100., skip_lat=1, skip_pres=1,
+                      orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
+                      round_sf=None, savefig=False, fig_label=None):
     
     """
     Input: Xarray Dataset containing u,v,t
@@ -285,6 +352,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
             divergence as contour plot
     """
     
+    ## CONDITIONS
     
     # ensure variables are named correctly
     if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
@@ -293,21 +361,47 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
         ds = calculate_epfluxes_ubar(ds, primitive=primitive)
+        
+    # reanalysis has unrealistic values at poles, so cut off ends
+    ds = ds.isel(lat=lat_slice)
     
     
-    # default is both hemispheres
+    ## default is both hemispheres
     if latitude == 'NH':
         ds = ds.where( ds.lat >= 0., drop=True )
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+        shrink=0.8
     elif latitude == 'SH':
         ds = ds.where( ds.lat <= 0., drop=True ) 
+        figsize=(4,5)
+        orientation='vertical'
+        location='right' 
+        shrink=0.8
     
     # exclude stratosphere-ish
     ds = ds.where( ds.level >= top_atmos, drop=True ) 
+        
     
+    #-------------------------------------------------------------------
+    
+    ## PRE-PLOTTING STUFF
     
     # Set divergence of div1 and remove outliers
     div1 = ds.div1.mean(('time'))
-    div1 = div1.where(abs(div1) < 1e2) 
+    div1 = div1.where(abs(div1) < 1e2)
+    
+    # calculate mean absolute value of max and min
+    max_value = np.nanmax(div1.values)
+    min_value = np.nanmin(div1.values)
+    value = (abs(max_value) + abs(min_value)) / 2
+    value = round(value, round_sf)
+    
+    # set linspace levels
+    lvl = np.linspace(-value, value, levels)
+    ticks = [-value, -value/2, 0, value/2, value] 
+    
     
     # skip variables
     skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
@@ -318,25 +412,37 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
     Fphi = ds.ep1.mean(('time')).isel(skip)
     Fp = ds.ep2.mean(('time')).isel(skip)
     
-    fig, ax = plt.subplots(figsize=(9,5))
-
     import seaborn as sns
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
+    
+    
+    #-------------------------------------------------------------------
+    
+    ## PLOTTING TIME
+    
+    # set figures
+    fig, ax = plt.subplots(figsize=figsize)
 
     plt.contourf(ds.lat.values, ds.level.values, div1,
-              cmap=coolwarm, levels=levels, extend='both')
-    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.5,
-             label='Wind speed (m/s)', extend='both')
+              cmap=coolwarm, levels=lvl, extend=extend)
+    plt.colorbar(location=location, orientation=orientation, shrink=shrink,
+             label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
+    
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
+    # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
+    
+    # save figure if required
+    if savefig == True:
+        plt.savefig(f'./plots/{fig_label}.png')
         
     plt.show()
 
