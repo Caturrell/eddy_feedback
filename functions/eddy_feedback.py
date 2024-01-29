@@ -137,7 +137,7 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 # Plot zonal-mean zonal wind on meridional plane
 def plot_ubar(ds, label='Zonal-mean zonal wind', latitude='both', top_atmos=0.,
               levels=21, yincrease=False, yscale='linear', figsize=(8,5), extend='both', shrink=0.5,
-              savefig=False, fig_label=None):
+              round_sf=-1, savefig=False, fig_label=None):
     
     """
     Input: Xarray dataset
@@ -177,7 +177,7 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', latitude='both', top_atmos=0.,
     max_value = ds.ubar.values.max()
     min_value = ds.ubar.values.min()
     value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, -1)
+    value = round(value, round_sf)
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
@@ -228,7 +228,7 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', latitude='both', top_atmos=0.,
 # Plot zonal-mean zonal wind with EP flux arrows
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitude='both', top_atmos=0.,
                      levels=21, skip_lat=1, skip_pres=1, yscale='linear', extend='both', shrink=0.5, primitive=True,
-                     savefig=False, fig_label=None):
+                     round_sf=-1, savefig=False, fig_label=None):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -268,7 +268,7 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
     max_value = ds.ubar.values.max()
     min_value = ds.ubar.values.min()
     value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, -1)
+    value = round(value, round_sf)
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
@@ -292,6 +292,7 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
     # Set figure
     fig, ax = plt.subplots(figsize=(9,5))
 
+    # set cmap from seaborn
     import seaborn as sns
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
@@ -305,11 +306,13 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
+    # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
-        
+    
+    # save figure if required
     if savefig == True:
         plt.savefig(f'./plots/{fig_label}.png')
         
@@ -323,7 +326,7 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', latitu
 # plot EP fluxes and northward divergence
 def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', latitude='both', top_atmos=100., 
                       levels=21, skip_lat=1, skip_pres=1, yscale='linear', primitive=True, extend='both', shrink=0.5,
-                      savefig=False, fig_label=None):
+                      round_sf=None, savefig=False, fig_label=None):
     
     """
     Input: Xarray Dataset containing u,v,t
@@ -361,10 +364,10 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
     div1 = div1.where(abs(div1) < 1e2) 
     
     # calculate mean absolute value of max and min
-    max_value = ds.div1.values.max()
-    min_value = ds.div1.values.min()
+    max_value = div1.values.max()
+    min_value = div1.values.min()
     value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, -1)
+    value = round(value, round_sf)
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
@@ -398,13 +401,19 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', l
 
     aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
+    
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
+    # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
+    
+    # save figure if required
+    if savefig == True:
+        plt.savefig(f'./plots/{fig_label}.png')
         
     plt.show()
 
