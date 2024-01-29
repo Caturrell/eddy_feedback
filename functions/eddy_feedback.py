@@ -340,9 +340,9 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
 
     
 # plot EP fluxes and northward divergence
-def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', figsize=(9,5), latitude=None, lat_slice=None, top_atmos=100., 
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', figsize=(9,5), yscale='linear', primitive=True, 
+                      latitude=None, lat_slice=slice(None,None), top_atmos=100., skip_lat=1, skip_pres=1,
                       orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
-                      skip_lat=1, skip_pres=1, yscale='linear', primitive=True, 
                       round_sf=None, savefig=False, fig_label=None):
     
     """
