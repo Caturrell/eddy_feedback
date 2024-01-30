@@ -106,6 +106,8 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     Output: Xarray dataset with EP fluxes calculated
             and optional calculate ubar
     """
+    
+    ## CONDITIONS
 
     # ensure variables are named correctly
     if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
@@ -135,9 +137,9 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, top_atmos=0.,
+def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, top_atmos=0., show_rect=False,
               orientation='horizontal', location='bottom', extend='both', shrink=0.5,
-              levels=21, yincrease=False, yscale='linear', round_sf=-1, savefig=False, fig_label=None):
+              levels=21, yincrease=False, yscale='linear', round_sf=None, savefig=False, fig_label=None):
               
     
     """
@@ -184,9 +186,8 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, t
     
     # calculate mean absolute value of max and min
     max_value = np.nanmax(ds.ubar.values)
-    min_value = np.nanmin(ds.ubar.values)
-    value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, round_sf)
+    value = round(max_value, round_sf)
+        
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
@@ -227,6 +228,14 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, t
     # save figure, if required
     if savefig == True:
         plt.savefig(f'./plots/{fig_label}.png')
+        
+    # show EFP box
+    if show_rect == True:
+        import matplotlib.patches as patches
+        
+        rect = patches.Rectangle((25., 600.), 50, -400, 
+                         fill=False, linewidth=2)
+        plt.gca().add_patch(rect)
     
     plt.show()
     
@@ -238,7 +247,7 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, t
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5), latitude=None, top_atmos=0.,
                      orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
                      skip_lat=1, skip_pres=1, yscale='linear', primitive=True,
-                     round_sf=-1, savefig=False, fig_label=None):
+                     round_sf=None, savefig=False, fig_label=None):
     
     """
     Input: Xarray DataSet containing u,v,t for DJF
@@ -282,9 +291,8 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     
     # calculate mean absolute value of max and min
     max_value = np.nanmax(ds.ubar.values)
-    min_value = np.nanmin(ds.ubar.values)
-    value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, round_sf)
+    value = round(max_value, round_sf)
+        
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
@@ -394,13 +402,12 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     
     # calculate mean absolute value of max and min
     max_value = np.nanmax(div1.values)
-    min_value = np.nanmin(div1.values)
-    value = (abs(max_value) + abs(min_value)) / 2
-    value = round(value, round_sf)
+    value = round(max_value, round_sf)
+        
     
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
-    ticks = [-value, -value/2, 0, value/2, value] 
+    ticks = [-value, -value/2, 0, value/2, value]
     
     
     # skip variables
@@ -454,58 +461,9 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
 # CORRELATION PLOTS
 #--------------------
 
-# correlation on a grid function
-def correlation_array(da1, da2, show_progress=False):
-    
-    """
-    Input: two Xarray DataArrays of same shape (time,level,lat)
-    
-    Output: a NumPy array of correlation coefficients,
-            of shape (level, lat)
-            
-            
-    !!! Might need to check .load() otherwise will run
-        for VERY long time
-    
-    """
-    
-    # show progress bar
-    if show_progress==True:
-        from tqdm import tqdm
-    
-        # create array of desired shape
-        da_corr = np.zeros((len(da1[0,:,0]), len(da1[0,0,:])))
-    
-        # loop through each variable
-        # on each row, do each column entry
-        for i in tqdm(range(len(da1[0,:,0]))):
-            for j in range(len(da1[0,0,:])):
-            
-                # calculate correlation coefficient
-                corr = np.corrcoef(da1[:,i, j], da2[:,i, j])
-                # save coefficient to respective data point
-                da_corr[i, j] = corr[0,1]
-    else:
-        # create array of desired shape
-        da_corr = np.zeros((len(da1[0,:,0]), len(da1[0,0,:])))
-    
-        # loop through each variable
-        # on each row, do each column entry
-        for i in range(len(da1[0,:,0])):
-            for j in range(len(da1[0,0,:])):
-            
-                # calculate correlation coefficient
-                corr = np.corrcoef(da1[:,i, j], da2[:,i, j])  
-                # save coefficient to respective data point
-                da_corr[i, j] = corr[0,1]
-        
-            
-    return da_corr 
 
-#--------------------------------------------------------------------------------------------------------------------------------
-
-
-def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
+def correlation_contourf(ds, top_atmos=100.,
+                         show_div2=False, logscale=True, show_rect=True, primitive=True):
     
     """"
     Input: dataset that contains ep fluxes data
@@ -513,8 +471,30 @@ def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
     
     Output: contourf plot matching Fig.6 in Smith et al., 2022
     """
+    
+    ## CONDITIONS
+    
+    # ensure variables are named correctly
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)  
+    
+    # Check to see if EP fluxes are in DataSet
+    if not 'ep1' in ds:
+        ds = calculate_epfluxes_ubar(ds, primitive=primitive)
         
-    ds = ds.isel(dict( level=slice(10,37) ))
+    # set northern hemisphere
+    ds = ds.where( ds.lat >= 0 )
+    
+    # cut off stratosphere
+    ds = ds.where( ds.level >= top_atmos )
+    
+    #------------------------------------------------------------------
+    
+    ## SET UP TIME
+    
+    # remove unwanted variables
+    vars = ['u', 'div1', 'div2']
+    ds = ds[vars]
         
     # set variables and save them
     ubar = ds.u.mean(('lon'))
@@ -522,9 +502,9 @@ def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
     div2 = ds.div2
     
     # separate time into annual means
-    ubar = ubar.groupby('time.year').mean('time').load()
-    div1 = div1.groupby('time.year').mean('time').load()
-    div2 = div2.groupby('time.year').mean('time').load()
+    ubar = ubar.load()
+    div1 = div1.mean('time').load()
+    div2 = div2.mean('time').load()
     
     # choose which variable; default: div1
     if show_div2==True:
@@ -560,3 +540,39 @@ def correlation_contourf(ds, show_div2=False, logscale=True, show_rect=True):
         plt.gca().add_patch(rect)
 
     plt.show()
+    
+
+#--------------------------------------------------------------------------------------------------------------------------------
+    
+    
+# correlation on a grid function
+def correlation_array(da1, da2):
+    
+    """
+    Input: two Xarray DataArrays of same shape (time,level,lat)
+    
+    Output: a NumPy array of correlation coefficients,
+            of shape (level, lat)
+            
+            
+    !!! Might need to check .load() otherwise will run
+        for VERY long time
+    
+    """
+    
+    
+    # create array of desired shape
+    da_corr = np.zeros((len(da1[0,:,0]), len(da1[0,0,:])))
+    
+    # loop through each variable
+    # on each row, do each column entry
+    for i in range(len(da1[0,:,0])):
+        for j in range(len(da1[0,0,:])):
+        
+            # calculate correlation coefficient
+            corr = np.corrcoef(da1[:,i, j], da2[:,i, j])  
+            # save coefficient to respective data point
+            da_corr[i, j] = corr[0,1]
+        
+            
+    return da_corr 
