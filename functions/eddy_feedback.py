@@ -351,7 +351,7 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
 def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', figsize=(9,5), yscale='linear', primitive=True, 
                       latitude=None, lat_slice=slice(None,None), top_atmos=100., skip_lat=1, skip_pres=1,
                       orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
-                      round_sf=None, savefig=False, fig_label=None):
+                      plot_arrows=True, show_rect=False, round_sf=None, savefig=False, fig_label=None):
     
     """
     Input: Xarray Dataset containing u,v,t
@@ -435,8 +435,12 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     plt.colorbar(location=location, orientation=orientation, shrink=shrink,
              label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
-    aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
+    if plot_arrows == True:
+        aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
+    else:
+        plt.gca().invert_yaxis()
+        plt.yscale(yscale)
     
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
@@ -451,6 +455,14 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     if savefig == True:
         plt.savefig(f'./plots/{fig_label}.png')
         
+    # show EFP box
+    if show_rect == True:
+        import matplotlib.patches as patches
+        
+        rect = patches.Rectangle((25., 600.), 50, -400, 
+                         fill=False, linewidth=2)
+        plt.gca().add_patch(rect)
+        
     plt.show()
 
 
@@ -462,7 +474,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
 #--------------------
 
 
-def correlation_contourf(ds, top_atmos=100.,
+def correlation_contourf(ds, top_atmos=10., reanalysis=False,
                          show_div2=False, logscale=True, show_rect=True, primitive=True):
     
     """"
@@ -483,10 +495,10 @@ def correlation_contourf(ds, top_atmos=100.,
         ds = calculate_epfluxes_ubar(ds, primitive=primitive)
         
     # set northern hemisphere
-    ds = ds.where( ds.lat >= 0 )
+    ds = ds.where( ds.lat >= 0, drop=True )
     
     # cut off stratosphere
-    ds = ds.where( ds.level >= top_atmos )
+    ds = ds.where( ds.level >= top_atmos, drop=True )
     
     #------------------------------------------------------------------
     
@@ -495,20 +507,27 @@ def correlation_contourf(ds, top_atmos=100.,
     # remove unwanted variables
     vars = ['u', 'div1', 'div2']
     ds = ds[vars]
-        
+    
     # set variables and save them
     ubar = ds.u.mean(('lon'))
     div1 = ds.div1
     div2 = ds.div2
     
-    # separate time into annual means
-    ubar = ubar.load()
-    div1 = div1.mean('time').load()
-    div2 = div2.mean('time').load()
+    if reanalysis == True:
+        # separate time into annual means
+        # and use .load() to force the calculation now
+        ubar = ubar.groupby('time.year').mean('time').load()
+        div1 = div1.groupby('time.year').mean('time').load()
+        div2 = div2.groupby('time.year').mean('time').load()
+    else:
+        # separate time into annual means
+        ubar = ubar.load()
+        div1 = div1.load()
+        div2 = div2.load()
     
     # choose which variable; default: div1
     if show_div2==True:
-        corr = correlation_array(ubar, div2)
+        corr = correlation_array(ubar, div2) 
         title_name = '\\nabla_p F_p'
         figgy = (6,7)
     else:
@@ -520,7 +539,7 @@ def correlation_contourf(ds, top_atmos=100.,
 
     plt.figure(figsize=figgy)
 
-    plt.contourf(ds.lat.values, ds.level.values, corr, cmap='RdBu_r', levels=15,
+    plt.contourf(ds.lat.values, ds.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
              extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
              extend='both', ticks=[-0.6,-0.2,0.2,0.6])
@@ -532,7 +551,7 @@ def correlation_contourf(ds, top_atmos=100.,
 
     plt.xlabel('Latitude $(^\\circ N)$')
     plt.ylabel('Log pressure (hPa)')
-    plt.title('(a) $Corr(\\bar{{u}}, {0})$'.format(title_name))
+    plt.title('$Corr(\\bar{{u}}, {0})$ - DJF'.format(title_name))
 
     if show_rect == True:
         rect = patches.Rectangle((25., 600.), 50, -400, 
@@ -559,20 +578,18 @@ def correlation_array(da1, da2):
         for VERY long time
     
     """
-    
-    
+   
     # create array of desired shape
     da_corr = np.zeros((len(da1[0,:,0]), len(da1[0,0,:])))
     
-    # loop through each variable
-    # on each row, do each column entry
+        # loop through each variable
+        # on each row, do each column entry
     for i in range(len(da1[0,:,0])):
         for j in range(len(da1[0,0,:])):
-        
+                
             # calculate correlation coefficient
             corr = np.corrcoef(da1[:,i, j], da2[:,i, j])  
             # save coefficient to respective data point
             da_corr[i, j] = corr[0,1]
-        
             
     return da_corr 

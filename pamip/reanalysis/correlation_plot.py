@@ -8,13 +8,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+import sys 
+sys.path.append('/home/links/ct715/eddy_feedback')
 import functions.eddy_feedback as ef
+
+import pdb 
 
 # import dataset on MATHS SERVER
 # ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
 
 # Import dataset on JASMIN
-ds = xr.open_mfdataset('/home/users/cturrell/documents/eddy_feedback/daily_datasets/jra55_djf_ep.nc')
+ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/jra55_uvtw_ep.nc',
+                            parallel=True, chunks={'time': 31})
 
 # NH subset
 # ds = ds.isel(lat=slice(0, 37))
@@ -31,6 +36,8 @@ div2 = ds.div2
 ubar = ubar.groupby('time.year').mean('time').load()
 div1 = div1.groupby('time.year').mean('time').load()
 div2 = div2.groupby('time.year').mean('time').load()
+
+pdb.set_trace()
 
 corr = ef.correlation_array(ubar, div1)
 
@@ -52,5 +59,5 @@ plt.xlabel('Latitude $(^\\circ N)$')
 plt.ylabel('Log pressure (hPa)')
 plt.title('(a) $Corr(\\bar{u}, \\nabla_{\\phi} F_{\\phi})$')
 
-plt.savefig('/home/users/cturrell/documents/eddy_feedback/corr_linear_whole.png')
+plt.savefig('/home/links/ct715/eddy_feedback/corr_linear_whole.png')
 plt.show()
