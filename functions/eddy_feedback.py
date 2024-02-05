@@ -128,6 +128,8 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     ds['div2'] = (div2.dims, div2.values)
     
     return ds
+        
+    
 
 
 #======================================================================================================================================
@@ -474,14 +476,14 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
 #--------------------
 
 
-def correlation_contourf(ds, top_atmos=10., reanalysis=False,
+def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisphere='NH',
                          show_div2=False, logscale=True, show_rect=True, primitive=True):
     
     """"
     Input: dataset that contains ep fluxes data
             - with variables: (time, level, lat, lon)
     
-    Output: contourf plot matching Fig.6 in Smith et al., 2022
+    Output: contourf plot matching Fig.6 in Smith et al., 2022 
     """
     
     ## CONDITIONS
@@ -492,10 +494,15 @@ def correlation_contourf(ds, top_atmos=10., reanalysis=False,
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
-        ds = calculate_epfluxes_ubar(ds, primitive=primitive)
+        ds = calculate_epfluxes_ubar(ds, primitive=primitive) 
         
-    # set northern hemisphere
-    ds = ds.where( ds.lat >= 0, drop=True )
+    # choose hemisphere
+    if hemisphere == 'SH':
+        # set southern hermisphere
+        ds = ds.where( ds.lat <= 0, drop=True )
+    else:
+        # set northern hemisphere
+        ds = ds.where( ds.lat >= 0, drop=True )
     
     # cut off stratosphere
     ds = ds.where( ds.level >= top_atmos, drop=True )
@@ -551,7 +558,7 @@ def correlation_contourf(ds, top_atmos=10., reanalysis=False,
 
     plt.xlabel('Latitude $(^\\circ N)$')
     plt.ylabel('Log pressure (hPa)')
-    plt.title('$Corr(\\bar{{u}}, {0})$ - DJF'.format(title_name))
+    plt.title('$Corr(\\bar{{u}}, {0})$ - {1}'.format(title_name, label))
 
     if show_rect == True:
         rect = patches.Rectangle((25., 600.), 50, -400, 
@@ -565,7 +572,7 @@ def correlation_contourf(ds, top_atmos=10., reanalysis=False,
     
     
 # correlation on a grid function
-def correlation_array(da1, da2):
+def correlation_array(da1, da2): 
     
     """
     Input: two Xarray DataArrays of same shape (time,level,lat)

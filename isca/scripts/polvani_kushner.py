@@ -1,19 +1,13 @@
-"""
-
-python /home/links/ct715/eddy_feedback/isca/scripts
-
-"""
-
 import numpy as np
-
+import os
 from isca import DryCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 NCORES = 16
-RESOLUTION = 'T42', 25  # T42 horizontal resolution, 25 levels in pressure
+RESOLUTION = 'T42', 40  # T42 horizontal resolution, 40 levels in pressure
 
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
-cb = DryCodeBase.from_directory(GFDL_BASE)
+cb = DryCodeBase.from_directory(GFDL_BASE) 
 
 # or it can point to a specific git repo and commit id.
 # This method should ensure future, independent, reproducibility of results.
@@ -29,7 +23,7 @@ cb.compile()  # compile the source code to working directory $GFDL_WORK/codebase
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
 
-exp_name = 'held_suarez_delh_omega'
+exp_name = 'polvani_kushner_test'
 exp = Experiment(exp_name, codebase=cb)
 
 #Tell model how to write diagnostics
@@ -42,11 +36,10 @@ diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
 
-diag.add_field('dynamics', 'ucomp', time_avg=True)  
-diag.add_field('dynamics', 'vcomp', time_avg=True)  
-diag.add_field('dynamics', 'temp', time_avg=True)  
-diag.add_field('dynamics', 'omega', time_avg=True)  
-
+diag.add_field('dynamics', 'ucomp', time_avg=True)
+diag.add_field('dynamics', 'vcomp', time_avg=True)
+diag.add_field('dynamics', 'temp', time_avg=True)
+diag.add_field('dynamics', 'omega', time_avg=True)
 
 exp.diag_table = diag
 
@@ -66,14 +59,15 @@ namelist = Namelist({
 
     'spectral_dynamics_nml': {
         'damping_order'           : 4,                      # default: 2
-        'water_correction_limit'  : 200.e2,                 # default: 0
+        #'water_correction_limit'  : 200.e2,                 # default: 0
+        'do_water_correction': False,
         'reference_sea_level_press': 1.0e5,                  # default: 101325
-        'valid_range_t'           : [100., 800.],           # default: (100, 500)
+        'valid_range_t'           : [50., 800.],           # default: (100, 500)
         'initial_sphum'           : 0.0,                  # default: 0
         'vert_coord_option'       : 'uneven_sigma',         # default: 'even_sigma'
-        'scale_heights': 6.0,
-        'exponent': 7.5,
-        'surf_res': 0.5
+        'scale_heights': 11.0,
+        'exponent': 3.0,
+        'surf_res': 0.5,
     },
 
     # configure the relaxation profile
@@ -84,15 +78,33 @@ namelist = Namelist({
         'delv': 10.,       # lapse rate (default 10K)
         'eps': 0.,         # stratospheric latitudinal variation (default 0K)
         'sigma_b': 0.7,    # boundary layer friction height (default p/ps = sigma = 0.7)
-
+        'equilibrium_t_option': 'Polvani_Kushner',
+        
         # negative sign is a flag indicating that the units are days
         'ka':   -40.,      # Constant Newtonian cooling timescale (default 40 days)
         'ks':    -4.,      # Boundary layer dependent cooling timescale (default 4 days)
         'kf':   -1.,       # BL momentum frictional timescale (default 1 days)
-
+        'z_ozone': 15.,     # Height (in km) of stratospheric warming start
         'do_conserve_energy':   True,  # convert dissipated momentum into heat (default True)
+        'sponge_flag': True,       # Turn on simple damping in upper levels
+        # 'polar_heating_srfamp': 2.,
+        # 'polar_heating_latwidth': 20*np.pi/180.,
+        # 'polar_heating_latcenter': 90*np.pi/180.,
+        # 'polar_heating_sigwidth': 0.1,
+        # 'polar_heating_sigcenter': 1.,
+        # 'local_heating_option': 'Polar'
+        'relax_to_qbo': False,
+        'qbo_amp': -20.
     },
-
+    
+    # 'damping_driver_nml': {
+    #     'do_rayleigh': True,
+    #     'trayfric': -0.5,              # neg. value: time in *days*
+    #     'sponge_pbottom':  50., #Bottom of the model's sponge down to 0.5hPa
+    #     'do_conserve_energy': True,    
+    # },
+    
+    
     'diag_manager_nml': {
         'mix_snapshot_average_fields': False
     },
