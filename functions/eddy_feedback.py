@@ -7,9 +7,9 @@ import functions.aos_functions as aos
 
 #======================================================================================================================================
 
-#------------------
-# DATASET RENAMING
-#------------------
+#----------------------
+# DATASET MANIPULATION
+#---------------------- 
 
 # Rename dimensions in Dataset and check if ds contains Isca variable notation
 def find_rename_variables(ds):
@@ -65,6 +65,40 @@ def rename_variables(ds):
     ds = ds.rename(rename)
     
     return ds
+
+# Subset to seasonal datasets
+def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
+    
+    """ 
+    Input: Xarray dataset for full year
+    
+    Output: Xarray dataset with required season data 
+    
+    """
+    
+    import datetime as dt
+    
+    # DJF (winter) sub-dataset 
+    if season == 'djf': 
+        ds = ds.sel(time=ds.time.dt.month.isin([12, 1, 2]))
+        
+    # MAM (spring) dataset
+    if season == 'mam':
+        ds = ds.sel(time=ds.time.dt.month.isin([3, 4, 5])) 
+    
+    # JJA (summer) dataset    
+    if season == 'jja':
+        ds = ds.sel(time=ds.time.dt.month.isin([6, 7, 8]))
+        
+    # SON (autumn) dataset    
+    if season == 'son':
+        ds = ds.sel(time=ds.time.dt.month.isin([9, 10 ,11]))
+    
+    # save new dataset if wanted    
+    if save_ds == True:
+        ds.to_netcdf(f'{save_location}')    
+        
+    return ds 
     
     
 
@@ -534,11 +568,17 @@ def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisp
     
     # choose which variable; default: div1
     if show_div2==True:
-        corr = correlation_array(ubar, div2) 
+        if reanalysis == True:
+            corr = xr.corr(ubar, div2, dim='year') 
+        else:
+            corr = xr.corr(ubar, div2, dim='time')
         title_name = '\\nabla_p F_p'
         figgy = (6,7)
     else:
-        corr = correlation_array(ubar, div1)
+        if reanalysis == True:
+            corr = xr.corr(ubar, div1, dim='year')
+        else:
+            corr = xr.corr(ubar, div1, dim='time')
         title_name = '\\nabla_{\\phi} F_{\\phi}'
         figgy = (6,6)
         
@@ -569,34 +609,3 @@ def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisp
     
 
 #--------------------------------------------------------------------------------------------------------------------------------
-    
-    
-# correlation on a grid function
-def correlation_array(da1, da2): 
-    
-    """
-    Input: two Xarray DataArrays of same shape (time,level,lat)
-    
-    Output: a NumPy array of correlation coefficients,
-            of shape (level, lat)
-            
-            
-    !!! Might need to check .load() otherwise will run
-        for VERY long time
-    
-    """
-   
-    # create array of desired shape
-    da_corr = np.zeros((len(da1[0,:,0]), len(da1[0,0,:])))
-    
-        # loop through each variable
-        # on each row, do each column entry
-    for i in range(len(da1[0,:,0])):
-        for j in range(len(da1[0,0,:])):
-                
-            # calculate correlation coefficient
-            corr = np.corrcoef(da1[:,i, j], da2[:,i, j])  
-            # save coefficient to respective data point
-            da_corr[i, j] = corr[0,1]
-            
-    return da_corr 
