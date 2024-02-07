@@ -99,6 +99,17 @@ def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
         ds.to_netcdf(f'{save_location}')    
         
     return ds 
+
+# sort data into interannual mean for reanalysis data
+def interannual(da):
+    
+    # average longitude if not already done
+    if 'lon' in da.dims:
+        da = da.mean('lon')
+        
+    da = da.groupby('time.year').mean('time').load()
+    
+    return da 
     
     
 
@@ -506,7 +517,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
 #======================================================================================================================================
 
 #-------------------- 
-# CORRELATION PLOTS
+# STATISTICAL PLOTS
 #--------------------
 
 
@@ -609,3 +620,99 @@ def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisp
     
 
 #--------------------------------------------------------------------------------------------------------------------------------
+    
+def plot_variance(ds, variable='ubar', top_atmos=100.,
+                  figsize=(9,5), orientation='horizontal', location='bottom',
+                  latitude=None, primitive=True, reanalysis=True,
+                  logscale=True, show_rect=True):
+    
+    """
+    Input: DataArray of required variable with three dimensions
+            - Usually (time, level, lat)
+            
+    Output: Contour plot showing (lat, level) variance
+    
+    """
+    
+    ## CONDITIONS
+    
+    # ensure variables are named correctly
+    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+        ds = find_rename_variables(ds)  
+    
+    # Check to see if EP fluxes are in DataSet
+    if not 'ep1' in ds:
+        ds = calculate_epfluxes_ubar(ds, primitive=primitive)
+
+    # remove poles for div1 variable because massive
+    if variable == 'div1':
+        ds = ds.isel(lat=slice(1,72)) 
+    
+    # set top of atmosphere
+    ds = ds.where( ds.level >= top_atmos, drop=True )
+    
+    # Choose hemisphere, if required
+    if latitude == 'NH':
+        ds = ds.where( ds.lat >= 0., drop=True )
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+    if latitude == 'SH':
+        ds = ds.where( ds.lat <= 0., drop=True )
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+
+        
+    #-------------------------------------------------------------------
+        
+    ## PRE-PLOTTING SET UP
+        
+    # Choose required DataArray
+    if variable == 'ubar':
+        da = ds['u'].mean(('lon'))
+    else:
+        da = ds[variable]
+
+    # take interannual time average if reanalysis set
+    # and specify which variable to find the variance over
+    if reanalysis == True:
+        da = interannual(da)
+        var = da.var(dim='year').load()
+    else:
+        var = da.var(dim='time').load()
+
+    # find max value
+    max_value = np.max(var).round(1)
+
+    #-------------------------------------------------------------------
+        
+    ## PLOTTING TIME
+        
+    # set up figure
+    plt.figure(figsize=figsize)
+
+    plt.contourf(var.lat.values, var.level.values, var, cmap='Greens',
+                 levels=np.linspace(0, max_value, 21), extend='both')
+    plt.colorbar(location=location, orientation=orientation, shrink=0.75, 
+                 label='variance', extend='both')
+    
+    plt.gca().invert_yaxis()
+    # choose log or linear scale
+    if logscale==True:
+        plt.yscale('log')
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.yscale('linear')
+        plt.ylabel('Pressure (hPa)')
+
+    plt.xlabel('Latitude $(^\\circ N)$')
+    plt.title(f'Variance of {variable}')
+
+    if show_rect == True:
+        import matplotlib.patches as patches 
+        rect = patches.Rectangle((25., 600.), 50, -400, 
+                         fill=False, linewidth=2)
+        plt.gca().add_patch(rect)
+
+    plt.show()
