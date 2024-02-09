@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import xarray as xr
 
-
+import sys
+sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 import functions.aos_functions as aos
 
 #======================================================================================================================================
@@ -716,3 +717,16 @@ def plot_variance(ds, variable='ubar', top_atmos=100.,
         plt.gca().add_patch(rect)
 
     plt.show()
+    
+
+
+if __name__ == '__main__':
+    
+    # era5
+    ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt.nc', 
+                            parallel=True, chunks={'time': 31})
+    
+    ds = calculate_epfluxes_ubar(ds)
+    
+    # save dataset
+    ds.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt_ep.nc')
