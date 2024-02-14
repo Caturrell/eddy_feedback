@@ -3,7 +3,13 @@ import matplotlib.pyplot as plt
 import xarray as xr
 
 import sys
-sys.path.append('/home/users/cturrell/documents/eddy_feedback')
+
+## JASMIN
+# sys.path.append('/home/users/cturrell/documents/eddy_feedback')
+
+## MATHS SERVERS
+sys.path.append('/home/links/ct715/eddy_feedback/')
+
 import functions.aos_functions as aos
 
 #======================================================================================================================================
@@ -24,7 +30,7 @@ def find_rename_variables(ds):
             - Checks for Isca labelling
     """
     
-    if 'ucomp' or 'ua' in ds:
+    if 'ucomp' in ds or 'ua' in ds:
         ds = rename_variables(ds)
     
     # search for dimension labels
@@ -133,10 +139,18 @@ def calculate_ubar(ds):
             calculated and added as variable
     """
     
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
         ds = find_rename_variables(ds)
-    
-    # Calculate 
+
+    # ensure variables are named correctly
+    if 'ucomp' in ds or 'ua' in ds:
+        ds = rename_variables(ds)
+
+
+    # Calculate ubar
     ds['ubar'] = ds.u.mean(('time', 'lon'))
     
     return ds
@@ -155,19 +169,25 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     
     ## CONDITIONS
 
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds)
+
     # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)   
+    if 'ucomp' in ds or 'ua' in ds:
+        ds = rename_variables(ds)
     
     # check if ubar is in dataset also
     if not 'ubar' in ds:
-        ds = calculate_ubar(ds)
+        ds = calculate_ubar(ds) 
         
-    
+    # calculate ep fluxes using aostools
     import functions.aos_functions as aos
-    
     ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ds.u, ds.v, ds.t, do_ubar=primitive)
-    
+
+    # save variables to dataset
     ds['ep1'] = (ep1.dims, ep1.values)
     ds['ep2'] = (ep2.dims, ep2.values)
     ds['div1'] = (div1.dims, div1.values)
@@ -199,9 +219,11 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5), latitude=None, t
     
     ## CONDITIONS
     
-    # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)  
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds) 
     
     # Check to see if ubar is in DataSet
     if not 'ubar' in ds:
@@ -307,9 +329,11 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     
     ## CONDITIONS
     
-    # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)  
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds) 
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
@@ -410,9 +434,11 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     
     ## CONDITIONS
     
-    # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)  
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds)
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
@@ -534,9 +560,11 @@ def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisp
     
     ## CONDITIONS
     
-    # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)  
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds) 
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
@@ -637,9 +665,11 @@ def plot_variance(ds, variable='ubar', top_atmos=100.,
     
     ## CONDITIONS
     
-    # ensure variables are named correctly
-    if 'lat' and 'lon' and 'level' and 'u' and 'v' and 't' not in ds:
-        ds = find_rename_variables(ds)  
+    # ensure dimensions are labelled correctly
+    if 'lat' in ds and 'lon' in ds and 'level' in ds:
+        print('Variables are already named as required.')
+    else:
+        ds = find_rename_variables(ds) 
     
     # Check to see if EP fluxes are in DataSet
     if not 'ep1' in ds:
@@ -719,14 +749,41 @@ def plot_variance(ds, variable='ubar', top_atmos=100.,
     plt.show()
     
 
+#===================================================================================================================
 
+## JASMIN SERVER
+# if __name__ == '__main__':
+    
+#     # era5
+#     ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt.nc', 
+#                             parallel=True, chunks={'time': 31})
+    
+#     ds = calculate_epfluxes_ubar(ds) 
+    
+#     # save dataset
+#     ds.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt_ep.nc')
+    
+
+#-------------------------------------------------------------------------------------------------------------------
+    
+
+## MATHS SERVERS
+    
 if __name__ == '__main__':
+
+    print('Program starting...')
     
     # era5
-    ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt.nc', 
-                            parallel=True, chunks={'time': 31})
+    ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/era5daily_djf_uvt.nc', 
+                            parallel=True, chunks={'time': 31}) 
     
-    ds = calculate_epfluxes_ubar(ds)
+    print('Dataset has been loaded.')
+    
+    ds = calculate_epfluxes_ubar(ds) 
+
+    print('Function was successful. Now saving data...') 
     
     # save dataset
-    ds.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt_ep.nc')
+    ds.to_netcdf('/home/links/ct715/eddy_feedback/daily_datasets/era5daily_djf_uvt_ep.nc')
+
+    print('Dataset has been saved.')
