@@ -151,7 +151,7 @@ def calculate_ubar(ds):
 
 
     # Calculate ubar
-    ds['ubar'] = ds.u.mean(('time', 'lon'))
+    ds['ubar'] = ds.u.mean('lon')
     
     return ds
 
