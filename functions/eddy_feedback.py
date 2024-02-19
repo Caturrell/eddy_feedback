@@ -108,10 +108,10 @@ def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
     return ds 
 
 # sort data into interannual mean for reanalysis data
-def interannual(da):
+def interannual(da, lon_mean=False):
     
     # average longitude if not already done
-    if 'lon' in da.dims:
+    if lon_mean:
         da = da.mean('lon')
         
     da = da.groupby('time.year').mean('time').load()
