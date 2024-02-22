@@ -81,7 +81,34 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True):
     return ds
         
     
+# Calculate Eddy Feedback Parameter
+def calculate_efp_sliced(ubar, div1): 
+    
+    """ 
+    Input: Xarray DataArrays of zonal-mean zonal wind (ubar)
+            and divergence of northward EP flux (div1)
+                - dims: (year, latitude) 
+                - sliced at selected level (hPa)
+                - ENSURE DATA IS SEASONALLY AVERAGED 
+    
+    Output: EFP Value at chosen level slice 
+    
+    """ 
+    
+    # Calculate Pearson's correlation
+    r = xr.corr(div1, ubar, dim='time')
 
+    # correlation squared
+    r = r**2
+    
+    # take EFP latitude slice if required
+    r = r.sel(latitude=slice(25,72))
+    
+    # Calculate weighted latitude average 
+    weights = np.cos( np.deg2rad(r.latitude) )
+    EFP = r.weighted(weights).mean('latitude') 
+    
+    return EFP 
 
 
     
