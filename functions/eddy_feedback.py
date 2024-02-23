@@ -2,14 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import xarray as xr
 
-import sys
-
-## JASMIN SERVERS
-sys.path.append('/home/users/cturrell/documents/eddy_feedback')
-
-## MATHS SERVERS
-# sys.path.append('/home/links/ct715/eddy_feedback/')
-
 import functions.aos_functions as aos 
 import functions.data_wrangling as data 
 
@@ -69,7 +61,6 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True):
         ds = calculate_ubar(ds) 
         
     # calculate ep fluxes using aostools
-    import functions.aos_functions as aos
     ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ds.u, ds.v, ds.t, do_ubar=primitive)
 
     # save variables to dataset
