@@ -124,7 +124,7 @@ def annual_mean(ds):
     return ds 
 
 # Calculate annual means
-def seasonal_mean(ds):
+def seasonal_mean(ds, cut_ends=True):
     
     """ 
     Input: Xarray Dataset or DataArray (time, ...)
@@ -133,6 +133,13 @@ def seasonal_mean(ds):
     Output: Xarray Dataset or DataArray with seasonal mean calculated
     
     """
+
+    # remove first Jan and Feb, and final Dec to ensure FULL seasons
+    if cut_ends:
+        # slice data from first March to final November
+        # (assuming dataset is JanYYYY - DecYYYY)
+        ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', f'{ds.time.dt.year[-1].values}-11'))
+
     
     # resample data to start 1st Dec
     seasonal = ds.resample(time='QS-DEC').mean('time').load() 

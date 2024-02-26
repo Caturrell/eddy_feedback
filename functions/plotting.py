@@ -22,7 +22,7 @@ import functions.eddy_feedback as ef
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=(9,5), latitude=None, top_atmos=0., 
+def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=(9,5), latitude=None, top_atmos=0., seasonal_mean=True,
               show_rect=False, orientation='horizontal', location='bottom', extend='both', shrink=0.5,
               levels=21, yincrease=False, yscale='linear', round_sf=None, savefig=False, fig_label=None):
               
@@ -41,37 +41,39 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
     
-    # Check to see if ubar is in DataSet
+    # Check to see if ubar is in DataSet and define it
     if not 'ubar' in ds:
         ds = ef.calculate_ubar(ds)
+    # define ubar
+    ubar = ds.ubar
         
     # default is both hemispheres
     if latitude == 'NH':
-        ds = ds.where( ds.lat >= 0., drop=True )
+        ubar = ubar.where( ubar.lat >= 0., drop=True )
         figsize=(4,5)
         orientation='vertical'
         location='right'
         shrink=0.8
     elif latitude == 'SH':
-        ds = ds.where( ds.lat <= 0., drop=True ) 
+        ubar = ubar.where( ubar.lat <= 0., drop=True ) 
         figsize=(4,5)
         orientation='vertical'
         location='right'
         shrink=0.8
     
     # exclude stratosphere-ish
-    ds = ds.where( ds.level >= top_atmos, drop=True )
+    ubar = ubar.where( ubar.level >= top_atmos, drop=True )
     
     
     #-------------------------------------------------------------------
     
     ## PRE-PLOTTING STUFF
-    
-    # define ubar dataArray
-    ubar = ds.ubar
+
+    # calculate time average
+    ubar = ubar.mean('time') 
     
     # calculate mean absolute value of max and min
-    max_value = np.nanmax(ds.ubar.values)
+    max_value = np.nanmax(ubar.values)
     value = round(max_value, round_sf)
         
     
@@ -131,13 +133,12 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
 
 # Plot zonal-mean zonal wind with EP flux arrows
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5), latitude=None, top_atmos=0.,
-                     orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
-                     skip_lat=1, skip_pres=1, yscale='linear', primitive=True,
+                     orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
                      round_sf=None, savefig=False, fig_label=None, check_variables=False):
     
     """
-    Input: Xarray DataSet containing u,v,t for DJF
-            - dims: (time, level, lat, lon)
+    Input: Xarray DataSet containing ubar and epfluxes
+            - dims: (time, level, lat)
     
     Output: Plot showing zonal-mean zonal wind
             and EP flux arrows
@@ -149,10 +150,6 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     if check_variables:
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
-    
-    # Check to see if EP fluxes are in DataSet
-    if not 'ep1' in ds:
-        ds = ef.calculate_epfluxes_ubar(ds, primitive=primitive)
         
     ## default is both hemispheres
     if latitude == 'NH':
@@ -235,11 +232,9 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
 
     
 # plot EP fluxes and northward divergence
-def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', figsize=(9,5), yscale='linear', primitive=True, 
-                      latitude=None, lat_slice=slice(None,None), top_atmos=100., skip_lat=1, skip_pres=1,
-                      orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
-                      plot_arrows=True, show_rect=False, round_sf=None, savefig=False, fig_label=None,
-                      check_variables=False):
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', which_div1='div1', figsize=(9,5), yscale='linear', latitude=None, remove_poles=True,
+                      top_atmos=100., skip_lat=1, skip_pres=1, orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
+                      plot_arrows=True, show_rect=False, round_sf=None, savefig=False, fig_label=None, check_variables=False):
     
     """
     Input: Xarray Dataset containing u,v,t
@@ -254,13 +249,10 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     if check_variables:
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
-    
-    # Check to see if EP fluxes are in DataSet
-    if not 'ep1' in ds:
-        ds = ef.calculate_epfluxes_ubar(ds, primitive=primitive)
         
     # reanalysis has unrealistic values at poles, so cut off ends
-    ds = ds.isel(lat=lat_slice)
+    if remove_poles:
+        ds = ds.isel(lat=slice(1,-1)) 
     
     
     ## default is both hemispheres
@@ -286,7 +278,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     ## PRE-PLOTTING STUFF
     
     # Set divergence of div1 and remove outliers
-    div1 = ds.div1.mean(('time'))
+    div1 = ds[f'{which_div1}'].mean(('time'))
     div1 = div1.where(abs(div1) < 1e2)
     
     # calculate mean absolute value of max and min
@@ -302,11 +294,9 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
     # skip variables
     skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
 
-    #    set variables
+    # set variables
     lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
     p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
-    Fphi = ds.ep1.mean(('time')).isel(skip)
-    Fp = ds.ep2.mean(('time')).isel(skip)
     
     import seaborn as sns
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
@@ -325,6 +315,8 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
              label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
     if plot_arrows == True:
+        Fphi = ds.ep1.mean(('time')).isel(skip)
+        Fp = ds.ep2.mean(('time')).isel(skip)
         aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
     else:
@@ -363,99 +355,64 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', f
 #--------------------
 
 
-def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisphere='NH',
-                         show_div2=False, logscale=True, show_rect=True, primitive=True,
-                         check_variables=False): 
+def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10.,
+                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}'): 
     
     """"
-    Input: dataset that contains ep fluxes data
-            - with variables: (time, level, lat, lon)
+    Input: DataArrays of ubar and F_\\phi
+            - Dims: (time, level, lat)
+                - DATASET MUST BE FULL YEAR FOR SEASONAL MEAN 
+            - Subsetted to NH or SH
+            - Cut off stratosphere >10. hPa
     
-    Output: contourf plot matching Fig.6 in Smith et al., 2022 
+    Output: contourf plot matching Fig.6a in Smith et al., 2022 
     """
     
-    ## CONDITIONS
-    
-    # If required, check dimensions and variables are labelled correctly
-    if check_variables:
-        ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
-    
-    # Check to see if EP fluxes are in DataSet
-    if not 'ep1' in ds:
-        ds = ef.calculate_epfluxes_ubar(ds, primitive=primitive) 
-        
+    ## SET UP TIME
+
+    # separate time into annual means
+    # and use .load() to force the calculation now
+    ubar = data.seasonal_mean(ubar) 
+    div1 = data.seasonal_mean(div1)
+
+    # calculate correlation using built-in Xarray function
+    corr = xr.corr(div1, ubar, dim='time')
+
     # choose hemisphere
-    if hemisphere == 'SH':
-        # set southern hermisphere
-        ds = ds.where( ds.lat <= 0, drop=True )
-    else:
-        # set northern hemisphere
-        ds = ds.where( ds.lat >= 0, drop=True )
-    
-    # cut off stratosphere
-    ds = ds.where( ds.level >= top_atmos, drop=True )
-    
+    if latitude == 'NH':
+        corr = corr.where(corr.lat >= 0., drop=True)
+    elif latitude == 'SH':
+        corr = corr.where(corr.lat <= 0., drop=True)
+
+    # choose top of atmosphere
+    corr = corr.where(corr.level >= top_atmos, drop=True)
+
     #------------------------------------------------------------------
     
-    ## SET UP TIME
-    
-    # remove unwanted variables
-    vars = ['u', 'div1', 'div2']
-    ds = ds[vars]
-    
-    # set variables and save them
-    ubar = ds.ubar 
-    div1 = ds.div1
-    div2 = ds.div2
-    
-    if reanalysis == True:
-        # separate time into annual means
-        # and use .load() to force the calculation now
-        ubar = ubar.groupby('time.year').mean('time').load()
-        div1 = div1.groupby('time.year').mean('time').load()
-        div2 = div2.groupby('time.year').mean('time').load()
-    else:
-        # separate time into annual means
-        ubar = ubar.load()
-        div1 = div1.load()
-        div2 = div2.load()
-    
-    # choose which variable; default: div1
-    if show_div2==True:
-        if reanalysis == True:
-            corr = xr.corr(ubar, div2, dim='year') 
-        else:
-            corr = xr.corr(ubar, div2, dim='time')
-        title_name = '\\nabla_p F_p'
-        figgy = (6,7)
-    else:
-        if reanalysis == True:
-            corr = xr.corr(ubar, div1, dim='year')
-        else:
-            corr = xr.corr(ubar, div1, dim='time')
-        title_name = '\\nabla_{\\phi} F_{\\phi}'
-        figgy = (6,6)
-        
-    import matplotlib.patches as patches
+    ## PLOTTING TIME
 
-    plt.figure(figsize=figgy)
+    # Initiate plot
+    plt.figure(figsize=figsize)
 
-    plt.contourf(ds.lat.values, ds.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
+    # actual plotting
+    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
              extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
              extend='both', ticks=[-0.6,-0.2,0.2,0.6])
-    plt.gca().invert_yaxis()
     
-    if logscale==True:
-        plt.yscale('log')
-        
-
+    # axis alterations
+    plt.gca().invert_yaxis()
     plt.xlabel('Latitude $(^\\circ N)$')
-    plt.ylabel('Log pressure (hPa)')
+    if logscale:
+        plt.yscale('log')
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.ylabel('Pressure (hPa)')
     plt.title('$Corr(\\bar{{u}}, {0})$ - {1}'.format(title_name, label))
 
+    # Plot EFP box
     if show_rect == True:
+        import matplotlib.patches as patches
         rect = patches.Rectangle((25., 600.), 50, -400, 
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
@@ -465,13 +422,12 @@ def correlation_contourf(ds, label='DJF', top_atmos=10., reanalysis=True, hemisp
 
 #--------------------------------------------------------------------------------------------------------------------------------
     
-def plot_variance(ds, variable='ubar', top_atmos=100., check_variables=False,
+def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
                   figsize=(9,5), orientation='horizontal', location='bottom',
-                  latitude=None, primitive=True, reanalysis=True,
-                  logscale=True, show_rect=True):
+                  latitude=None, logscale=True, show_rect=True):
     
     """
-    Input: DataArray of required variable with three dimensions
+    Input: DataArray of required variable related to EFP
             - Usually (time, level, lat)
             
     Output: Contour plot showing (lat, level) variance
@@ -484,48 +440,36 @@ def plot_variance(ds, variable='ubar', top_atmos=100., check_variables=False,
     if check_variables:
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
-    
-    # Check to see if EP fluxes are in DataSet
-    if not 'ep1' in ds:
-        ds = ef.calculate_epfluxes_ubar(ds, primitive=primitive)
 
-    # remove poles for div1 variable because massive
-    if variable == 'div1':
-        ds = ds.isel(lat=slice(1,72)) 
-    
-    # set top of atmosphere
-    ds = ds.where( ds.level >= top_atmos, drop=True )
-    
-    # Choose hemisphere, if required
-    if latitude == 'NH':
-        ds = ds.where( ds.lat >= 0., drop=True )
-        figsize=(4,5)
-        orientation='vertical'
-        location='right'
-    if latitude == 'SH':
-        ds = ds.where( ds.lat <= 0., drop=True )
-        figsize=(4,5)
-        orientation='vertical'
-        location='right'
-
-        
     #-------------------------------------------------------------------
         
     ## PRE-PLOTTING SET UP
         
     # Choose required DataArray
-    if variable == 'ubar':
-        da = ds['u'].mean(('lon'))
-    else:
-        da = ds[variable]
+    da = ds[variable]
 
-    # take interannual time average if reanalysis set
-    # and specify which variable to find the variance over
-    if reanalysis == True:
-        da = data.annual_mean(da)
-        var = da.var(dim='year').load()
-    else:
-        var = da.var(dim='time').load()
+    # take seasonal time average and calculate variance
+    da = data.seasonal_mean(da) 
+    var = da.var(dim='time').load()
+
+    # remove poles for div1 variable because massive 
+    if remove_poles: 
+        var = var.isel(lat=slice(1,-1))  
+
+    # choose hemisphere
+    if latitude == 'NH':
+        var = var.where(var.lat >= 0., drop=True)
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+    elif latitude == 'SH':
+        var = var.where(var.lat <= 0., drop=True)
+        figsize=(4,5)
+        orientation='vertical'
+        location='right' 
+
+    # choose top of atmosphere
+    var = var.where(var.level >= top_atmos, drop=True)
 
     # find max value
     max_value = np.max(var).round(1)
