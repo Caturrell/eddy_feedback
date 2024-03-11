@@ -355,8 +355,9 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
 #--------------------
 
 
-def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10.,
-                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}'): 
+def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10.,
+                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal_mean=True,
+                                season='djf', check_variables=False, which_div1='div1_pr'): 
     
     """"
     Input: DataArrays of ubar and F_\\phi
@@ -370,10 +371,20 @@ def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rec
     
     ## SET UP TIME
 
+    # If required, check dimensions and variables are labelled correctly
+    if check_variables:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_variables(ds) 
+
+    # set variables
+    ubar = ds.ubar
+    div1 = ds[which_div1]
+
     # separate time into annual means
     # and use .load() to force the calculation now
-    ubar = data.seasonal_mean(ubar) 
-    div1 = data.seasonal_mean(div1)
+    if take_seasonal_mean:
+        ubar = data.seasonal_mean(ubar, season=season) 
+        div1 = data.seasonal_mean(div1, season=season)
 
     # calculate correlation using built-in Xarray function
     corr = xr.corr(div1, ubar, dim='time')
@@ -381,8 +392,10 @@ def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rec
     # choose hemisphere
     if latitude == 'NH':
         corr = corr.where(corr.lat >= 0., drop=True)
+        rect_box = (25., 600.)
     elif latitude == 'SH':
         corr = corr.where(corr.lat <= 0., drop=True)
+        rect_box = (-75., 600.)
 
     # choose top of atmosphere
     corr = corr.where(corr.level >= top_atmos, drop=True)
@@ -413,7 +426,7 @@ def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rec
     # Plot EFP box
     if show_rect == True:
         import matplotlib.patches as patches
-        rect = patches.Rectangle((25., 600.), 50, -400, 
+        rect = patches.Rectangle(rect_box, 50, -400, 
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
 
@@ -423,7 +436,7 @@ def plot_reanalysis_correlation(ubar, div1, label='DJF', logscale=True, show_rec
 #--------------------------------------------------------------------------------------------------------------------------------
     
 def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
-                  figsize=(9,5), orientation='horizontal', location='bottom',
+                  figsize=(9,5), orientation='horizontal', location='bottom', season='djf',
                   latitude=None, logscale=True, show_rect=True):
     
     """
@@ -438,8 +451,8 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
-        ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_variables(ds)  
 
     #-------------------------------------------------------------------
         
@@ -449,7 +462,7 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     da = ds[variable]
 
     # take seasonal time average and calculate variance
-    da = data.seasonal_mean(da) 
+    da = data.seasonal_mean(da, season=season) 
     var = da.var(dim='time').load()
 
     # remove poles for div1 variable because massive 
@@ -505,3 +518,12 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
         plt.gca().add_patch(rect)
 
     plt.show()
+
+
+#======================================================================================================================================
+
+#---------------------
+# EDDY FEEDBACK PLOTS
+#--------------------- 
+
+

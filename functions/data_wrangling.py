@@ -20,7 +20,7 @@ import functions.aos_functions as aos
 #---------------------- 
 
 # Rename dimensions in Dataset and check if ds contains Isca variable notation
-def check_dimensions(ds):
+def check_dimensions(ds, ignore_dim=None):
     
     """
     Input: Xarray Dataset with variety of dimension labels
@@ -34,8 +34,13 @@ def check_dimensions(ds):
     # search for dimension labels
     dims = aos.FindCoordNames(ds)
     
-    # rename variables usinf dict
-    rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'}
+
+    # rename variables using dict
+    if ignore_dim == 'lon':
+        rename = {dims['lat']: 'lat', dims['pres']: 'level'}
+    else:
+        rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'} 
+
     
     # rename dataset
     ds = ds.rename(rename)
@@ -60,11 +65,13 @@ def check_variables(ds):
     if 'ucomp' in ds:
         # Set renaming dict
         rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
-    
     # if-statement for PAMIP data    
-    if 'ua' in ds:
+    elif 'ua' in ds:
         # Set renaming dict
         rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
+    else:
+        rename = {}
+
     
     # apply changes
     ds = ds.rename(rename)
@@ -124,7 +131,7 @@ def annual_mean(ds):
     return ds 
 
 # Calculate annual means
-def seasonal_mean(ds, cut_ends=True):
+def seasonal_mean(ds, cut_ends=True, season=None):
     
     """ 
     Input: Xarray Dataset or DataArray (time, ...)
@@ -137,7 +144,7 @@ def seasonal_mean(ds, cut_ends=True):
     # remove first Jan and Feb, and final Dec to ensure FULL seasons
     if cut_ends:
         # slice data from first March to final November
-        # (assuming dataset is JanYYYY - DecYYYY)
+        # (assuming dataset is JanYYYY - DecYYYY) 
         ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', f'{ds.time.dt.year[-1].values}-11'))
 
     
@@ -145,6 +152,13 @@ def seasonal_mean(ds, cut_ends=True):
     seasonal = ds.resample(time='QS-DEC').mean('time').load() 
 
     # take winter season of set and cut off last 'season' 
-    seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([12]))
+    if season == 'djf':
+        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([12]))
+    elif season =='mam':
+        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([3]))
+    elif season =='jja':
+        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([6]))
+    elif season =='son':
+        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([9]))
     
     return seasonal 
