@@ -79,6 +79,22 @@ def check_variables(ds):
     return ds
 
 
+# # flip coordinates
+# def flip_coords(ds, dim=None):
+
+#     """ 
+#     Input: Xarray Dataset
+#             - Any dims
+
+#     Output: Equivalent Xarray Dataset with flipped
+#             chosen coordinate
+    
+#     """
+
+#     ds = ds[dim].sel()
+
+
+
 #======================================================================================================================================
 
 #----------------------

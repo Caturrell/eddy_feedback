@@ -134,7 +134,8 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
 # Plot zonal-mean zonal wind with EP flux arrows
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5), latitude=None, top_atmos=0.,
                      orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
-                     round_sf=None, savefig=False, fig_label=None, check_variables=False):
+                     round_sf=None, savefig=False, fig_label=None, check_variables=False,
+                     season=None, plot_arrows=True):
     
     """
     Input: Xarray DataSet containing ubar and epfluxes
@@ -150,6 +151,9 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     if check_variables:
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
+
+    if season != None:
+        ds = data.seasonal_mean(ds, season=season)
         
     ## default is both hemispheres
     if latitude == 'NH':
@@ -171,10 +175,10 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     ## PRE-PLOTTING STUFF
     
     # define ubar
-    ubar = ds.ubar
+    ubar = ds.ubar.mean('time')
     
     # calculate mean absolute value of max and min
-    max_value = np.nanmax(ds.ubar.values)
+    max_value = np.nanmax(ubar.values)
     value = round(max_value, round_sf)
         
     
@@ -189,8 +193,6 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     #    set variables
     lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
     p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
-    Fphi = ds.ep1.mean(('time')).isel(skip)
-    Fp = ds.ep2.mean(('time')).isel(skip)
     
     
     #-------------------------------------------------------------------
@@ -205,12 +207,19 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, ubar,
-              cmap=coolwarm, levels=lvl, extend=extend)
+              cmap='coolwarm', levels=lvl, extend=extend)
     plt.colorbar(location=location, orientation=orientation, shrink=shrink,
              label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
-    aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
+    if plot_arrows == True:
+        Fphi = ds.ep1.mean(('time')).isel(skip)
+        Fp = ds.ep2.mean(('time')).isel(skip)
+        aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
                      fig, ax, pivot='mid', yscale=yscale)
+    else:
+        plt.gca().invert_yaxis()
+        plt.yscale(yscale)
+
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     
@@ -355,7 +364,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
 #--------------------
 
 
-def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10.,
+def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10., cut_poles=False,
                                 figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal_mean=True,
                                 season='djf', check_variables=False, which_div1='div1_pr'): 
     
@@ -376,15 +385,16 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
         ds = data.check_dimensions(ds, ignore_dim='lon')
         ds = data.check_variables(ds) 
 
-    # set variables
-    ubar = ds.ubar
-    div1 = ds[which_div1]
-
     # separate time into annual means
     # and use .load() to force the calculation now
     if take_seasonal_mean:
-        ubar = data.seasonal_mean(ubar, season=season) 
-        div1 = data.seasonal_mean(div1, season=season)
+        ds = ds.sel(time=slice('1979', '2016'))
+        ds = data.seasonal_mean(ds, season=season)
+
+
+    # set variables
+    ubar = ds.ubar
+    div1 = ds[which_div1]
 
     # calculate correlation using built-in Xarray function
     corr = xr.corr(div1, ubar, dim='time')
@@ -399,6 +409,9 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
 
     # choose top of atmosphere
     corr = corr.where(corr.level >= top_atmos, drop=True)
+
+    if cut_poles:
+        corr = corr.where(corr.lat <= 85., drop=True)
 
     #------------------------------------------------------------------
     

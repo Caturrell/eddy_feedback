@@ -73,52 +73,77 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True):
         
     
 # Calculate Eddy Feedback Parameter
-def calculate_efp_sliced(ds, which_div1='div1_pr', lat_slice=slice(72.,25.),
-                         check_variables=False, take_seasonal=True): 
+def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=True, season='djf',
+                  calculate_SH=False, flip_latitude=False, flip_level=False, check_variables=False): 
     
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
                 - dims: (year, latitude) 
-                - sliced at selected level (hPa)
     
     Output: EFP Value at chosen level slice 
     
     """ 
+
+    ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds, ignore_dim='lon')
         ds = data.check_variables(ds) 
 
+    # flip dimensions if required
+    if flip_latitude:
+        ds = ds.sel(lat=slice(None,None,-1))
+    if flip_level:
+        ds = ds.sel(level=slice(None,None,-1))
+
     # subset dataset and take seasonal mean
     if take_seasonal:
+        # take time slice to match smallest domain
         ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_mean(ds, season='djf')
+        ds = data.seasonal_mean(ds, season=season)
+        print('Seasonal data has been calculated for 1979-2015.')
+        print()
+    else:
+        print('Seasonal average has not been calculated.')
+        print() 
 
-    # define variables
+    #-------------------------------------------------------------------------------
+
+    ## CALCULATIONS
+
+    # define variables 
     ubar = ds.ubar
     div1 = ds[which_div1]
     
     # Calculate Pearson's correlation
-    r = xr.corr(div1, ubar, dim='time')
+    corr = xr.corr(div1, ubar, dim='time')
 
     # correlation squared
-    r = r**2
+    corr = corr**2
     
-    # take EFP latitude slice if required
-    r = r.sel(lat=lat_slice)
+    # take EFP latitude slice
+    if calculate_SH:
+        corr = corr.sel(lat=slice(-75., -25.))
+    else:
+        corr = corr.sel(lat=slice(25.,72.)) 
+
     
+    if take_level_mean:
+        corr = corr.sel(level=slice(200.,600.))
+        corr = corr.mean('level')
+
     # Calculate weighted latitude average 
-    weights = np.cos( np.deg2rad(r.lat) )
-    EFP = r.weighted(weights).mean('lat') 
-    
+    weights = np.cos( np.deg2rad(corr.lat) )
+    EFP = corr.weighted(weights).mean('lat') 
+
     return EFP 
 
 
 
 def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1='div1_pr', 
-                           take_seasonal=True, level_mean=True):
+                           take_seasonal=True, level_mean=True, flip_level=False, flip_latitude=False):
     
     """ 
     Input: Xarray Dataset containing ubar and div1 
@@ -136,6 +161,12 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
         ds = data.check_dimensions(ds, ignore_dim='lon')
         ds = data.check_variables(ds)  
 
+    # flip dimensions if required
+    if flip_latitude:
+        ds = ds.sel(lat=slice(None,None,-1))
+    if flip_level:
+        ds = ds.sel(level=slice(None,None,-1))
+
     # subset dataset and take seasonal mean
     if take_seasonal:
         ds = ds.sel(time=slice('1979', '2016'))
@@ -152,7 +183,7 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
     ## Calculations
     corr = xr.corr(ds[which_div1], ds['ubar'], dim='time')
     corr = corr.sel(lat=lat_slice)
-    corr = corr.sel(level=slice(600., 200.))
+    corr = corr.sel(level=slice(200.,600.))
 
     if level_mean:
         corr = corr.mean('level')
