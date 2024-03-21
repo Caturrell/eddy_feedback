@@ -411,6 +411,7 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     corr = corr.where(corr.level >= top_atmos, drop=True)
 
     if cut_poles:
+        corr = corr.where(corr.lat >= -85., drop=True)
         corr = corr.where(corr.lat <= 85., drop=True)
 
     #------------------------------------------------------------------
