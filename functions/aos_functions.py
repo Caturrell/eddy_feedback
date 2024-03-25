@@ -130,11 +130,11 @@ def ComputeEPfluxDivXr(u,v,t,lon='infer',lat='infer',pres='infer',time='time',re
 	""" Compute the EP-flux vectors and divergence terms.
 
 		The vectors are normalized to be plotted in cartesian (linear)
-		coordinates, i.e. do not incluxde the geometric factor a*cos\phi.
+		coordinates, i.e. do not incluxde the geometric factor a*cos\\phi.
 		Thus, ep1 is in [m2/s2], and ep2 in [hPa*m/s2].
 		The divergence is in units of m/s/day, and therefore represents
 		the deceleration of the zonal wind. This is actually the quantity
-		1/(acos\phi)*div(F).
+		1/(acos\\phi)*div(F).
 
 	INPUTS:
 	  u    - zonal wind, xarray.DataArray [m/s]
@@ -151,11 +151,11 @@ def ComputeEPfluxDivXr(u,v,t,lon='infer',lat='infer',pres='infer',time='time',re
 	OUTPUTS (all xarray.DataArray):
 	  ep1  - meridional EP-flux component, scaled to plot in cartesian [m2/s2]
 	  ep2  - vertical   EP-flux component, scaled to plot in cartesian [hPa*m/s2]
-	  div1 - horizontal EP-flux divergence, divided by acos\phi [m/s/d]
-	  div2 - horizontal EP-flux divergence , divided by acos\phi [m/s/d]
+	  div1 - horizontal EP-flux divergence, divided by acos\\phi [m/s/d]
+	  div2 - horizontal EP-flux divergence , divided by acos\\phi [m/s/d]
 	"""
 	# some constants
-	from .constants import Rd,cp,kappa,p0,Omega,a0
+	from constants import Rd,cp,kappa,p0,Omega,a0
 	# shape
 	dim_names = FindCoordNames(u)
 	if lon == 'infer':
@@ -268,7 +268,7 @@ def ComputeVertEddyXr(v,t,p='level',p0=1e3,lon='lon',time='time',ref='mean',wave
 	"""
 	#
 	# some constants
-	from .constants import kappa
+	from constants import kappa
 	#
 	# pressure quantitites
 	pp0 = (p0/t[p])**kappa

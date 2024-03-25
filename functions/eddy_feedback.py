@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import xarray as xr
 
-import functions.aos_functions as aos 
-import functions.data_wrangling as data 
+import aos_functions as aos 
+import data_wrangling as data 
 
 
 #======================================================================================================================================
@@ -200,16 +200,34 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
 #===================================================================================================================
 
 ## JASMIN SERVER
-# if __name__ == '__main__':
+if __name__ == '__main__':
     
-#     # era5
-#     ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt.nc', 
-#                             parallel=True, chunks={'time': 31})
+    print('Opening datasets...')
     
-#     ds = calculate_epfluxes_ubar(ds) 
+    # Open datasets
+    ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/jra55_daily/jra55_uvtw.nc', 
+                            parallel=True, chunks={'time': 31})
     
-#     # save dataset
-#     ds.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/era5_data/era5daily_djf_uvt_ep.nc')
+    print('JRA55 Daily open.')
+    
+    srip = xr.open_mfdataset('/badc/srip/data/zonal/common_grid/jra_55/TEM_monthly*')
+    print('SRIP Open.')
+
+    print('Both datasets opened.')
+    ds = ds.sel(level=srip.pressure.values)
+    
+    # calculate EP fluxes
+    print('Calculating Primitive EP fluxes...')
+    ds_pr = calculate_epfluxes_ubar(ds) 
+    print('Calculating QG EP fluxes...')
+    ds_qg = calculate_epfluxes_ubar(ds, primitive=False)
+    print('Calculations complete.')
+    
+    ds_new = xr.Dataset(data_vars={'ep1_pr': ds_pr.ep1, 'ep2_pr':ds_pr.ep2, 'div1_pr':ds_pr.div1, 'div2_pr':ds_pr.div2,
+                                   'ep1_qg': ds_qg.ep1, 'ep2_qg':ds_qg.ep2, 'div1_qg':ds_qg.div1, 'div2_qg':ds_qg.div2})
+    
+    # save dataset
+    ds_new.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/jra55_daily/jra55_ep-fluxes.nc')
     
 
 #-------------------------------------------------------------------------------------------------------------------

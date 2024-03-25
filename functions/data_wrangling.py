@@ -3,15 +3,7 @@ import matplotlib.pyplot as plt
 import xarray as xr
 import datetime as dt
 
-import sys
-
-## JASMIN SERVERS
-# sys.path.append('/home/users/cturrell/documents/eddy_feedback')
-
-## MATHS SERVERS
-sys.path.append('/home/links/ct715/eddy_feedback/')
-
-import functions.aos_functions as aos 
+import aos_functions as aos 
 
 #======================================================================================================================================
 
