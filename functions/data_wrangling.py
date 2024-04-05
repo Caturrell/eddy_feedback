@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import xarray as xr
 import datetime as dt
 
-import aos_functions as aos 
+import functions.aos_functions as aos 
 
 #======================================================================================================================================
 

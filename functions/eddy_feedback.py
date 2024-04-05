@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import xarray as xr
 
-import aos_functions as aos 
-import data_wrangling as data 
+import functions.aos_functions as aos 
+import functions.data_wrangling as data 
 
 
 #======================================================================================================================================
@@ -94,9 +94,18 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
 
     # flip dimensions if required
     if flip_latitude:
+        # default: [-90,90]
         ds = ds.sel(lat=slice(None,None,-1))
     if flip_level:
+        # default: [0,1000]
         ds = ds.sel(level=slice(None,None,-1))
+
+    # choose hemisphere
+    if calculate_SH:
+        latitude_slice=slice(-75., -25.)
+        season = 'jja'
+    else:
+        latitude_slice=slice(25.,72.)
 
     # subset dataset and take seasonal mean
     if take_seasonal:
@@ -124,10 +133,7 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
     corr = corr**2
     
     # take EFP latitude slice
-    if calculate_SH:
-        corr = corr.sel(lat=slice(-75., -25.))
-    else:
-        corr = corr.sel(lat=slice(25.,72.)) 
+    corr = corr.sel(lat=latitude_slice)
 
     
     if take_level_mean:

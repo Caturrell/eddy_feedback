@@ -155,7 +155,7 @@ def ComputeEPfluxDivXr(u,v,t,lon='infer',lat='infer',pres='infer',time='time',re
 	  div2 - horizontal EP-flux divergence , divided by acos\\phi [m/s/d]
 	"""
 	# some constants
-	from constants import Rd,cp,kappa,p0,Omega,a0
+	from .constants import Rd,cp,kappa,p0,Omega,a0
 	# shape
 	dim_names = FindCoordNames(u)
 	if lon == 'infer':
@@ -268,7 +268,7 @@ def ComputeVertEddyXr(v,t,p='level',p0=1e3,lon='lon',time='time',ref='mean',wave
 	"""
 	#
 	# some constants
-	from constants import kappa
+	from .constants import kappa
 	#
 	# pressure quantitites
 	pp0 = (p0/t[p])**kappa
