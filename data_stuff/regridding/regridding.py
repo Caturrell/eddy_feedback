@@ -61,13 +61,13 @@ def regrid_dataset_3x3(ds, check_dims=False):
     
 if __name__ == '__main__':
 
-    print('Importing paths for AWI-CM-1-1-MR va...')
+    print('Importing paths for AWI-CM-1-1-MR ta...')
     files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ta/pdSST-pdSIC/AWI-CM-1-1-MR/*')
     
     
     for count, item in enumerate(files):
         
-        print(f'Opening ensemble member: {count}')
+        print(f'Opening ensemble member: {count+1}')
         ds = xr.open_mfdataset(item)
         ds = ds[['ta']]
     
