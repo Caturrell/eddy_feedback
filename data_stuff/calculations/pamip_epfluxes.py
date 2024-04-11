@@ -13,10 +13,7 @@ def calculate_pamip_epfluxes(ta, ua, va):
     ds = xr.Dataset(data_vars={'ta': ta.ta, 'ua': ua.ua, 'va': va.va})
     
     # Calculating EP fluxes
-    print('Calculating EP fluxes...')
-    ds = ef.calculate_epfluxes_ubar(ds)
-    
-    print('Done.')
+    ds = ef.calculate_epfluxes_ubar(ds, pamip_data=True)
     
     return ds 
 
@@ -25,9 +22,9 @@ def calculate_pamip_epfluxes(ta, ua, va):
 if __name__ == '__main__':
     
     print('Importing datasets...')
-    ta_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/ta/*')
-    ua_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/ua/*')
-    va_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/va/*')
+    ta_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/ta/*')
+    ua_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/ua/*')
+    va_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/va/*')
     
     print(f'ta:{len(ta_files)}, ua:{len(ua_files)}, va:{len(va_files)}')
     
@@ -41,14 +38,14 @@ if __name__ == '__main__':
         
         
         # Start function
-        print('Datasets loaded. Calculations starting...')
+        print(f'Datasets ({i+1}) loaded. Calculations starting...')
         ds = calculate_pamip_epfluxes(ta, ua, va) 
         
         print('Calculations complete. Now saving dataset...')
-        ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/AWI_uvt_ep_3x3_ens{i}.nc')
+        ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/all/CanESM5_uvt_epfluxes_3x3_ens{i+1}.nc')
+        
+        print(f'CanESM5 dataset saved. {i+1} iteration completed.')
          
-        #  # extract each file name
-        #  ta = os.path.basename(ta_files[i])
-        #  ua = os.path.basename(ua_files[i])
-        #  va = os.path.basename(va_files[i])
+        
+    print('PROGRAM COMPLETED.') 
          

@@ -14,7 +14,7 @@ import functions.data_wrangling as data
 
 
 # Calculate zonal-mean zonal wind
-def calculate_ubar(ds, check_variables=False):
+def calculate_ubar(ds, check_variables=False, pamip_data=False):
     
     """
     Input: Xarray dataset
@@ -30,14 +30,16 @@ def calculate_ubar(ds, check_variables=False):
         ds = data.check_dimensions(ds)
         ds = data.check_variables(ds) 
 
-
-    # Calculate ubar
-    ds['ubar'] = ds.u.mean('lon')
+    if pamip_data:
+        ds['ubar'] = ds.ua.mean('lon')
+    else:
+        # Calculate ubar
+        ds['ubar'] = ds.u.mean('lon')
     
     return ds
 
 # Calculate EP fluxes
-def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True):
+def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_data=False):
     
     """
     Input: Xarray dataset
@@ -58,10 +60,19 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True):
     
     # check if ubar is in dataset also
     if not 'ubar' in ds:
-        ds = calculate_ubar(ds) 
+        ds = calculate_ubar(ds, pamip_data=pamip_data) 
+        
+    if pamip_data:
+        ucomp = ds.ua 
+        vcomp = ds.va 
+        temp = ds.ta 
+    else:
+        ucomp = ds.u 
+        vcomp = ds.v 
+        temp = ds.t
         
     # calculate ep fluxes using aostools
-    ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ds.u, ds.v, ds.t, do_ubar=primitive)
+    ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ucomp, vcomp, temp, do_ubar=primitive)
 
     # save variables to dataset
     ds['ep1'] = (ep1.dims, ep1.values)

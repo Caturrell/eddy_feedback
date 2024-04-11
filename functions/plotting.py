@@ -365,8 +365,8 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
 
 
 def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10., cut_poles=False,
-                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal_mean=True,
-                                season='djf', check_variables=False, which_div1='div1_pr'): 
+                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal=True,
+                                season='djf', check_vars=False, which_div1='div1_pr'): 
     
     """"
     Input: DataArrays of ubar and F_\\phi
@@ -381,13 +381,13 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     ## SET UP TIME
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    if check_vars:
         ds = data.check_dimensions(ds, ignore_dim='lon')
         ds = data.check_variables(ds) 
 
     # separate time into annual means
     # and use .load() to force the calculation now
-    if take_seasonal_mean:
+    if take_seasonal:
         ds = ds.sel(time=slice('1979', '2016'))
         ds = data.seasonal_mean(ds, season=season)
 
@@ -438,9 +438,79 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     plt.title('$Corr(\\bar{{u}}, {0})$ - {1}'.format(title_name, label))
 
     # Plot EFP box
-    if show_rect == True:
+    if show_rect:
         import matplotlib.patches as patches
         rect = patches.Rectangle(rect_box, 50, -400, 
+                         fill=False, linewidth=2)
+        plt.gca().add_patch(rect)
+
+    plt.show()
+    
+    
+def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=True, show_rect=True,
+                           top_atmos=10., cut_poles=90, label='DJF'):
+    
+    """"
+    Input: DataArrays of ubar and F_\\phi with PAMIP data
+            - Dims: (ens_ax, time, level, lat)
+    
+    Output: contourf plot replicating Fig.6a in Smith et al., 2022 
+    """
+    
+    ## SET UP TIME
+
+    # If required, check dimensions and variables are labelled correctly
+    if check_vars:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_variables(ds) 
+    
+    if take_seasonal:
+        ds = data.seasonal_dataset(ds, season='djf')
+        ds = ds.mean('time')
+    
+    # Take seasonal mean
+    ds = data.seasonal_dataset(ds, season='djf')
+    ds = ds.mean('time')
+
+    # Subset to NH and cut top of atmos. and poles
+    # Can choose latitude cut-off
+    ds = ds.sel(lat=slice(0,cut_poles))
+    
+    # Cut off top of atmosphere
+    ds['level'] = ds['level'] / 100
+    ds = ds.where(ds.level > top_atmos, drop=True)
+    
+    # Calculate correlation
+    corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax')
+        
+        
+    #------------------------------------------------------------------
+    
+    ## PLOTTING TIME
+
+    # Initiate plot
+    plt.figure(figsize=(6,6))
+
+    # actual plotting
+    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
+             extend='both')
+    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
+             extend='both', ticks=[-0.6,-0.2,0.2,0.6])
+    
+    # axis alterations
+    plt.gca().invert_yaxis()
+    plt.xlabel('Latitude $(^\\circ N)$')
+    if logscale:
+        plt.yscale('log')
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.ylabel('Pressure (hPa)')
+    plt.title(f'$Corr(\\bar{{u}}, \\nabla_{{\\phi}} F_{{\\phi}})$ - {label}')
+
+    # Plot EFP box
+    if show_rect:
+        import matplotlib.patches as patches
+        rect = patches.Rectangle((25.,600.), 50, -400, 
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
 

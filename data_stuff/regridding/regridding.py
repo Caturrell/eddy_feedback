@@ -46,7 +46,7 @@ def regrid_dataset_3x3(ds, check_dims=False):
     for k in ds.data_vars:
         print(k, ds_new[k].equals(regridder(ds[k])))
 
-    print('Checks complete. Dataset ready.')
+    print('Regridding and checks complete. Dataset ready.')
     
     return ds_new 
 
@@ -59,27 +59,50 @@ def regrid_dataset_3x3(ds, check_dims=False):
 
 ## JASMIN SERVERS
     
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    print('Importing paths for AWI-CM-1-1-MR ta...')
-    files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ta/pdSST-pdSIC/AWI-CM-1-1-MR/*')
+#     print('Importing paths for AWI-CM-1-1-MR ta...')
+#     files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ta/pdSST-pdSIC/AWI-CM-1-1-MR/*')
     
     
-    for count, item in enumerate(files):
+#     for count, item in enumerate(files):
         
-        print(f'Opening ensemble member: {count+1}')
-        ds = xr.open_mfdataset(item)
-        ds = ds[['ta']]
+#         print(f'Opening ensemble member: {count+1}')
+#         ds = xr.open_mfdataset(item)
+#         ds = ds[['ta']]
     
-        print('Starting regridding function...')
-        ds = regrid_dataset_3x3(ds, check_dims=True)
+#         print('Starting regridding function...')
+#         ds = regrid_dataset_3x3(ds, check_dims=True)
         
-        print('Regrid complete. Saving dataset...')
-        ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/ta/{os.path.basename(files[count])}')
+#         print('Regrid complete. Saving dataset...')
+#         ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/ta/{os.path.basename(files[count])}')
         
-    print('Program complete.')
+#     print('Program complete.')
+    
+    
+if __name__ == '__main__':
+    
+    list = ['ta', 'ua', 'va']
+    
+    for var in list:
         
-    
-    
-    
-    
+        print(f'Importing paths for FGOALS-f3-L {var}...')
+        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-pdSIC/FGOALS-f3-L/*.nc')
+        
+        
+        for count, item in enumerate(files):
+            
+            print(f'Opening ensemble member {var}: {count+1}')
+            ds = xr.open_mfdataset(item)
+            ds = ds[[f'{var}']] 
+        
+            print('Starting regridding function...')
+            ds = regrid_dataset_3x3(ds, check_dims=True) 
+            
+            print('Saving dataset...')
+            ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/FGOALS-f3-L_3x3/{var}/{os.path.basename(files[count])}')
+            
+            
+        print(f'Variable {var} finished.')
+        
+    print('PROGRAM COMPLETE.')
