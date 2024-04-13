@@ -1,3 +1,10 @@
+""" 
+    Martin Jucker's aostools package. Various constants and basic definitions.
+"""
+
+import xarray as xr
+from numpy import sin,deg2rad,cos,sqrt
+
 g = 9.81 #[m/s2 ]
 a0 = 6376.0e3 # [m]
 Omega = 7.292e-5 #[1/s]
@@ -31,8 +38,17 @@ def f(lat):
     OUTPUTS:
       f:    Coriolis parameter. Either numpy or xarray array
     '''
-    from numpy import sin,deg2rad
     return 2*Omega*sin(deg2rad(lat))
+
+def coslat(lat):
+    '''Compute cosine of latitude from degrees.
+    '''
+    return cos(deg2rad(lat))
+
+def sinlat(lat):
+    '''Compute sine of latitude from degrees.
+    '''
+    return sin(deg2rad(lat))
 
 def beta(lat,u=None):
     ''' Compute meridional derivative of Coriolis parameter, i.e. beta = 2*Omega*cos(lat)/a0.
@@ -45,35 +61,22 @@ def beta(lat,u=None):
     OUTPUTS:
       beta:   beta parameter. Either numpy or xarray array depending on input.
     '''
-    from numpy import cos,deg2rad
-    beta = 2*Omega*cos(deg2rad(lat))/a0
+    # tell function that variable is Xarray DataArray
+    u = xr.DataArray(u)
+    # define beta
+    b = 2*Omega*cos(deg2rad(lat))/a0
     if u is None:
-        return beta
-    else:
-        lats = lat.name
-        # uyy = d_phi(1/acosphi*d_phi(u*cosphi))/a0
-        uy = deg2rad((u*coslat(lat))).differentiate(lats,edge_order=2)
-        uyy = deg2rad((uy/coslat(lat)/a0).differentiate(lats,edge_order=2))/a0
-        return beta - uyy
+        return b
+    lats = lat.name
+    # uyy = d_phi(1/acosphi*d_phi(u*cosphi))/a0
+    uy = deg2rad((u*coslat(lat))).differentiate(lats,edge_order=2)
+    uyy = deg2rad((uy/coslat(lat)/a0).differentiate(lats,edge_order=2))/a0
+    return beta - uyy
 
 def kstar(u,lat,c=0):
-        '''K* = \cos\theta\sqrt{\beta*/(u-c)}
-           \beta* = \beta - u_yy
-        '''
-        from numpy import sqrt
-        beta_star = beta(lat,u)
-        k_star = coslat(lat)*sqrt(beta_star/(u-c))
-        return k_star
-                         
-
-def coslat(lat):
-    '''Compute cosine of latitude from degrees.
+    '''K* = \\cos\\theta\\sqrt{\\beta*/(u-c)}
+           \\beta* = \\beta - u_yy
     '''
-    from numpy import cos,deg2rad
-    return cos(deg2rad(lat))
-
-def sinlat(lat):
-    '''Compute sine of latitude from degrees.
-    '''
-    from numpy import sin,deg2rad
-    return sin(deg2rad(lat))
+    beta_star = beta(lat,u)
+    k_star = coslat(lat)*sqrt(beta_star/(u-c))
+    return k_star

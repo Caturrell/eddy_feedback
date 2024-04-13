@@ -1,12 +1,14 @@
+""" 
+    Python file containing various functions for calculations
+    surrounding the Eddy Feedback Parameter
+"""
 import numpy as np
-import matplotlib.pyplot as plt
 import xarray as xr
 
-import functions.aos_functions as aos 
-import functions.data_wrangling as data 
+import functions.aos_functions as aos
+import functions.data_wrangling as data
 
-
-#======================================================================================================================================
+#==================================================================================================
 
 #----------------------
 # DATASET CALCULATIONS
@@ -15,7 +17,6 @@ import functions.data_wrangling as data
 
 # Calculate zonal-mean zonal wind
 def calculate_ubar(ds, check_variables=False, pamip_data=False):
-    
     """
     Input: Xarray dataset
             - dim labels: (lon, ...)
@@ -24,23 +25,23 @@ def calculate_ubar(ds, check_variables=False, pamip_data=False):
     Output: Xarray dataset with zonal-mean zonal wind 
             calculated and added as variable
     """
-    
+
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
+        ds = data.check_variables(ds)
 
     if pamip_data:
         ds['ubar'] = ds.ua.mean('lon')
     else:
         # Calculate ubar
         ds['ubar'] = ds.u.mean('lon')
-    
+
     return ds
 
 # Calculate EP fluxes
 def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_data=False):
-    
+
     """
     Input: Xarray dataset
             - Variables required: u,v,t
@@ -50,27 +51,27 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
     Output: Xarray dataset with EP fluxes calculated
             and optional calculate ubar
     """
-    
+
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
-    
+        ds = data.check_variables(ds)
+
     # check if ubar is in dataset also
     if not 'ubar' in ds:
-        ds = calculate_ubar(ds, pamip_data=pamip_data) 
-        
+        ds = calculate_ubar(ds, pamip_data=pamip_data)
+
     if pamip_data:
-        ucomp = ds.ua 
-        vcomp = ds.va 
-        temp = ds.ta 
+        ucomp = ds.ua
+        vcomp = ds.va
+        temp = ds.ta
     else:
-        ucomp = ds.u 
-        vcomp = ds.v 
+        ucomp = ds.u
+        vcomp = ds.v
         temp = ds.t
-        
+
     # calculate ep fluxes using aostools
     ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ucomp, vcomp, temp, do_ubar=primitive)
 
@@ -79,14 +80,14 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
     ds['ep2'] = (ep2.dims, ep2.values)
     ds['div1'] = (div1.dims, div1.values)
     ds['div2'] = (div2.dims, div2.values)
-    
+
     return ds
-        
-    
+
+
 # Calculate Eddy Feedback Parameter
 def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=True, season='djf',
-                  calculate_SH=False, flip_latitude=False, flip_level=False, check_variables=False): 
-    
+                    calc_south_hemis=False, flip_latitude=False,
+                    flip_level=False, check_variables=False):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
@@ -94,14 +95,14 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
     
     Output: EFP Value at chosen level slice 
     
-    """ 
+    """
 
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds) 
+        ds = data.check_variables(ds)
 
     # flip dimensions if required
     if flip_latitude:
@@ -112,7 +113,7 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
         ds = ds.sel(level=slice(None,None,-1))
 
     # choose hemisphere
-    if calculate_SH:
+    if calc_south_hemis:
         latitude_slice=slice(-75., -25.)
         season = 'jja'
     else:
@@ -127,41 +128,41 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
         print()
     else:
         print('Seasonal average has not been calculated.')
-        print() 
+        print()
 
     #-------------------------------------------------------------------------------
 
     ## CALCULATIONS
 
-    # define variables 
+    # define variables
     ubar = ds.ubar
     div1 = ds[which_div1]
-    
+
     # Calculate Pearson's correlation
     corr = xr.corr(div1, ubar, dim='time')
 
     # correlation squared
     corr = corr**2
-    
+
     # take EFP latitude slice
     corr = corr.sel(lat=latitude_slice)
 
-    
     if take_level_mean:
         corr = corr.sel(level=slice(200.,600.))
         corr = corr.mean('level')
 
-    # Calculate weighted latitude average 
+    # Calculate weighted latitude average
     weights = np.cos( np.deg2rad(corr.lat) )
-    EFP = corr.weighted(weights).mean('lat') 
+    eddy_feedback_param = corr.weighted(weights).mean('lat')
 
-    return EFP 
+    return eddy_feedback_param
 
 
 
-def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1='div1_pr', 
-                           take_seasonal=True, level_mean=True, flip_level=False, flip_latitude=False):
-    
+def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1='div1_pr',
+                           take_seasonal=True, level_mean=True, flip_level=False,
+                           flip_latitude=False):
+
     """ 
     Input: Xarray Dataset containing ubar and div1 
             - either div1_pr or div1_qg 
@@ -176,7 +177,7 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)  
+        ds = data.check_variables(ds)
 
     # flip dimensions if required
     if flip_latitude:
@@ -193,10 +194,10 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
     if latitude == 'NH':
         lat_slice = slice(0,90)
     elif latitude == 'SH':
-        lat_slice = slice(-90,0) 
+        lat_slice = slice(-90,0)
 
     #----------------------------------------------------------------------
-        
+
     ## Calculations
     corr = xr.corr(ds[which_div1], ds['ubar'], dim='time')
     corr = corr.sel(lat=lat_slice)
@@ -204,69 +205,70 @@ def calculate_efp_latitude(ds, check_variables=False, latitude='NH', which_div1=
 
     if level_mean:
         corr = corr.mean('level')
-    
 
     # calculate variance explained
     r = corr**2
 
-    return r 
+    return r
 
 
-    
-
-#===================================================================================================================
+#==================================================================================================
 
 ## JASMIN SERVER
 if __name__ == '__main__':
-    
+
     print('Opening datasets...')
-    
+
     # Open datasets
-    ds = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/jra55_daily/jra55_uvtw.nc', 
+    dataset = xr.open_mfdataset('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/ \
+                                                                    jra55_daily/jra55_uvtw.nc',
                             parallel=True, chunks={'time': 31})
-    
+
     print('JRA55 Daily open.')
-    
+
     srip = xr.open_mfdataset('/badc/srip/data/zonal/common_grid/jra_55/TEM_monthly*')
     print('SRIP Open.')
 
     print('Both datasets opened.')
-    ds = ds.sel(level=srip.pressure.values)
-    
+    dataset = dataset.sel(level=srip.pressure.values)
+
     # calculate EP fluxes
     print('Calculating Primitive EP fluxes...')
-    ds_pr = calculate_epfluxes_ubar(ds) 
+    ds_pr = calculate_epfluxes_ubar(dataset)
     print('Calculating QG EP fluxes...')
-    ds_qg = calculate_epfluxes_ubar(ds, primitive=False)
+    ds_qg = calculate_epfluxes_ubar(dataset, primitive=False)
     print('Calculations complete.')
-    
-    ds_new = xr.Dataset(data_vars={'ep1_pr': ds_pr.ep1, 'ep2_pr':ds_pr.ep2, 'div1_pr':ds_pr.div1, 'div2_pr':ds_pr.div2,
-                                   'ep1_qg': ds_qg.ep1, 'ep2_qg':ds_qg.ep2, 'div1_qg':ds_qg.div1, 'div2_qg':ds_qg.div2})
-    
-    # save dataset
-    ds_new.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/jra55_daily/jra55_ep-fluxes.nc')
-    
 
-#-------------------------------------------------------------------------------------------------------------------
-    
+    ds_new = xr.Dataset(data_vars={'ep1_pr': ds_pr.ep1, 'ep2_pr':ds_pr.ep2,
+                                   'div1_pr':ds_pr.div1, 'div2_pr':ds_pr.div2,
+                                   'ep1_qg': ds_qg.ep1, 'ep2_qg':ds_qg.ep2, 
+                                   'div1_qg':ds_qg.div1, 'div2_qg':ds_qg.div2})
+
+    # save dataset
+    ds_new.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/reanalysis_data/jra55_daily/ \
+                                                                            jra55_ep-fluxes.nc')
+
+
+#--------------------------------------------------------------------------------------------------
 
 ## MATHS SERVERS
-    
+
 # if __name__ == '__main__':
 
 #     print('Program starting...')
-    
-#     # era5
-#     ds = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/era5daily_djf_uvt.nc', 
-#                             parallel=True, chunks={'time': 31}) 
-    
-#     print('Dataset has been loaded.')
-    
-#     ds = calculate_epfluxes_ubar(ds) 
 
-#     print('Function was successful. Now saving data...') 
-    
+#     # era5
+#     dataset = xr.open_mfdataset('/home/links/ct715/eddy_feedback/daily_datasets/ \
+    #                                                                   era5daily_djf_uvt.nc',
+#                             parallel=True, chunks={'time': 31})
+
+#     print('Dataset has been loaded.')
+
+#     dataset = calculate_epfluxes_ubar(dataset)
+
+#     print('Function was successful. Now saving data...')
+
 #     # save dataset
-#     ds.to_netcdf('/home/links/ct715/eddy_feedback/daily_datasets/era5daily_djf_uvt_ep.nc')
+#     dataset.to_netcdf('/home/links/ct715/eddy_feedback/daily_datasets/era5daily_djf_uvt_ep.nc')
 
 #     print('Dataset has been saved.')

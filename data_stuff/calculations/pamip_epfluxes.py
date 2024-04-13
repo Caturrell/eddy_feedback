@@ -66,4 +66,14 @@ if __name__ == '__main__':
                      CNRM-CM6-1_3x3/all/CNRM-CM6-1_uvt_epfluxes_3x3_ens{i+1}.nc')
         print(f'[{now}]: CNRM-CM6-1 dataset saved. {i+1} iteration completed.')
 
+    print(f'[{now}]: Loop completed. Now creating singular dataset with EFP variables.')
+    
+    # subset dataset and save it
+    files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/ \
+                                                                    FGOALS-f3-L_3x3/all/*.nc')
+    dataset = xr.open_mfdataset(files, combine='nested', concat_dim='ens_ax', parallel=True)
+    dataset = dataset[['ubar', 'div1']]
+    dataset.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/ \
+                                                                        FGOALS-f3-L_3x3_ef.nc')
+
     print(f'[{now}]: PROGRAM COMPLETED.')
