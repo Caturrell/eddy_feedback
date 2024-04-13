@@ -1,22 +1,24 @@
+"""Python function for regridding data."""
+
+import sys
+import glob
+import os
+
 import numpy as np
 import xarray as xr
 import xesmf as xe
-import glob 
-import os 
 
-import sys 
-sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 import functions.data_wrangling as data
+sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 
-#======================================================================================================================================
+#==================================================================================================
 
 #----------------------
 # REGRIDDING FUNCTIONS
 #----------------------
 
 # regrid PAMIP data
-def regrid_dataset_3x3(ds, check_dims=False):
-    
+def regrid_dataset_3x3(dataset, check_dims=False):
     """
     Input: Xarray dataset
             - Must contain (lat, lon)
@@ -25,12 +27,9 @@ def regrid_dataset_3x3(ds, check_dims=False):
             to 3 deg lat lon
     
     """
-    
-    # Rename 
+    # Rename
     if check_dims:
-        ds = data.check_dimensions(ds)
-        
-    
+        dataset = data.check_dimensions(dataset)
     # build regridder
     ds_out = xr.Dataset(
         {
@@ -39,70 +38,52 @@ def regrid_dataset_3x3(ds, check_dims=False):
         }
     )
 
-    regridder = xe.Regridder(ds, ds_out, "bilinear")
-    ds_new = regridder(ds)
+    regridder = xe.Regridder(dataset, ds_out, "bilinear")
+    ds_new = regridder(dataset)
 
     # verify that the result is the same as regridding each variable one-by-one
-    for k in ds.data_vars:
-        print(k, ds_new[k].equals(regridder(ds[k])))
+    for k in dataset.data_vars:
+        print(k, ds_new[k].equals(regridder(dataset[k])))
 
     print('Regridding and checks complete. Dataset ready.')
-    
-    return ds_new 
+    return ds_new
 
-    
-    
-    
-    
-#======================================================================================================================================
+#=================================================================================================
 
-
-## JASMIN SERVERS
-    
-# if __name__ == '__main__':
-
-#     print('Importing paths for AWI-CM-1-1-MR ta...')
-#     files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ta/pdSST-pdSIC/AWI-CM-1-1-MR/*')
-    
-    
-#     for count, item in enumerate(files):
-        
-#         print(f'Opening ensemble member: {count+1}')
-#         ds = xr.open_mfdataset(item)
-#         ds = ds[['ta']]
-    
-#         print('Starting regridding function...')
-#         ds = regrid_dataset_3x3(ds, check_dims=True)
-        
-#         print('Regrid complete. Saving dataset...')
-#         ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/AWI-CM-1-1-MR_3x3/ta/{os.path.basename(files[count])}')
-        
-#     print('Program complete.')
-    
-    
 if __name__ == '__main__':
-    
-    list = ['ta', 'ua', 'va']
-    
-    for var in list:
-        
-        print(f'Importing paths for FGOALS-f3-L {var}...')
-        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-pdSIC/FGOALS-f3-L/*.nc')
-        
-        
+
+    # Set var list
+    variables = ['ta', 'ua', 'va']
+
+    # Set time of day for program echo
+    from datetime import datetime
+    now = datetime.now().strftime("%H:%M:%S")
+    print("Current Time =", now)
+
+    for var in variables:
+
+        # reset time for counter
+        now = datetime.now().strftime("%H:%M:%S")
+
+        print(f'[{now}]: Importing paths for CNRM-CM6-1 {var}...')
+        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ \
+                          {var}/pdSST-pdSIC/CNRM-CM6-1/*.nc')
         for count, item in enumerate(files):
-            
-            print(f'Opening ensemble member {var}: {count+1}')
+
+            # reset current time
+            now = datetime.now().strftime("%H:%M:%S")
+
+            print(f'[{now}]: Opening ensemble member {var}: {count+1}')
             ds = xr.open_mfdataset(item)
-            ds = ds[[f'{var}']] 
-        
+            ds = ds[[f'{var}']]
+
             print('Starting regridding function...')
-            ds = regrid_dataset_3x3(ds, check_dims=True) 
-            
+            ds = regrid_dataset_3x3(ds, check_dims=True)
+
             print('Saving dataset...')
-            ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/FGOALS-f3-L_3x3/{var}/{os.path.basename(files[count])}')
-            
-            
+            ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/ \
+                         CNRM-CM6-1_3x3/{var}/{os.path.basename(item)}')
+
         print(f'Variable {var} finished.')
-        
+
     print('PROGRAM COMPLETE.')
