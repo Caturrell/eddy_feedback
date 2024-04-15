@@ -81,6 +81,9 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
     ds['div1'] = (div1.dims, div1.values)
     ds['div2'] = (div2.dims, div2.values)
 
+    # load dataset here
+    ds = ds.load()
+
     return ds
 
 

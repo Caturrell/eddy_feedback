@@ -8,8 +8,9 @@ import numpy as np
 import xarray as xr
 import xesmf as xe
 
-import functions.data_wrangling as data
 sys.path.append('/home/users/cturrell/documents/eddy_feedback')
+# pylint: disable=wrong-import-position
+import functions.data_wrangling as data
 
 #==================================================================================================
 
@@ -18,7 +19,7 @@ sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 #----------------------
 
 # regrid PAMIP data
-def regrid_dataset_3x3(dataset, check_dims=False):
+def regrid_dataset_3x3(ds, check_dims=False):
     """
     Input: Xarray dataset
             - Must contain (lat, lon)
@@ -29,7 +30,7 @@ def regrid_dataset_3x3(dataset, check_dims=False):
     """
     # Rename
     if check_dims:
-        dataset = data.check_dimensions(dataset)
+        ds = data.check_dimensions(ds)
     # build regridder
     ds_out = xr.Dataset(
         {
@@ -38,12 +39,12 @@ def regrid_dataset_3x3(dataset, check_dims=False):
         }
     )
 
-    regridder = xe.Regridder(dataset, ds_out, "bilinear")
-    ds_new = regridder(dataset)
+    regridder = xe.Regridder(ds, ds_out, "bilinear")
+    ds_new = regridder(ds)
 
     # verify that the result is the same as regridding each variable one-by-one
-    for k in dataset.data_vars:
-        print(k, ds_new[k].equals(regridder(dataset[k])))
+    for k in ds.data_vars:
+        print(k, ds_new[k].equals(regridder(ds[k])))
 
     print('Regridding and checks complete. Dataset ready.')
     return ds_new
@@ -65,25 +66,25 @@ if __name__ == '__main__':
         # reset time for counter
         now = datetime.now().strftime("%H:%M:%S")
 
-        print(f'[{now}]: Importing paths for CNRM-CM6-1 {var}...')
-        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/ \
-                          {var}/pdSST-pdSIC/CNRM-CM6-1/*.nc')
+        print(f'[{now}]: Importing paths for IPSL-CM6A-LR {var}...')
+        # pylint: disable=line-too-long
+        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-pdSIC/IPSL-CM6A-LR/*')
+
         for count, item in enumerate(files):
 
             # reset current time
             now = datetime.now().strftime("%H:%M:%S")
 
             print(f'[{now}]: Opening ensemble member {var}: {count+1}')
-            ds = xr.open_mfdataset(item)
-            ds = ds[[f'{var}']]
+            dataset = xr.open_mfdataset(item)
+            dataset = dataset[[f'{var}']]
 
             print('Starting regridding function...')
-            ds = regrid_dataset_3x3(ds, check_dims=True)
+            dataset = regrid_dataset_3x3(dataset, check_dims=True)
 
             print('Saving dataset...')
-            ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/ \
-                         CNRM-CM6-1_3x3/{var}/{os.path.basename(item)}')
+            dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/IPSL-CM6A-LR_3x3/{var}/{os.path.basename(item)}')
 
         print(f'Variable {var} finished.')
 
-    print('PROGRAM COMPLETE.')
+    print('PROGRAM COMPLETE (IPSL-CM6A-LR).')
