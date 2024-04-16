@@ -1,8 +1,16 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import xarray as xr
+""" 
+    Various functions used for plotting eddy feedback-related figures.
+"""
+# pylint: disable=wrong-import-position
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
+# pylint: disable=invalid-name
 
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import patches
+import xarray as xr
 
 ## JASMIN SERVERS
 sys.path.append('/home/users/cturrell/documents/eddy_feedback')
@@ -10,43 +18,45 @@ sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 ## MATHS SERVERS
 # sys.path.append('/home/links/ct715/eddy_feedback/')
 
-import functions.aos_functions as aos 
-import functions.data_wrangling as data 
-import functions.eddy_feedback as ef 
+
+import functions.aos_functions as aos
+import functions.data_wrangling as data
+import functions.eddy_feedback as ef
 
 
-#======================================================================================================================================
+#==================================================================================================
 
 #---------------------------
 # PLOTTING MERIDIONAL PLANE
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=(9,5), latitude=None, top_atmos=0., seasonal_mean=True,
-              show_rect=False, orientation='horizontal', location='bottom', extend='both', shrink=0.5,
-              levels=21, yincrease=False, yscale='linear', round_sf=None, savefig=False, fig_label=None):
-              
-    
+def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=(9,5),
+              latitude=None, top_atmos=0., show_rect=False, orientation='horizontal',
+              location='bottom', extend='both', shrink=0.5, levels=21, yincrease=False,
+              yscale='linear', round_sf=None, savefig=False, fig_label=None):
+
+
     """
     Input: Xarray dataset
             - dim labels: (time, lon, lat, level)
     
     Output: Countour plot showing zonal-mean zonal wind
     """
-    
+
     ## CONDITIONS
-    
+
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
-    
+        ds = data.check_variables(ds)
+
     # Check to see if ubar is in DataSet and define it
     if not 'ubar' in ds:
         ds = ef.calculate_ubar(ds)
     # define ubar
     ubar = ds.ubar
-        
+
     # default is both hemispheres
     if latitude == 'NH':
         ubar = ubar.where( ubar.lat >= 0., drop=True )
@@ -55,88 +65,83 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
         location='right'
         shrink=0.8
     elif latitude == 'SH':
-        ubar = ubar.where( ubar.lat <= 0., drop=True ) 
+        ubar = ubar.where( ubar.lat <= 0., drop=True )
         figsize=(4,5)
         orientation='vertical'
         location='right'
         shrink=0.8
-    
+
     # exclude stratosphere-ish
     ubar = ubar.where( ubar.level >= top_atmos, drop=True )
-    
-    
+
+
     #-------------------------------------------------------------------
-    
+
     ## PRE-PLOTTING STUFF
 
     # calculate time average
-    ubar = ubar.mean('time') 
-    
+    ubar = ubar.mean('time')
+
     # calculate mean absolute value of max and min
     max_value = np.nanmax(ubar.values)
     value = round(max_value, round_sf)
-        
-    
+
+
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
     ticks = [-value, -value/2, 0, value/2, value]
-    
-    
-    # set cmap for plotting
-    import seaborn as sns
-    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
-    
+
     #-------------------------------------------------------------------
-    
+
     ## PLOTTING TIME
-    
+
     # set figure
     plt.figure(figsize=figsize)
-    
+
     plt.contourf(ubar.lat.values, ubar.level.values, ubar,
-                 cmap=coolwarm, levels=lvl, extend=extend)
+                 cmap='coolwarm', levels=lvl, extend=extend)
     plt.colorbar(location=location, orientation=orientation, shrink=shrink,
-             label='Wind speed (m/s)', extend=extend, ticks=ticks) 
-    
+             label='Wind speed (m/s)', extend=extend, ticks=ticks)
+
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
     plt.yscale(yscale)
-    
+
     # set direction of y-axis
-    if yincrease == False:
+    if yincrease is False:
         plt.gca().invert_yaxis()
-    
+
     # set log or linear scale
     if yscale == 'log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
-    
+
     # save figure, if required
-    if savefig == True:
+    if savefig:
         plt.savefig(f'./plots/{fig_label}.png')
-        
+
     # show EFP box
-    if show_rect == True:
-        import matplotlib.patches as patches
-        
-        rect = patches.Rectangle((25., 600.), 50, -400, 
+    if show_rect:
+
+        rect = patches.Rectangle((25., 600.), 50, -400,
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
-    
+
     plt.show()
-    
-    
-#--------------------------------------------------------------------------------------------------------------------------------
+
+
+#--------------------------------------------------------------------------------------------------
 
 
 # Plot zonal-mean zonal wind with EP flux arrows
-def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5), latitude=None, top_atmos=0.,
-                     orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
+def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5),
+                     latitude=None, top_atmos=0., orientation='horizontal', location='bottom',
+                     extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
                      round_sf=None, savefig=False, fig_label=None, check_variables=False,
                      season=None, plot_arrows=True):
-    
+
     """
     Input: Xarray DataSet containing ubar and epfluxes
             - dims: (time, level, lat)
@@ -144,17 +149,17 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     Output: Plot showing zonal-mean zonal wind
             and EP flux arrows
     """
-    
+
     ## CONDITIONS
-    
+
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
+        ds = data.check_variables(ds)
 
-    if season != None:
+    if season is not None:
         ds = data.seasonal_mean(ds, season=season)
-        
+
     ## default is both hemispheres
     if latitude == 'NH':
         ds = ds.where( ds.lat >= 0., drop=True )
@@ -162,56 +167,55 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
         location='right'
         shrink=0.8
     elif latitude == 'SH':
-        ds = ds.where( ds.lat <= 0., drop=True ) 
+        ds = ds.where( ds.lat <= 0., drop=True )
         orientation='vertical'
-        location='right' 
+        location='right'
         shrink=0.8
-    
+
     # exclude stratosphere-ish
     ds = ds.where( ds.level >= top_atmos, drop=True )
-    
+
     #-------------------------------------------------------------------
-        
+
     ## PRE-PLOTTING STUFF
-    
+
     # define ubar
     ubar = ds.ubar.mean('time')
-    
+
     # calculate mean absolute value of max and min
     max_value = np.nanmax(ubar.values)
     value = round(max_value, round_sf)
-        
-    
+
+
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
     ticks = [-value, -value/2, 0, value/2, value]
-    
-    
-    # skip variables
-    skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
 
-    #    set variables
-    lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
-    p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
-    
-    
+
+    # skip variables
+    # skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
+    skip = {'lat':slice(None, None, skip_lat), 'level':slice(None, None, skip_pres)}
+
+    # set variables
+    # lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
+    # p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
+    lat = ds.lat.isel( {'lat':slice(None, None, skip_lat)} )
+    p = ds.level.isel( {'level':slice(None, None, skip_pres)} )
+
+
     #-------------------------------------------------------------------
-    
+
     ## PLOTTING TIME
 
     # Set figure
     fig, ax = plt.subplots(figsize=figsize)
-
-    # set cmap from seaborn
-    import seaborn as sns
-    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
 
     plt.contourf(ds.lat.values, ds.level.values, ubar,
               cmap='coolwarm', levels=lvl, extend=extend)
     plt.colorbar(location=location, orientation=orientation, shrink=shrink,
              label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
-    if plot_arrows == True:
+    if plot_arrows:
         Fphi = ds.ep1.mean(('time')).isel(skip)
         Fp = ds.ep2.mean(('time')).isel(skip)
         aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
@@ -222,48 +226,49 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
 
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
-    
+
     # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
-    
+
     # save figure if required
-    if savefig == True:
+    if savefig:
         plt.savefig(f'./plots/{fig_label}.png')
-        
+
     plt.show()
-    
-    
-#--------------------------------------------------------------------------------------------------------------------------------
 
 
-    
+#--------------------------------------------------------------------------------------------------
+
+
 # plot EP fluxes and northward divergence
-def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', which_div1='div1', figsize=(9,5), yscale='linear', latitude=None, remove_poles=True,
-                      top_atmos=100., skip_lat=1, skip_pres=1, orientation='horizontal', location='bottom', extend='both', shrink=0.5, levels=21,
-                      plot_arrows=True, show_rect=False, round_sf=None, savefig=False, fig_label=None, check_variables=False):
-    
+def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', which_div1='div1',
+                      figsize=(9,5), yscale='linear', latitude=None, remove_poles=True,
+                      top_atmos=100., skip_lat=1, skip_pres=1, orientation='horizontal',
+                      location='bottom', extend='both', shrink=0.5, levels=21, plot_arrows=True,
+                      show_rect=False, round_sf=None, savefig=False, fig_label=None,
+                      check_variables=False):
+
     """
     Input: Xarray Dataset containing u,v,t
     
     Output: Plot of EP flux vector arrows and
             divergence as contour plot
     """
-    
+
     ## CONDITIONS
-    
+
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds) 
-        
+        ds = data.check_variables(ds)
+
     # reanalysis has unrealistic values at poles, so cut off ends
     if remove_poles:
-        ds = ds.isel(lat=slice(1,-1)) 
-    
-    
+        ds = ds.isel(lat=slice(1,-1))
+
     ## default is both hemispheres
     if latitude == 'NH':
         ds = ds.where( ds.lat >= 0., drop=True )
@@ -272,58 +277,58 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
         location='right'
         shrink=0.8
     elif latitude == 'SH':
-        ds = ds.where( ds.lat <= 0., drop=True ) 
+        ds = ds.where( ds.lat <= 0., drop=True )
         figsize=(4,5)
         orientation='vertical'
-        location='right' 
+        location='right'
         shrink=0.8
-    
+
     # exclude stratosphere-ish
-    ds = ds.where( ds.level >= top_atmos, drop=True ) 
-        
-    
+    ds = ds.where( ds.level >= top_atmos, drop=True )
+
+
     #-------------------------------------------------------------------
-    
+
     ## PRE-PLOTTING STUFF
-    
+
     # Set divergence of div1 and remove outliers
     div1 = ds[f'{which_div1}'].mean(('time'))
     div1 = div1.where(abs(div1) < 1e2)
-    
+
     # calculate mean absolute value of max and min
     max_value = np.nanmax(div1.values)
     value = round(max_value, round_sf)
-        
-    
+
+
     # set linspace levels
     lvl = np.linspace(-value, value, levels)
     ticks = [-value, -value/2, 0, value/2, value]
-    
-    
+
+
     # skip variables
-    skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
+    # skip = dict( lat=slice(None, None, skip_lat), level=slice(None, None, skip_pres) )
+    skip = {'lat':slice(None, None, skip_lat), 'level':slice(None, None, skip_pres)}
 
     # set variables
-    lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
-    p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
-    
-    import seaborn as sns
-    coolwarm = sns.color_palette("coolwarm", as_cmap=True)
-    
-    
+    # lat = ds.lat.isel(dict(lat=slice(None, None, skip_lat)))
+    # p = ds.level.isel(dict(level=slice(None, None, skip_pres)))
+    lat = ds.lat.isel( {'lat':slice(None, None, skip_lat)} )
+    p = ds.level.isel( {'level':slice(None, None, skip_pres)} )
+
+
     #-------------------------------------------------------------------
-    
+
     ## PLOTTING TIME
-    
+
     # set figures
     fig, ax = plt.subplots(figsize=figsize)
 
     plt.contourf(ds.lat.values, ds.level.values, div1,
-              cmap=coolwarm, levels=lvl, extend=extend)
+              cmap='coolwarm', levels=lvl, extend=extend)
     plt.colorbar(location=location, orientation=orientation, shrink=shrink,
              label='Wind speed (m/s)', extend=extend, ticks=ticks)
 
-    if plot_arrows == True:
+    if plot_arrows:
         Fphi = ds.ep1.mean(('time')).isel(skip)
         Fp = ds.ep2.mean(('time')).isel(skip)
         aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
@@ -331,43 +336,41 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
     else:
         plt.gca().invert_yaxis()
         plt.yscale(yscale)
-    
+
     plt.title(f'{label}')
     plt.xlabel('Latitude ($^\\circ$N)')
-    
+
     # set whether log or linear scale
     if yscale=='log':
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
-    
+
     # save figure if required
-    if savefig == True:
+    if savefig:
         plt.savefig(f'./plots/{fig_label}.png')
-        
+
     # show EFP box
-    if show_rect == True:
-        import matplotlib.patches as patches
-        
-        rect = patches.Rectangle((25., 600.), 50, -400, 
+    if show_rect:
+        rect = patches.Rectangle((25., 600.), 50, -400,
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
-        
+
     plt.show()
 
 
 
-#======================================================================================================================================
+#==================================================================================================
 
-#-------------------- 
+#--------------------
 # STATISTICAL PLOTS
 #--------------------
 
 
-def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH', top_atmos=10., cut_poles=False,
-                                figsize=(6,6), title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal=True,
-                                season='djf', check_vars=False, which_div1='div1_pr'): 
-    
+def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH',
+                                top_atmos=10., cut_poles=False, figsize=(6,6),
+                                title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal=True,
+                                season='djf', check_vars=False, which_div1='div1_pr'):
     """"
     Input: DataArrays of ubar and F_\\phi
             - Dims: (time, level, lat)
@@ -377,13 +380,13 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     
     Output: contourf plot matching Fig.6a in Smith et al., 2022 
     """
-    
+
     ## SET UP TIME
 
     # If required, check dimensions and variables are labelled correctly
     if check_vars:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds) 
+        ds = data.check_variables(ds)
 
     # separate time into annual means
     # and use .load() to force the calculation now
@@ -415,18 +418,18 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
         corr = corr.where(corr.lat <= 85., drop=True)
 
     #------------------------------------------------------------------
-    
+
     ## PLOTTING TIME
 
     # Initiate plot
     plt.figure(figsize=figsize)
 
     # actual plotting
-    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
-             extend='both')
+    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r',
+                 levels=np.linspace(-0.9,0.9,19), extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
              extend='both', ticks=[-0.6,-0.2,0.2,0.6])
-    
+
     # axis alterations
     plt.gca().invert_yaxis()
     plt.xlabel('Latitude $(^\\circ N)$')
@@ -435,39 +438,39 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
         plt.ylabel('Log pressure (hPa)')
     else:
         plt.ylabel('Pressure (hPa)')
-    plt.title('$Corr(\\bar{{u}}, {0})$ - {1}'.format(title_name, label))
+    # plt.title('$Corr(\\bar{{u}}, {0})$ - {1}'.format(title_name, label))
+    plt.title(f'$Corr(\\bar{{u}}, {title_name})$ - {label}')
 
     # Plot EFP box
     if show_rect:
-        import matplotlib.patches as patches
-        rect = patches.Rectangle(rect_box, 50, -400, 
+        rect = patches.Rectangle(rect_box, 50, -400,
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
 
     plt.show()
-    
-    
+
+
 def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=True, show_rect=True,
                            top_atmos=10., cut_poles=90, label='DJF'):
-    
+
     """"
     Input: DataArrays of ubar and F_\\phi with PAMIP data
             - Dims: (ens_ax, time, level, lat)
     
     Output: contourf plot replicating Fig.6a in Smith et al., 2022 
     """
-    
+
     ## SET UP TIME
 
     # If required, check dimensions and variables are labelled correctly
     if check_vars:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds) 
-    
+        ds = data.check_variables(ds)
+
     if take_seasonal:
         ds = data.seasonal_dataset(ds, season='djf')
         ds = ds.mean('time')
-    
+
     # Take seasonal mean
     ds = data.seasonal_dataset(ds, season='djf')
     ds = ds.mean('time')
@@ -475,28 +478,28 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
     # Subset to NH and cut top of atmos. and poles
     # Can choose latitude cut-off
     ds = ds.sel(lat=slice(0,cut_poles))
-    
+
     # Cut off top of atmosphere
     ds['level'] = ds['level'] / 100
     ds = ds.where(ds.level > top_atmos, drop=True)
-    
+
     # Calculate correlation
     corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax')
-        
-        
+
+
     #------------------------------------------------------------------
-    
+
     ## PLOTTING TIME
 
     # Initiate plot
     plt.figure(figsize=(6,6))
 
     # actual plotting
-    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r', levels=np.linspace(-0.9,0.9,19),
-             extend='both')
+    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r',
+                 levels=np.linspace(-0.9,0.9,19), extend='both')
     plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
              extend='both', ticks=[-0.6,-0.2,0.2,0.6])
-    
+
     # axis alterations
     plt.gca().invert_yaxis()
     plt.xlabel('Latitude $(^\\circ N)$')
@@ -509,20 +512,19 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
 
     # Plot EFP box
     if show_rect:
-        import matplotlib.patches as patches
-        rect = patches.Rectangle((25.,600.), 50, -400, 
+        rect = patches.Rectangle((25.,600.), 50, -400,
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
 
     plt.show()
-    
 
-#--------------------------------------------------------------------------------------------------------------------------------
-    
+
+#--------------------------------------------------------------------------------------------------
+
 def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
                   figsize=(9,5), orientation='horizontal', location='bottom', season='djf',
                   latitude=None, logscale=True, show_rect=True):
-    
+
     """
     Input: DataArray of required variable related to EFP
             - Usually (time, level, lat)
@@ -530,28 +532,28 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     Output: Contour plot showing (lat, level) variance
     
     """
-    
+
     ## CONDITIONS
-    
+
     # If required, check dimensions and variables are labelled correctly
     if check_variables:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)  
+        ds = data.check_variables(ds)
 
     #-------------------------------------------------------------------
-        
+
     ## PRE-PLOTTING SET UP
-        
+
     # Choose required DataArray
     da = ds[variable]
 
     # take seasonal time average and calculate variance
-    da = data.seasonal_mean(da, season=season) 
+    da = data.seasonal_mean(da, season=season)
     var = da.var(dim='time').load()
 
-    # remove poles for div1 variable because massive 
-    if remove_poles: 
-        var = var.isel(lat=slice(1,-1))  
+    # remove poles for div1 variable because massive
+    if remove_poles:
+        var = var.isel(lat=slice(1,-1))
 
     # choose hemisphere
     if latitude == 'NH':
@@ -563,7 +565,7 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
         var = var.where(var.lat <= 0., drop=True)
         figsize=(4,5)
         orientation='vertical'
-        location='right' 
+        location='right'
 
     # choose top of atmosphere
     var = var.where(var.level >= top_atmos, drop=True)
@@ -572,20 +574,20 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     max_value = np.max(var).round(1)
 
     #-------------------------------------------------------------------
-        
+
     ## PLOTTING TIME
-        
+
     # set up figure
     plt.figure(figsize=figsize)
 
     plt.contourf(var.lat.values, var.level.values, var, cmap='Greens',
                  levels=np.linspace(0, max_value, 21), extend='both')
-    plt.colorbar(location=location, orientation=orientation, shrink=0.75, 
+    plt.colorbar(location=location, orientation=orientation, shrink=0.75,
                  label='variance', extend='both')
-    
+
     plt.gca().invert_yaxis()
     # choose log or linear scale
-    if logscale==True:
+    if logscale:
         plt.yscale('log')
         plt.ylabel('Log pressure (hPa)')
     else:
@@ -595,19 +597,16 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     plt.xlabel('Latitude $(^\\circ N)$')
     plt.title(f'Variance of {variable}')
 
-    if show_rect == True:
-        import matplotlib.patches as patches 
-        rect = patches.Rectangle((25., 600.), 50, -400, 
+    if show_rect:
+        rect = patches.Rectangle((25., 600.), 50, -400,
                          fill=False, linewidth=2)
         plt.gca().add_patch(rect)
 
     plt.show()
 
 
-#======================================================================================================================================
+#==================================================================================================
 
 #---------------------
 # EDDY FEEDBACK PLOTS
-#--------------------- 
-
-
+#---------------------

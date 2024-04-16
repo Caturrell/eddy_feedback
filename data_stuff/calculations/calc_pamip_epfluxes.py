@@ -46,10 +46,10 @@ if __name__ == '__main__':
     now = datetime.now().strftime("%H:%M:%S")
     print("Current Time =", now)
 
-    print('Importing CanESM5 datasets...')
-    ta_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/ta/*')
-    ua_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/ua/*')
-    va_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/va/*')
+    print('Importing CNRM-CM6-1 datasets...')
+    ta_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3/ta/*')
+    ua_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3/ua/*')
+    va_files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3/va/*')
 
     print(f'ta:{len(ta_files)}, ua:{len(ua_files)}, va:{len(va_files)}')
 
@@ -68,15 +68,15 @@ if __name__ == '__main__':
         print('Calculations complete. Now saving dataset...')
 
         # Save new dataset
-        dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/all/CanESM5_uvt_epfluxes_3x3_ens{i+1}.nc')
-        print(f'[{now}]: CanESM5 dataset saved. {i+1} iteration completed.')
+        dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3/all/CNRM-CM6-1_uvt_epfluxes_3x3_ens{i+1}.nc')
+        print(f'[{now}]: CNRM-CM6-1 dataset saved. {i+1} iteration completed.')
 
     print(f'[{now}]: Loop completed. Now creating singular dataset with EFP variables.')
 
     # subset dataset and save it
-    files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/all/*.nc')
+    files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3/all/*.nc')
     dataset = xr.open_mfdataset(files, combine='nested', concat_dim='ens_ax', parallel=True)
     dataset = dataset[['ubar', 'div1']]
-    dataset.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3_ef.nc')
+    dataset.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CNRM-CM6-1_3x3_ef.nc')
 
     print(f'[{now}]: PROGRAM COMPLETED.')
