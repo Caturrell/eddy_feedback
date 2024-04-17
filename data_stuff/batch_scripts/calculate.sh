@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #SBATCH --partition=short-serial
-#SBATCH --job-name=pamip_regrid
+#SBATCH --job-name=pamip_calc_CNRM
 #SBATCH -o %A_%a.out
 #SBATCH -e %A_%a.err
-#SBATCH --time=12:00:00
+#SBATCH --time=06:00:00
 
 module load jaspy
 echo 'Python loaded.'

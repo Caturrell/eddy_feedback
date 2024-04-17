@@ -366,6 +366,95 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
 # STATISTICAL PLOTS
 #--------------------
 
+def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
+                  figsize=(9,5), orientation='horizontal', location='bottom', season='djf',
+                  latitude=None, logscale=True, show_rect=True):
+
+    """
+    Input: DataArray of required variable related to EFP
+            - Usually (time, level, lat)
+            
+    Output: Contour plot showing (lat, level) variance
+    
+    """
+
+    ## CONDITIONS
+
+    # If required, check dimensions and variables are labelled correctly
+    if check_variables:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_variables(ds)
+
+    #-------------------------------------------------------------------
+
+    ## PRE-PLOTTING SET UP
+
+    # Choose required DataArray
+    da = ds[variable]
+
+    # take seasonal time average and calculate variance
+    da = data.seasonal_mean(da, season=season)
+    var = da.var(dim='time').load()
+
+    # remove poles for div1 variable because massive
+    if remove_poles:
+        var = var.isel(lat=slice(1,-1))
+
+    # choose hemisphere
+    if latitude == 'NH':
+        var = var.where(var.lat >= 0., drop=True)
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+    elif latitude == 'SH':
+        var = var.where(var.lat <= 0., drop=True)
+        figsize=(4,5)
+        orientation='vertical'
+        location='right'
+
+    # choose top of atmosphere
+    var = var.where(var.level >= top_atmos, drop=True)
+
+    # find max value
+    max_value = np.max(var).round(1)
+
+    #-------------------------------------------------------------------
+
+    ## PLOTTING TIME
+
+    # set up figure
+    plt.figure(figsize=figsize)
+
+    plt.contourf(var.lat.values, var.level.values, var, cmap='Greens',
+                 levels=np.linspace(0, max_value, 21), extend='both')
+    plt.colorbar(location=location, orientation=orientation, shrink=0.75,
+                 label='variance', extend='both')
+
+    plt.gca().invert_yaxis()
+    # choose log or linear scale
+    if logscale:
+        plt.yscale('log')
+        plt.ylabel('Log pressure (hPa)')
+    else:
+        plt.yscale('linear')
+        plt.ylabel('Pressure (hPa)')
+
+    plt.xlabel('Latitude $(^\\circ N)$')
+    plt.title(f'Variance of {variable}')
+
+    if show_rect:
+        rect = patches.Rectangle((25., 600.), 50, -400,
+                         fill=False, linewidth=2)
+        plt.gca().add_patch(rect)
+
+    plt.show()
+
+
+#==================================================================================================
+
+#---------------------
+# EDDY FEEDBACK PLOTS
+#---------------------
 
 def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH',
                                 top_atmos=10., cut_poles=False, figsize=(6,6),
@@ -480,7 +569,6 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
     ds = ds.sel(lat=slice(0,cut_poles))
 
     # Cut off top of atmosphere
-    ds['level'] = ds['level'] / 100
     ds = ds.where(ds.level > top_atmos, drop=True)
 
     # Calculate correlation
@@ -519,94 +607,6 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
     plt.show()
 
 
-#--------------------------------------------------------------------------------------------------
-
-def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
-                  figsize=(9,5), orientation='horizontal', location='bottom', season='djf',
-                  latitude=None, logscale=True, show_rect=True):
-
-    """
-    Input: DataArray of required variable related to EFP
-            - Usually (time, level, lat)
-            
-    Output: Contour plot showing (lat, level) variance
-    
-    """
-
-    ## CONDITIONS
-
-    # If required, check dimensions and variables are labelled correctly
-    if check_variables:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
-
-    #-------------------------------------------------------------------
-
-    ## PRE-PLOTTING SET UP
-
-    # Choose required DataArray
-    da = ds[variable]
-
-    # take seasonal time average and calculate variance
-    da = data.seasonal_mean(da, season=season)
-    var = da.var(dim='time').load()
-
-    # remove poles for div1 variable because massive
-    if remove_poles:
-        var = var.isel(lat=slice(1,-1))
-
-    # choose hemisphere
-    if latitude == 'NH':
-        var = var.where(var.lat >= 0., drop=True)
-        figsize=(4,5)
-        orientation='vertical'
-        location='right'
-    elif latitude == 'SH':
-        var = var.where(var.lat <= 0., drop=True)
-        figsize=(4,5)
-        orientation='vertical'
-        location='right'
-
-    # choose top of atmosphere
-    var = var.where(var.level >= top_atmos, drop=True)
-
-    # find max value
-    max_value = np.max(var).round(1)
-
-    #-------------------------------------------------------------------
-
-    ## PLOTTING TIME
-
-    # set up figure
-    plt.figure(figsize=figsize)
-
-    plt.contourf(var.lat.values, var.level.values, var, cmap='Greens',
-                 levels=np.linspace(0, max_value, 21), extend='both')
-    plt.colorbar(location=location, orientation=orientation, shrink=0.75,
-                 label='variance', extend='both')
-
-    plt.gca().invert_yaxis()
-    # choose log or linear scale
-    if logscale:
-        plt.yscale('log')
-        plt.ylabel('Log pressure (hPa)')
-    else:
-        plt.yscale('linear')
-        plt.ylabel('Pressure (hPa)')
-
-    plt.xlabel('Latitude $(^\\circ N)$')
-    plt.title(f'Variance of {variable}')
-
-    if show_rect:
-        rect = patches.Rectangle((25., 600.), 50, -400,
-                         fill=False, linewidth=2)
-        plt.gca().add_patch(rect)
-
-    plt.show()
-
-
 #==================================================================================================
 
-#---------------------
-# EDDY FEEDBACK PLOTS
-#---------------------
+

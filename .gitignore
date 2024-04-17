@@ -1,3 +1,5 @@
 *.nc
 *.pyc
 *.zip
+*.err
+*.out
