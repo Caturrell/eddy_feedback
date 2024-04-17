@@ -87,6 +87,13 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
     return ds
 
 
+#==================================================================================================
+
+#-----------------------------------
+# CALCULATE EDDY FEEDBACK PARAMETER
+#-----------------------------------
+
+
 # Calculate Eddy Feedback Parameter
 def calculate_efp_reanalysis(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=True,
                              season='djf', calc_south_hemis=False, flip_latitude=False,
@@ -117,10 +124,10 @@ def calculate_efp_reanalysis(ds, which_div1='div1_pr', take_level_mean=True, tak
 
     # choose hemisphere
     if calc_south_hemis:
-        latitude_slice=slice(-75., -25.)
+        latitude_slice=slice(-72., -24.)
         season = 'jja'
     else:
-        latitude_slice=slice(25.,72.)
+        latitude_slice=slice(24.,72.)
 
     # subset dataset and take seasonal mean
     if take_seasonal:
@@ -178,11 +185,11 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     # choose hemisphere
     if calc_south_hemis:
         ds = ds.sel( lat=slice(-cut_pole, 0) )
-        latitude_slice=slice(-72., -25.)
+        latitude_slice=slice(-72., -24.)
         season = 'jja'
     else:
         ds = ds.sel( lat=slice(0, cut_pole) )
-        latitude_slice=slice(25.,72.)
+        latitude_slice=slice(24.,72.)
 
     # Take seasonal mean
     ds = data.seasonal_dataset(ds, season=season)

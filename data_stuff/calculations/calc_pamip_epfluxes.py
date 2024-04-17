@@ -76,10 +76,10 @@ if __name__ == '__main__':
     # subset dataset and save it
     files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/all/*.nc')
     dataset = xr.open_mfdataset(files, combine='nested', concat_dim='ens_ax', parallel=True)
-    
+
     print('Dataset Loaded. Saving dataset...')
     dataset = dataset[['ubar', 'div1']]
     dataset['level'] = dataset['level'] / 100
-    dataset.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/3x3_ef_Can.nc')
+    dataset.to_netcdf('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/3x3_ef_CanESM5.nc')
 
     print(f'[{now}]: PROGRAM COMPLETED.')
