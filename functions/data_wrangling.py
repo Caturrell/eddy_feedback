@@ -2,6 +2,9 @@
     Python file containing various data wrangling functions.
 """
 
+import numpy as np
+import xarray as xr
+import xesmf as xe
 import functions.aos_functions as aos
 
 #==================================================================================================
@@ -93,7 +96,11 @@ def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
         ds = ds.sel(time=ds.time.dt.month.isin([6, 7, 8]))
     # SON (autumn) dataset
     if season == 'son':
-        ds = ds.sel(time=ds.time.dt.month.isin([9, 10 ,11]))
+        ds = ds.sel(time=ds.time.dt.month.isin([9, 10, 11]))
+
+    # PAMIP SH summer
+    if season == 'jas':
+        ds = ds.sel(time=ds.time.dt.month.isin([7, 8, 9]))
 
     # save new dataset if wanted
     if save_ds:
@@ -145,3 +152,35 @@ def seasonal_mean(ds, cut_ends=True, season=None):
         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([9]))
 
     return seasonal
+
+
+# regrid PAMIP data
+def regrid_dataset_3x3(ds, check_dims=False):
+    """
+    Input: Xarray dataset
+            - Must contain (lat, lon)
+            
+    Output: Regridded Xarray dataset 
+            to 3 deg lat lon
+    
+    """
+    # Rename
+    if check_dims:
+        ds = check_dimensions(ds)
+    # build regridder
+    ds_out = xr.Dataset(
+        {
+            'lat': (['lat'], np.arange(-90, 93, 3)),
+            'lon': (['lon'], np.arange(0,360, 3))
+        }
+    )
+
+    regridder = xe.Regridder(ds, ds_out, "bilinear")
+    ds_new = regridder(ds)
+
+    # verify that the result is the same as regridding each variable one-by-one
+    for k in ds.data_vars:
+        print(k, ds_new[k].equals(regridder(ds[k])))
+
+    print('Regridding and checks complete. Dataset ready.')
+    return ds_new

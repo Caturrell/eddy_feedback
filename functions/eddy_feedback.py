@@ -2,6 +2,7 @@
     Python file containing various functions for calculations
     surrounding the Eddy Feedback Parameter
 """
+import cftime
 import numpy as np
 import xarray as xr
 
@@ -246,10 +247,20 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     if calc_south_hemis:
         ds = ds.sel( lat=slice(-cut_pole, 0) )
         latitude_slice=slice(-72., -24.)
-        season = 'jja'
+        season = 'jas'
     else:
         ds = ds.sel( lat=slice(0, cut_pole) )
         latitude_slice=slice(24.,72.)
+
+    # Convert datetime to cftime, if required
+    if not isinstance(ds.time.values[0], cftime.datetime):
+        ds = ds.convert_calendar('noleap')
+    # Remove spin up from model, checking whether time is in 360day format or not
+    if len(ds.time) > 365:
+        if isinstance(ds.time.values[0], cftime.Datetime360Day):
+            ds = ds.sel( time=slice('2000-06-01', '2001-05-30') )
+        else:
+            ds = ds.sel( time=slice('2000-06-01', '2001-05-31') )
 
     # Take seasonal mean
     ds = data.seasonal_dataset(ds, season=season)

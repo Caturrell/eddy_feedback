@@ -87,6 +87,7 @@ if __name__ == '__main__':
 
     # Set var list
     variables = ['ta', 'ua', 'va']
+    # variables = ['ua', 'va']
 
     # Set time of day for program echo
     from datetime import datetime
@@ -98,9 +99,9 @@ if __name__ == '__main__':
         # reset time for counter
         now = datetime.now().strftime("%H:%M:%S")
 
-        print(f'[{now}]: Importing paths for CanESM5 {var}...')
+        print(f'[{now}]: Importing paths for IPSL-CM6A-LR {var}...')
         # pylint: disable=line-too-long
-        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-pdSIC/CanESM5/*')
+        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-futArcSIC/IPSL-CM6A-LR/*')
 
         for count, item in enumerate(files):
 
@@ -115,8 +116,8 @@ if __name__ == '__main__':
             dataset = regrid_dataset_3x3(dataset, check_dims=True)
 
             print('Saving dataset...')
-            dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/CanESM5_3x3/{var}/{os.path.basename(item)}')
+            dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/pdSST-futArcSIC_3x3/IPSL-CM6A-LR_3x3/{var}/{os.path.basename(item)}')
 
         print(f'Variable {var} finished.')
 
-    print('PROGRAM COMPLETE (CanESM5).')
+    print('PROGRAM COMPLETE (IPSL-CM6A-LR).')
