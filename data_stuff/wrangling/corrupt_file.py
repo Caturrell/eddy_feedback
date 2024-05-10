@@ -3,6 +3,7 @@
 """
 # pylint: disable=line-too-long
 
+import os
 import glob
 import xarray as xr
 
@@ -18,10 +19,22 @@ for item in files:
     try:
         dataset = xr.open_dataset(item)
         dataset.close()
-        print('No error.')
     # if fails, append to list and print Exception
     except OSError:
         bad_files.append(item)
         print('Corrupt file found.')
+    else:
+        print('No error found in this file.')
 
 # PRINT BAD_FILES OUTPUT TO TXT FILE
+# file = open('CanESM5_corrupt-files.txt', mode='w', encoding="utf-8")
+# for item in bad_files:
+#     file.write(item+'\n')
+# file.close()
+
+with open('CanESM5_corrupt-files.txt', mode='w+', encoding="utf-8") as file:
+    for item in bad_files:
+        file_name = os.path.basename(item)
+        file.write(file_name+'\n')
+
+print('Program completed.')

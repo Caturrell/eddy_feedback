@@ -1,0 +1,10 @@
+ua_Amon_CanESM5_pdSST-pdSIC_r211i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r223i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r226i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r228i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r275i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r280i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r292i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r32i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r34i1p2f1_gn_200004-200105.nc
+ua_Amon_CanESM5_pdSST-pdSIC_r36i1p2f1_gn_200004-200105.nc

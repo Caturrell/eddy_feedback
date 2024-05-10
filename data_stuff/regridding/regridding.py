@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
         print(f'[{now}]: Importing paths for MIROC6 {var}...')
         # pylint: disable=line-too-long
-        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-futArcSIC/MIROC6/*')
+        files = glob.glob(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/daily/{var}/pdSST-pdSIC/MIROC6/*')
 
         for count, item in enumerate(files):
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
             dataset = regrid_dataset_3x3(dataset, check_dims=True)
 
             print('Saving dataset...')
-            dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/pdSST-futArcSIC_3x3/MIROC6_3x3/{var}/{os.path.basename(item)}')
+            dataset.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/regridded/pdSST-pdSIC_3x3/MIROC6_3x3/{var}/{os.path.basename(item)}')
 
         print(f'Variable {var} finished.')
 
