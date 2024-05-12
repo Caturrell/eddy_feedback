@@ -255,6 +255,7 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     # Convert datetime to cftime, if required
     if not isinstance(ds.time.values[0], cftime.datetime):
         ds = ds.convert_calendar('noleap')
+        
     # Remove spin up from model, checking whether time is in 360day format or not
     if len(ds.time) > 365:
         if isinstance(ds.time.values[0], cftime.Datetime360Day):
@@ -271,7 +272,8 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     ## CALCULATIONS
 
     # Calculate Pearson's correlation
-    corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax')
+    corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax').load()
+    print('Correlation calculated.')
 
     # correlation squared
     corr = corr**2
@@ -284,8 +286,10 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     # Calculate weighted latitude average
     weights = np.cos( np.deg2rad(corr.lat) )
     eddy_feedback_param = corr.weighted(weights).mean('lat')
+    
+    eddy_feedback_param.load()
 
-    return eddy_feedback_param.values.round(2)
+    return eddy_feedback_param.values.round(4)
 
 
 # Calculate EFP for PAMIP data without taking latitudinal average
