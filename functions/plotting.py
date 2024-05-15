@@ -31,7 +31,7 @@ import functions.eddy_feedback as ef
 #---------------------------
 
 # Plot zonal-mean zonal wind on meridional plane
-def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=(9,5),
+def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5),
               latitude=None, top_atmos=0., show_rect=False, orientation='horizontal',
               location='bottom', extend='both', shrink=0.5, levels=21, yincrease=False,
               yscale='linear', round_sf=None, savefig=False, fig_label=None):
@@ -47,9 +47,9 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
+    if not correct_dims:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds)
 
     # Check to see if ubar is in DataSet and define it
     if not 'ubar' in ds:
@@ -139,8 +139,7 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', check_variables=False, figsize=
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5),
                      latitude=None, top_atmos=0., orientation='horizontal', location='bottom',
                      extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
-                     round_sf=None, savefig=False, fig_label=None, check_variables=False,
-                     season=None, plot_arrows=True):
+                     round_sf=None, savefig=False, fig_label=None, season=None, plot_arrows=True):
 
     """
     Input: Xarray DataSet containing ubar and epfluxes
@@ -153,9 +152,9 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
+    if not correct_dims:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds)
 
     if season is not None:
         ds = data.seasonal_mean(ds, season=season)
@@ -248,8 +247,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
                       figsize=(9,5), yscale='linear', latitude=None, remove_poles=True,
                       top_atmos=100., skip_lat=1, skip_pres=1, orientation='horizontal',
                       location='bottom', extend='both', shrink=0.5, levels=21, plot_arrows=True,
-                      show_rect=False, round_sf=None, savefig=False, fig_label=None,
-                      check_variables=False):
+                      show_rect=False, round_sf=None, savefig=False, fig_label=None):
 
     """
     Input: Xarray Dataset containing u,v,t
@@ -261,9 +259,9 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
+    if not correct_dims:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds)
 
     # reanalysis has unrealistic values at poles, so cut off ends
     if remove_poles:
@@ -366,7 +364,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
 # STATISTICAL PLOTS
 #--------------------
 
-def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check_variables=False,
+def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100.,
                   figsize=(9,5), orientation='horizontal', location='bottom', season='djf',
                   latitude=None, logscale=True, show_rect=True):
 
@@ -381,9 +379,9 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
 
     #-------------------------------------------------------------------
 
@@ -459,7 +457,7 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100., check
 def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH',
                                 top_atmos=10., cut_poles=False, figsize=(6,6),
                                 title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal=True,
-                                season='djf', check_vars=False, which_div1='div1_pr'):
+                                season='djf', which_div1='div1_pr'):
     """"
     Input: DataArrays of ubar and F_\\phi
             - Dims: (time, level, lat)
@@ -473,9 +471,9 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     ## SET UP TIME
 
     # If required, check dimensions and variables are labelled correctly
-    if check_vars:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
 
     # separate time into annual means
     # and use .load() to force the calculation now
@@ -539,7 +537,7 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     plt.show()
 
 
-def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=True, show_rect=True,
+def plot_pamip_correlation(ds, take_seasonal=True, logscale=True, show_rect=True,
                            top_atmos=10., cut_poles=90, label='DJF'):
 
     """"
@@ -552,9 +550,9 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
     ## SET UP TIME
 
     # If required, check dimensions and variables are labelled correctly
-    if check_vars:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
+    if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
 
     if take_seasonal:
         ds = data.seasonal_dataset(ds, season='djf')
@@ -608,5 +606,3 @@ def plot_pamip_correlation(ds, check_vars=False, take_seasonal=True, logscale=Tr
 
 
 #==================================================================================================
-
-

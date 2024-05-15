@@ -17,7 +17,7 @@ import functions.data_wrangling as data
 
 
 # Calculate zonal-mean zonal wind
-def calculate_ubar(ds, check_variables=False, pamip_data=False):
+def calculate_ubar(ds, pamip_data=False):
     """
     Input: Xarray dataset
             - dim labels: (lon, ...)
@@ -28,9 +28,9 @@ def calculate_ubar(ds, check_variables=False, pamip_data=False):
     """
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
+    if not correct_dims:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds)
 
     if pamip_data:
         ds['ubar'] = ds.ua.mean('lon')
@@ -41,7 +41,7 @@ def calculate_ubar(ds, check_variables=False, pamip_data=False):
     return ds
 
 # Calculate EP fluxes
-def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_data=False):
+def calculate_epfluxes_ubar(ds, primitive=True, pamip_data=False):
 
     """
     Input: Xarray dataset
@@ -56,9 +56,9 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
+    if not correct_dims:
         ds = data.check_dimensions(ds)
-        ds = data.check_variables(ds)
 
     # check if ubar is in dataset also
     if not 'ubar' in ds:
@@ -96,9 +96,7 @@ def calculate_epfluxes_ubar(ds, check_variables=False, primitive=True, pamip_dat
 
 
 # Calculate Eddy Feedback Parameter for reanalysis and Isca data
-def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=True,
-                             season='djf', calc_south_hemis=False, flip_latitude=False,
-                             flip_level=False, check_variables=False):
+def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hemis=False):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
@@ -111,35 +109,27 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_variables:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
 
     # flip dimensions if required
-    if flip_latitude:
+    if (ds.level[0] - ds.level[1]) < 0:
+        # default: [1000,0]
+        ds = ds.sel(level=slice(None,None,-1))
+    if (ds.lat[0] + ds.lat[1]) > 0:
         # default: [-90,90]
         ds = ds.sel(lat=slice(None,None,-1))
-    if flip_level:
-        # default: [0,1000]
-        ds = ds.sel(level=slice(None,None,-1))
 
     # choose hemisphere
     if calc_south_hemis:
-        latitude_slice=slice(-72., -24.)
-        season = 'jja'
-    else:
-        latitude_slice=slice(24.,72.)
-
-    # subset dataset and take seasonal mean
-    if take_seasonal:
-        # take time slice to match smallest domain
         ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_mean(ds, season=season)
-        print('Seasonal data has been calculated for 1979-2015.')
-        print()
+        ds = data.seasonal_dataset(ds, season='jas')
+        latitude_slice=slice(-72., -24.)
     else:
-        print('Seasonal average has not been calculated.')
-        print()
+        ds = ds.sel(time=slice('1979', '2016'))
+        ds = data.seasonal_mean(ds, season='djf')
+        latitude_slice=slice(24.,72.)
 
     #-------------------------------------------------------------
 
@@ -159,19 +149,18 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, take_seasonal=
     corr = corr.sel(lat=latitude_slice)
 
     if take_level_mean:
-        corr = corr.sel(level=slice(200.,600.))
+        corr = corr.sel(level=slice(600., 200.))
         corr = corr.mean('level')
 
     # Calculate weighted latitude average
     weights = np.cos( np.deg2rad(corr.lat) )
     eddy_feedback_param = corr.weighted(weights).mean('lat')
 
-    return eddy_feedback_param.values.round(2)
+    return eddy_feedback_param.values.round(4)
 
 # Calculate EFP without taking the latitude average
-def calculate_efp_latitude(ds, check_vars=False, calc_south_hemis=False, cut_pole=90,
-                                 which_div1='div1', take_seasonal=True, season='djf',
-                                 level_mean=True, flip_level=False, flip_latitude=False):
+def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
+                                which_div1='div1', level_mean=True):
 
     """ 
     Input: Xarray Dataset containing ubar and div1 
@@ -186,27 +175,32 @@ def calculate_efp_latitude(ds, check_vars=False, calc_south_hemis=False, cut_pol
     ## CONDITIONS
 
     # If required, check dimensions and variables are labelled correctly
-    if check_vars:
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
-        ds = data.check_variables(ds)
 
     # flip dimensions if required
-    if flip_latitude:
-        ds = ds.sel(lat=slice(None,None,-1))
-    if flip_level:
+    if (ds.level[0] - ds.level[1]) < 0:
+        # default: [1000,0]
         ds = ds.sel(level=slice(None,None,-1))
+    if (ds.lat[0] + ds.lat[1]) > 0:
+        # default: [-90,90]
+        ds = ds.sel(lat=slice(None,None,-1))
 
     # choose hemisphere
     if calc_south_hemis:
-        ds = ds.sel( lat=slice(-cut_pole, 0) )
-        season = 'jja'
-    else:
-        ds = ds.sel( lat=slice(0, cut_pole) )
-
-    # subset dataset and take seasonal mean
-    if take_seasonal:
+        # take time average
         ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_mean(ds, season=season)
+        ds = data.seasonal_dataset(ds, season='jas')
+        ds = ds.mean('time')
+        # take lat slice
+        ds = ds.sel( lat=slice(-cut_pole, 0) )
+    else:
+        # take time avg
+        ds = ds.sel(time=slice('1979', '2016'))
+        ds = data.seasonal_mean(ds, season='djf')
+        # take lat slice
+        ds = ds.sel( lat=slice(0, cut_pole) )
 
     #----------------------------------------------------------------------
 
@@ -234,7 +228,7 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
-                - dims: (year, level, latitude) 
+                - dims: (time, level, lat) 
                     - lat: [-90,90]; level: [1000,0]
     
     Output: EFP Value
@@ -242,6 +236,11 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     """
 
     ## CONDITIONS
+
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
+    if not correct_dims:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
 
     # choose hemisphere
     if calc_south_hemis:
@@ -255,7 +254,7 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     # Convert datetime to cftime, if required
     if not isinstance(ds.time.values[0], cftime.datetime):
         ds = ds.convert_calendar('noleap')
-        
+
     # Remove spin up from model, checking whether time is in 360day format or not
     if len(ds.time) > 365:
         if isinstance(ds.time.values[0], cftime.Datetime360Day):
@@ -286,7 +285,7 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     # Calculate weighted latitude average
     weights = np.cos( np.deg2rad(corr.lat) )
     eddy_feedback_param = corr.weighted(weights).mean('lat')
-    
+
     eddy_feedback_param.load()
 
     return eddy_feedback_param.values.round(4)
@@ -304,6 +303,11 @@ def calculate_efp_lat_pamip(ds, season='djf', calc_south_hemis=False, cut_pole=9
     """
 
     ## CONDITIONS
+
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
+    if not correct_dims:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
 
     # subset dataset and take seasonal mean
     ds = data.seasonal_dataset(ds, season=season)
