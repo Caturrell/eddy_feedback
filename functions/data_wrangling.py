@@ -79,6 +79,11 @@ def check_variables(ds):
 # Subset to seasonal datasets
 def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
     """ 
+    
+    MUST NOT USE WINTER SUBSET FOR MULTI-YEAR DATASETS
+        - PAMIP/model data is OK
+        - Don't use with reanalysis
+    
     Input: Xarray dataset for full year
     
     Output: Xarray dataset with required season data 
@@ -131,6 +136,12 @@ def seasonal_mean(ds, cut_ends=True, season=None):
     Output: Xarray Dataset or DataArray with seasonal mean calculated
     
     """
+    
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
+        ds = check_dimensions(ds, ignore_dim='lon')
+    
     # remove first Jan and Feb, and final Dec to ensure FULL seasons
     if cut_ends:
         # slice data from first March to final November
