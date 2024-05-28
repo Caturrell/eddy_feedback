@@ -2,6 +2,7 @@
     Python file containing various functions for calculations
     surrounding the Eddy Feedback Parameter
 """
+# pylint: disable=invalid-name
 import cftime
 import numpy as np
 import xarray as xr
@@ -84,6 +85,84 @@ def calculate_epfluxes_ubar(ds, primitive=True, pamip_data=False):
 
     # load dataset here
     ds = ds.load()
+
+    return ds
+
+# Rescale DataArray for log-pressure to pressure or visa versa
+def pressure_scaling(da, p0=1e3, multiply_factor=True):
+
+    """
+        Converts log-pressure coordinates to pressure coordinates
+        or visa versa.
+        ----------------------------------------------------------
+        
+        Input: xr.DataArray in log-pressure/pressure coordinates
+                - (pressure, latitude)
+        
+        Output: xr.DataArray in pressure/log-pressure coordinates
+                - (pressure, latitude)
+    """
+
+    # define dimensions
+    lat = da.lat.values
+    level = da.level.values
+
+    # define and calculate ratio
+    p_ratio = np.repeat(level/p0, lat.size).reshape((level.size,lat.size))
+
+    if multiply_factor:
+        da_new = da * p_ratio
+    else:
+        da_new = da / p_ratio
+
+    return da_new
+
+# Calculate divergence of northward component of EP flux
+def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_factor=True,
+                      save_divFphi='divF'):
+
+    """
+        Calculate divergence of northward component
+        of EP flux, F_phi. Including an optional 
+        scaling from log-pressure to pressure coords.
+        
+        ----------------------------------------------
+        
+        Input: xr.Dataset containing epfy/Fy/Fphi [m3 s-2]
+        
+        Out: xr.DataArray Div_Fphi
+    """
+
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+
+    # define DataArray
+    Fphi = ds[which_Fphi]                                                       # [m3 s-2]
+
+    if apply_scaling:
+        Fphi = pressure_scaling(Fphi, multiply_factor=multiply_factor)
+        print('Scaling applied.')
+
+
+    # convert lat to radians take np.cos and multiply by Fphi (inside derivative)
+    lat_rads = np.deg2rad(ds.lat.values)
+    coslat = np.cos(lat_rads)
+    F_coslat = Fphi * coslat
+
+    # calc derivative and convert lat dimension to radians
+    F_coslat['lat'] = lat_rads
+    deriv1 = F_coslat.differentiate('lat')                                      # [m2 s-2]
+
+    # Divide by a cos(φ)
+    a = 6.371e6
+    divFphi = deriv1 / (a * coslat)                                             # [m s-2]
+
+    # Divide by a cos(φ) AGAIN for whatever reason
+    divFphi = divFphi / (a * coslat)                                            # [m s-2]
+
+    ds[save_divFphi] = (divFphi.dims, divFphi.values)
 
     return ds
 
@@ -223,7 +302,8 @@ def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
 
 
 # Calculate Eddy feedback parameter for PAMIP data
-def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
+def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=84, calc_south_hemis=False,
+                        usual_mean=True):
 
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
@@ -255,24 +335,26 @@ def calculate_efp_pamip(ds, season='djf', cut_pole=84, calc_south_hemis=False):
     if not isinstance(ds.time.values[0], cftime.datetime):
         ds = ds.convert_calendar('noleap')
 
-    # Remove spin up from model, checking whether time is in 360day format or not
-    if len(ds.time) > 365:
-        if isinstance(ds.time.values[0], cftime.Datetime360Day):
-            ds = ds.sel( time=slice('2000-06-01', '2001-05-30') )
+    # Take seasonal dataset when using ensembles
+    if usual_mean:
+        ds = data.seasonal_dataset(ds, season=season)
+        ds = ds.mean('time')
+    # some datasets have put all ensembles into separate years
+    else:
+        if calc_south_hemis:
+            ds = data.seasonal_dataset(ds, season='jas')
+            ds = ds.groupby('time.year').mean('time')
+            ds = ds.rename({'year': 'ens_ax'})
         else:
-            ds = ds.sel( time=slice('2000-06-01', '2001-05-31') )
-
-    # Take seasonal mean
-    ds = data.seasonal_dataset(ds, season=season)
-    ds = ds.mean('time')
+            ds = data.seasonal_mean(ds, season=season, cut_ends=False)
+            ds = ds.rename({'time': 'ens_ax'})
 
     #-------------------------------------------------------------------------------
 
     ## CALCULATIONS
 
     # Calculate Pearson's correlation
-    corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax').load()
-    print('Correlation calculated.')
+    corr = xr.corr(ds[which_div1], ds.ubar, dim='ens_ax').load()
 
     # correlation squared
     corr = corr**2

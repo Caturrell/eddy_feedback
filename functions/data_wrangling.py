@@ -1,11 +1,17 @@
 """
     Python file containing various data wrangling functions.
 """
-
+# pylint: disable=line-too-long
+# pylint: disable=wrong-import-position
+import sys
+import warnings
 import numpy as np
 import xarray as xr
 import xesmf as xe
+
+sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 import functions.aos_functions as aos
+import functions.eddy_feedback as ef
 
 #==================================================================================================
 
@@ -136,12 +142,12 @@ def seasonal_mean(ds, cut_ends=True, season=None):
     Output: Xarray Dataset or DataArray with seasonal mean calculated
     
     """
-    
+
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
         ds = check_dimensions(ds, ignore_dim='lon')
-    
+
     # remove first Jan and Feb, and final Dec to ensure FULL seasons
     if cut_ends:
         # slice data from first March to final November
@@ -149,7 +155,7 @@ def seasonal_mean(ds, cut_ends=True, season=None):
         ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', \
                                     f'{ds.time.dt.year[-1].values}-11'))
 
-    # resample data to start 1st Dec
+    # resample data to start 1st Dec and take monthly mean
     seasonal = ds.resample(time='QS-DEC').mean('time').load()
 
     # take winter season of set and cut off last 'season'
@@ -164,6 +170,12 @@ def seasonal_mean(ds, cut_ends=True, season=None):
 
     return seasonal
 
+
+#==================================================================================================
+
+#----------------------
+# DATASET PROCESSING
+#----------------------
 
 # regrid PAMIP data
 def regrid_dataset_3x3(ds, check_dims=False):
@@ -195,3 +207,76 @@ def regrid_dataset_3x3(ds, check_dims=False):
 
     print('Regridding and checks complete. Dataset ready.')
     return ds_new
+
+
+
+def process_pamip_monthly(model=None):
+    """ 
+        Process monthly PAMIP data to be regridded to 3x3
+        and subset the dataset to match SRIP NaNs.
+        Also calculates divFy.
+        ---------------------------------------------------
+        Input: Model name
+        
+        Output: Saved dataset with divFy
+    """
+
+    # suppress serialisation warning
+    if model == 'CESM2':
+        warnings.filterwarnings('ignore', category=xr.SerializationWarning)
+
+    # import datasets
+    epfy = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/epfy/{model}/*.nc',
+                            combine='nested', concat_dim='ens_ax', parallel=True)
+    ua = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/ua/{model}/*.nc',
+                            combine='nested', concat_dim='ens_ax', parallel=True)
+
+    ## Model specific needs:
+    if model == 'EC-EARTH3':
+        epfy = epfy.mean('lon')
+
+    # rename plev coordinate if required
+    if 'plev' in epfy.dims:
+        epfy = epfy.rename({'plev': 'level'})
+        ua = ua.rename({'plev': 'level'})
+
+    # match pressure levels to smaller dataset
+    if len(epfy.level) > len(ua.level):
+        epfy = epfy.sel( level = ua.level.values )
+    else:
+        ua = ua.sel( level = epfy.level.values )
+
+    # create dataset and slice to remove spin-up
+    ds = xr.Dataset( {'ubar': ua.ua.mean('lon'), 'epfy': epfy.epfy})
+    ds['level'] = ds['level'] / 100
+    ds = ds.interp(lat=np.arange(-90,93,3))
+    ds = ds.sel(time=slice('2000-06', '2001-05'))
+
+    # subset epfy to match SRIP datasets
+    ds = ds.where(ds.level < 1000.)
+    ds = ds.where(ds.level > 1.)
+    ds = ds.where(ds.lat > -90.)
+    ds = ds.where(ds.lat < 90)
+
+    # Calculate DivF
+    ds = ef.calculate_divFphi(ds)
+
+    ## SAVE DATASET
+    ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/processed_monthly/{model}_epfy_ua_r{len(ds.ens_ax)}_3x3.nc')
+
+
+###################################################################################################
+
+if __name__ == '__main__':
+
+    print('Starting program.')
+
+    models = ['CESM2', 'CanESM5', 'EC-EARTH3', 'FGOALS-f3-L', 'MIROC6', 'NorESM2-LM']
+
+    for item in models:
+
+        print(f'Processing {item}...')
+        process_pamip_monthly(model=item)
+        print(f'Model {item} complete.')
+
+    print('Program completed.')

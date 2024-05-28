@@ -8,7 +8,7 @@ import glob
 import xarray as xr
 
 # Load in file paths
-files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/ua/CanESM5/Amon/*.nc')
+files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/epfy/HadGEM3-GC31-MM_2files/*.nc')
 
 # Empty list for corrupt file paths
 bad_files = []
@@ -27,14 +27,21 @@ for item in files:
         print('No error found in this file.')
 
 # PRINT BAD_FILES OUTPUT TO TXT FILE
-# file = open('CanESM5_corrupt-files.txt', mode='w', encoding="utf-8")
+# file = open('HadGEM3-MM_corrupt-files.txt', mode='w', encoding="utf-8")
 # for item in bad_files:
 #     file.write(item+'\n')
 # file.close()
 
-with open('CanESM5_corrupt-files.txt', mode='w+', encoding="utf-8") as file:
+FILE_NAME = 'HadGEM3-MM_epfy_corrupt-files.txt'
+with open(FILE_NAME, mode='w+', encoding="utf-8") as file:
     for item in bad_files:
-        file_name = os.path.basename(item)
-        file.write(file_name+'\n')
+        ensemble_member = os.path.basename(item)
+        file.write(ensemble_member+'\n')
+
+# check if file is empty, then leave message if so
+path_size = os.path.getsize(f'/home/users/cturrell/documents/eddy_feedback/data_stuff/wrangling/{FILE_NAME}')
+if path_size == 0:
+    with open(FILE_NAME, mode='w+', encoding="utf-8") as file:
+        file.write('No corrupt files found.')
 
 print('Program completed.')
