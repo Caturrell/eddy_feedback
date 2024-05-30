@@ -537,7 +537,7 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     plt.show()
 
 
-def plot_pamip_correlation(ds, take_seasonal=True, logscale=True, show_rect=True,
+def plot_pamip_correlation(ds, take_seasonal=True, season='djf', logscale=True, show_rect=True,
                            top_atmos=10., cut_poles=90, label='DJF'):
 
     """"
@@ -555,12 +555,8 @@ def plot_pamip_correlation(ds, take_seasonal=True, logscale=True, show_rect=True
         ds = data.check_dimensions(ds, ignore_dim='lon')
 
     if take_seasonal:
-        ds = data.seasonal_dataset(ds, season='djf')
+        ds = data.seasonal_dataset(ds, season=season)
         ds = ds.mean('time')
-
-    # Take seasonal mean
-    ds = data.seasonal_dataset(ds, season='djf')
-    ds = ds.mean('time')
 
     # Subset to NH and cut top of atmos. and poles
     # Can choose latitude cut-off
@@ -571,7 +567,6 @@ def plot_pamip_correlation(ds, take_seasonal=True, logscale=True, show_rect=True
 
     # Calculate correlation
     corr = xr.corr(ds.div1, ds.ubar, dim='ens_ax')
-
 
     #------------------------------------------------------------------
 

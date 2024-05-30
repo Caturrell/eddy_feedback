@@ -134,7 +134,7 @@ def annual_mean(ds):
     return ds
 
 # Calculate annual means
-def seasonal_mean(ds, cut_ends=True, season=None):
+def seasonal_mean(ds, cut_ends=False, season=None):
     """ 
     Input: Xarray Dataset or DataArray (time, ...)
             - MUST be full year dataset
@@ -155,8 +155,14 @@ def seasonal_mean(ds, cut_ends=True, season=None):
         ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', \
                                     f'{ds.time.dt.year[-1].values}-11'))
 
-    # resample data to start 1st Dec and take monthly mean
-    seasonal = ds.resample(time='QS-DEC').mean('time').load()
+
+    if season == 'jas':
+        seasonal = ds.sel(time=ds.time.dt.month.isin([7,8,9]))
+        seasonal = seasonal.groupby('time.year').mean('time')
+        seasonal = seasonal.rename({'year': 'time'})
+    else:
+        # resample data to start 1st Dec and take monthly mean
+        seasonal = ds.resample(time='QS-DEC').mean('time').load()
 
     # take winter season of set and cut off last 'season'
     if season == 'djf':
@@ -234,6 +240,8 @@ def process_pamip_monthly(model=None):
     ## Model specific needs:
     if model == 'EC-EARTH3':
         epfy = epfy.mean('lon')
+    if model == 'HadGEM3-GC31-LL':
+        ua = ua.rename({'u': 'ua', 't': 'time', 'p_1': 'level', 'latitude_1': 'lat', 'longitude_1': 'lon'})
 
     # rename plev coordinate if required
     if 'plev' in epfy.dims:
@@ -248,7 +256,7 @@ def process_pamip_monthly(model=None):
 
     # create dataset and slice to remove spin-up
     ds = xr.Dataset( {'ubar': ua.ua.mean('lon'), 'epfy': epfy.epfy})
-    ds['level'] = ds['level'] / 100
+    # ds['level'] = ds['level'] / 100
     ds = ds.interp(lat=np.arange(-90,93,3))
     ds = ds.sel(time=slice('2000-06', '2001-05'))
 
@@ -271,7 +279,8 @@ if __name__ == '__main__':
 
     print('Starting program.')
 
-    models = ['CESM2', 'CanESM5', 'EC-EARTH3', 'FGOALS-f3-L', 'MIROC6', 'NorESM2-LM']
+    # models = ['CESM2', 'CanESM5', 'EC-EARTH3', 'FGOALS-f3-L', 'MIROC6', 'NorESM2-LM']
+    models = ['HadGEM3-GC31-LL']
 
     for item in models:
 

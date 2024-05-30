@@ -302,7 +302,7 @@ def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
 
 
 # Calculate Eddy feedback parameter for PAMIP data
-def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=84, calc_south_hemis=False,
+def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=90, calc_south_hemis=False,
                         usual_mean=True):
 
     """ 
@@ -374,7 +374,8 @@ def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=84, calc_s
 
 
 # Calculate EFP for PAMIP data without taking latitudinal average
-def calculate_efp_lat_pamip(ds, season='djf', calc_south_hemis=False, cut_pole=90):
+def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemis=False, 
+                            usual_mean=True, cut_pole=90):
 
     """ 
     Input: Xarray Dataset containing PAMIP data for ubar and div1 
@@ -391,23 +392,37 @@ def calculate_efp_lat_pamip(ds, season='djf', calc_south_hemis=False, cut_pole=9
     if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
 
-    # subset dataset and take seasonal mean
-    ds = data.seasonal_dataset(ds, season=season)
-    ds = ds.mean('time')
-
     # choose hemisphere
     if calc_south_hemis:
         ds = ds.sel( lat=slice(-cut_pole, 0) )
-        season = 'jja'
+        season='jas'
     else:
         ds = ds.sel( lat=slice(0, cut_pole) )
+        
+    # Convert datetime to cftime, if required
+    if not isinstance(ds.time.values[0], cftime.datetime):
+        ds = ds.convert_calendar('noleap')
+
+    # Take seasonal dataset when using ensembles
+    if usual_mean:
+        ds = data.seasonal_dataset(ds, season=season)
+        ds = ds.mean('time')
+    # some datasets have put all ensembles into separate years
+    else:
+        if calc_south_hemis:
+            ds = data.seasonal_dataset(ds, season='jas')
+            ds = ds.groupby('time.year').mean('time')
+            ds = ds.rename({'year': 'ens_ax'})
+        else:
+            ds = data.seasonal_mean(ds, season=season, cut_ends=False)
+            ds = ds.rename({'time': 'ens_ax'})
 
     #----------------------------------------------------------------------
 
     ## CALCULATIONS
 
     # Calculate correlation
-    corr = xr.corr(ds.div1, ds['ubar'], dim='ens_ax')
+    corr = xr.corr(ds[which_div1], ds['ubar'], dim='ens_ax')
 
     # Calculate
     corr = corr.sel(level=slice(600., 200.))
