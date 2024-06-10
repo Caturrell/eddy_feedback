@@ -3,6 +3,7 @@
 """
 # pylint: disable=line-too-long
 # pylint: disable=wrong-import-position
+# import os
 import sys
 import warnings
 import numpy as np
@@ -232,16 +233,20 @@ def process_pamip_monthly(model=None):
         warnings.filterwarnings('ignore', category=xr.SerializationWarning)
 
     # import datasets
-    epfy = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/epfy/{model}/*.nc',
+    epfy = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/1.6_pdSST-futArcSIC/epfy/{model}/*.nc',
                             combine='nested', concat_dim='ens_ax', parallel=True)
-    ua = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/ua/{model}/*.nc',
+    ua = xr.open_mfdataset(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/1.6_pdSST-futArcSIC/ua/{model}/*.nc',
                             combine='nested', concat_dim='ens_ax', parallel=True)
 
     ## Model specific needs:
     if model == 'EC-EARTH3':
         epfy = epfy.mean('lon')
+    if model == 'CNRM-CM6-1':
+        epfy = epfy.mean('lon')
     if model == 'HadGEM3-GC31-LL':
         ua = ua.rename({'u': 'ua', 't': 'time', 'p_1': 'level', 'latitude_1': 'lat', 'longitude_1': 'lon'})
+        ua['level'] = ua['level'] * 100
+        epfy['level'] = epfy['level'] * 100
 
     # rename plev coordinate if required
     if 'plev' in epfy.dims:
@@ -256,7 +261,7 @@ def process_pamip_monthly(model=None):
 
     # create dataset and slice to remove spin-up
     ds = xr.Dataset( {'ubar': ua.ua.mean('lon'), 'epfy': epfy.epfy})
-    # ds['level'] = ds['level'] / 100
+    ds['level'] = ds['level'] / 100
     ds = ds.interp(lat=np.arange(-90,93,3))
     ds = ds.sel(time=slice('2000-06', '2001-05'))
 
@@ -270,7 +275,7 @@ def process_pamip_monthly(model=None):
     ds = ef.calculate_divFphi(ds)
 
     ## SAVE DATASET
-    ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/processed_monthly/{model}_epfy_ua_r{len(ds.ens_ax)}_3x3.nc')
+    ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/processed_monthly/1.6_pdSST-futArcSIC/{model}_ua_epfy_divF_r{len(ds.ens_ax)}_3x3_futArc.nc')
 
 
 ###################################################################################################
@@ -279,8 +284,20 @@ if __name__ == '__main__':
 
     print('Starting program.')
 
-    # models = ['CESM2', 'CanESM5', 'EC-EARTH3', 'FGOALS-f3-L', 'MIROC6', 'NorESM2-LM']
+    # standard models
+    # models = ['CESM2', 'CanESM5', 'CNRM-CM6-1', 'EC-EARTH3', 'FGOALS-f3-L', 'MIROC6', 'NorESM2-LM',
+    #               'HadGEM3-GC31-MM']
     models = ['HadGEM3-GC31-LL']
+
+    # # delete duplicate models
+    # for item in models:
+    #     path = f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/processed_monthly/1.6_pdSST-futArcSIC/{item}*.nc'
+    #     os.system(f'rm -rf {path}')
+
+    # sort individually
+    individual = ['IPSL-CM6A-LR', 'OpenIFS-159', 'OpenIFS-511', 'CESM1-WACCM-SC']
+    # not consistent across experiments
+    NA = ['E3SMv1', 'ECHAM6.3_AWI']
 
     for item in models:
 

@@ -175,7 +175,8 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 
 # Calculate Eddy Feedback Parameter for reanalysis and Isca data
-def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hemis=False):
+def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hemis=False,
+                  reanalysis_slice=True):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
@@ -200,13 +201,14 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hem
         # default: [-90,90]
         ds = ds.sel(lat=slice(None,None,-1))
 
+    if reanalysis_slice:
+        ds = ds.sel(time=slice('1979', '2016'))
+
     # choose hemisphere
     if calc_south_hemis:
-        ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_dataset(ds, season='jas')
+        ds = data.seasonal_mean(ds, season='jas')
         latitude_slice=slice(-72., -24.)
     else:
-        ds = ds.sel(time=slice('1979', '2016'))
         ds = data.seasonal_mean(ds, season='djf')
         latitude_slice=slice(24.,72.)
 

@@ -457,7 +457,7 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100.,
 def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, latitude='NH',
                                 top_atmos=10., cut_poles=False, figsize=(6,6),
                                 title_name = '\\nabla_{\\phi} F_{\\phi}', take_seasonal=True,
-                                season='djf', which_div1='div1_pr'):
+                                which_div1='div1_pr'):
     """"
     Input: DataArrays of ubar and F_\\phi
             - Dims: (time, level, lat)
@@ -475,6 +475,16 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     if not correct_dims:
         ds = data.check_dimensions(ds, ignore_dim='lon')
 
+    # choose hemisphere
+    if latitude == 'NH':
+        ds = ds.where(ds.lat >= 0., drop=True)
+        rect_box = (25., 600.)
+        season='djf'
+    elif latitude == 'SH':
+        ds = ds.where(ds.lat <= 0., drop=True)
+        rect_box = (-75., 600.)
+        season='jas'
+
     # separate time into annual means
     # and use .load() to force the calculation now
     if take_seasonal:
@@ -488,14 +498,6 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
 
     # calculate correlation using built-in Xarray function
     corr = xr.corr(div1, ubar, dim='time')
-
-    # choose hemisphere
-    if latitude == 'NH':
-        corr = corr.where(corr.lat >= 0., drop=True)
-        rect_box = (25., 600.)
-    elif latitude == 'SH':
-        corr = corr.where(corr.lat <= 0., drop=True)
-        rect_box = (-75., 600.)
 
     # choose top of atmosphere
     corr = corr.where(corr.level >= top_atmos, drop=True)

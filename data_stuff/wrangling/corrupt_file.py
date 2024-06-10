@@ -8,7 +8,7 @@ import glob
 import xarray as xr
 
 # Load in file paths
-files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/pdSST-pdSIC/epfy/HadGEM3-GC31-MM_2files/*.nc')
+files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/1.6_pdSST-futArcSIC/ua/HadGEM3-GC31-MM_2files/*.nc')
 
 # Empty list for corrupt file paths
 bad_files = []
@@ -20,9 +20,12 @@ for item in files:
         dataset = xr.open_dataset(item)
         dataset.close()
     # if fails, append to list and print Exception
-    except OSError:
+    except OSError as e1:
         bad_files.append(item)
-        print('Corrupt file found.')
+        print(f'Corrupt file found: {e1}')
+    except ValueError as e2:
+        bad_files.append(item)
+        print(f'Corrupt file found: {e2}')
     else:
         print('No error found in this file.')
 
@@ -32,7 +35,7 @@ for item in files:
 #     file.write(item+'\n')
 # file.close()
 
-FILE_NAME = 'HadGEM3-MM_epfy_corrupt-files.txt'
+FILE_NAME = 'HadGEM3-MM_futArc_ua_corrupt-files.txt'
 with open(FILE_NAME, mode='w+', encoding="utf-8") as file:
     for item in bad_files:
         ensemble_member = os.path.basename(item)
