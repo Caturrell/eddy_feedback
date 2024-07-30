@@ -175,7 +175,7 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 
 # Calculate Eddy Feedback Parameter for reanalysis and Isca data
-def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hemis=False,
+def calculate_efp(ds, which_div1='div1', take_level_mean=True, calc_south_hemis=False,
                   reanalysis_slice=True):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
@@ -207,10 +207,10 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hem
     # choose hemisphere
     if calc_south_hemis:
         ds = data.seasonal_mean(ds, season='jas')
-        latitude_slice=slice(-72., -24.)
+        latitude_slice=slice(-72., -25.)
     else:
         ds = data.seasonal_mean(ds, season='djf')
-        latitude_slice=slice(24.,72.)
+        latitude_slice=slice(25.,72.)
 
     #-------------------------------------------------------------
 
@@ -228,14 +228,17 @@ def calculate_efp(ds, which_div1='div1_pr', take_level_mean=True, calc_south_hem
 
     # take EFP latitude slice
     corr = corr.sel(lat=latitude_slice)
+    corr = corr.sel(level=slice(600., 200.))
 
     if take_level_mean:
-        corr = corr.sel(level=slice(600., 200.))
         corr = corr.mean('level')
 
     # Calculate weighted latitude average
     weights = np.cos( np.deg2rad(corr.lat) )
     eddy_feedback_param = corr.weighted(weights).mean('lat')
+
+    if take_level_mean is False:
+        return eddy_feedback_param
 
     return eddy_feedback_param.values.round(4)
 
@@ -273,7 +276,6 @@ def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
         # take time average
         ds = ds.sel(time=slice('1979', '2016'))
         ds = data.seasonal_dataset(ds, season='jas')
-        ds = ds.mean('time')
         # take lat slice
         ds = ds.sel( lat=slice(-cut_pole, 0) )
     else:
@@ -376,7 +378,7 @@ def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=90, calc_s
 
 
 # Calculate EFP for PAMIP data without taking latitudinal average
-def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemis=False, 
+def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemis=False,
                             usual_mean=True, cut_pole=90):
 
     """ 
@@ -400,7 +402,7 @@ def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemi
         season='jas'
     else:
         ds = ds.sel( lat=slice(0, cut_pole) )
-        
+
     # Convert datetime to cftime, if required
     if not isinstance(ds.time.values[0], cftime.datetime):
         ds = ds.convert_calendar('noleap')
