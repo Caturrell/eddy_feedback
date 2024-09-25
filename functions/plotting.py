@@ -13,10 +13,10 @@ from matplotlib import patches
 import xarray as xr
 
 ## JASMIN SERVERS
-sys.path.append('/home/users/cturrell/documents/eddy_feedback')
+# sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 
 ## MATHS SERVERS
-# sys.path.append('/home/links/ct715/eddy_feedback/')
+sys.path.append('/home/links/ct715/eddy_feedback/')
 
 
 import functions.aos_functions as aos
@@ -179,7 +179,7 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     ## PRE-PLOTTING STUFF
 
     # define ubar
-    ubar = ds.ubar.mean('time')
+    ubar = ds.u.mean(('time', 'lon'))
 
     # calculate mean absolute value of max and min
     max_value = np.nanmax(ubar.values)
@@ -600,6 +600,52 @@ def plot_pamip_correlation(ds, take_seasonal=True, season='djf', logscale=True, 
         plt.gca().add_patch(rect)
 
     plt.show()
+    
+    
+def plot_isca_correlation(ds, both_hemis=False):
+    
+    """"
+    Input: DataArrays of ubar and F_\\phi with Isca data
+            - Dims: (time, level, lat)
+    
+    Output: contourf plot replicating Fig.6a in Smith et al., 2022 
+    """
+    
+    #-----------------------------------------------------------------------------------------------
 
+    # define variables
+    ubar = ds.ubar
+    div1 = ds.div1
 
+    # Calculate Pearson's correlation
+    corr = xr.corr(div1, ubar, dim='time')
+
+    if not both_hemis:
+        corr = corr.sel(lat=slice(0,90))
+    corr = corr.sel(level=slice(1000,10))
+
+    # Initiate plot
+    plt.figure(figsize=(6,6))
+
+    # actual plotting
+    plt.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r',
+                    levels=np.linspace(-0.9,0.9,19), extend='both')
+    plt.colorbar(location='bottom', orientation='horizontal', shrink=0.75, label='correlation',
+                extend='both', ticks=[-0.6,-0.2,0.2,0.6])
+
+    # axis alterations
+    plt.gca().invert_yaxis()
+    plt.xlabel('Latitude $(^\\circ N)$')
+    plt.yscale('log')
+    plt.ylabel('Log pressure (hPa)')
+    plt.title(f'$Corr(\\bar{{u}}, \\nabla_{{\\phi}} F_{{\\phi}})$')
+    from matplotlib import patches
+    rect = patches.Rectangle((25.,600.), 50, -400,
+                        fill=False, linewidth=2)
+    plt.gca().add_patch(rect)
+
+    plt.show()
+    
+    
+    
 #==================================================================================================

@@ -5,11 +5,13 @@ python /home/links/ct715/eddy_feedback/isca/scripts
 """
 
 import numpy as np
+import os
 
 from isca import DryCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 NCORES = 16
-RESOLUTION = 'T42', 25  # T42 horizontal resolution, 25 levels in pressure
+RESOLUTION = 'T42', 40  # (horizontal resolution, levels in pressure)
+dt = 600
 
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
@@ -29,8 +31,22 @@ cb.compile()  # compile the source code to working directory $GFDL_WORK/codebase
 # create an Experiment object to handle the configuration of model parameters
 # and output diagnostics
 
-exp_name = 'held_suarez_delh_omega'
+#--------------------------------------------------------------------------------------------------
+
+# SET PARAMETERS
+
+# Choose number of years
+YEARS = 10
+# Set equator-to-pole temperature gradient
+DELH = 60.                      # default: 60K
+
+exp_name = f'HS_{RESOLUTION[0]}_{YEARS}y_{int(DELH)}delh_t42-land'
 exp = Experiment(exp_name, codebase=cb)
+
+exp.inputfiles = [os.path.join(GFDL_BASE,'input/land_masks/era_land_t42.nc')]
+
+#--------------------------------------------------------------------------------------------------
+
 
 #Tell model how to write diagnostics
 diag = DiagTable()
@@ -47,14 +63,13 @@ diag.add_field('dynamics', 'vcomp', time_avg=True)
 diag.add_field('dynamics', 'temp', time_avg=True)  
 diag.add_field('dynamics', 'omega', time_avg=True)  
 
-
 exp.diag_table = diag
 
 # define namelist values as python dictionary
 # wrapped as a namelist object.
 namelist = Namelist({
     'main_nml': {
-        'dt_atmos': 600,
+        'dt_atmos': dt,
         'days': 30,
         'calendar': 'thirty_day',
         'current_date': [2000,1,1,0,0,0]
@@ -67,9 +82,9 @@ namelist = Namelist({
     'spectral_dynamics_nml': {
         'damping_order'           : 4,                      # default: 2
         'water_correction_limit'  : 200.e2,                 # default: 0
-        'reference_sea_level_press': 1.0e5,                  # default: 101325
+        'reference_sea_level_press': 1.0e5,                 # default: 101325
         'valid_range_t'           : [100., 800.],           # default: (100, 500)
-        'initial_sphum'           : 0.0,                  # default: 0
+        'initial_sphum'           : 0.0,                    # default: 0
         'vert_coord_option'       : 'uneven_sigma',         # default: 'even_sigma'
         'scale_heights': 6.0,
         'exponent': 7.5,
@@ -80,7 +95,7 @@ namelist = Namelist({
     'hs_forcing_nml': {
         't_zero': 315.,    # temperature at reference pressure at equator (default 315K)
         't_strat': 200.,   # stratosphere temperature (default 200K)
-        'delh': 60.,       # equator-pole temp gradient (default 60K)
+        'delh': DELH,       # equator-pole temp gradient (default 60K)
         'delv': 10.,       # lapse rate (default 10K)
         'eps': 0.,         # stratospheric latitudinal variation (default 0K)
         'sigma_b': 0.7,    # boundary layer friction height (default p/ps = sigma = 0.7)
@@ -91,6 +106,11 @@ namelist = Namelist({
         'kf':   -1.,       # BL momentum frictional timescale (default 1 days)
 
         'do_conserve_energy':   True,  # convert dissipated momentum into heat (default True)
+    },
+    
+    'spectral_init_cond_nml':{
+         'topog_file_name': 'era_land_t42.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
+         'topography_option': 'input' #!Tell model to get topography from input file
     },
 
     'diag_manager_nml': {
@@ -110,8 +130,14 @@ namelist = Namelist({
 exp.namelist = namelist
 exp.set_resolution(*RESOLUTION)
 
+#--------------------------------------------------------------------------------------------------
+
+
+# Calculate number of months
+num_months = 1 + (12 * YEARS)
+
 #Lets do a run!
 if __name__ == '__main__':
     exp.run(1, num_cores=NCORES, use_restart=False)
-    for i in range(2, 13):
+    for i in range(2, num_months):
         exp.run(i, num_cores=NCORES)  # use the restart i-1 by default

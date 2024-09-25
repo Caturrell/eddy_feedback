@@ -74,6 +74,43 @@ def check_variables(ds):
 
     return ds
 
+def check_coords(ds):
+    
+    """
+    
+    Check coordinates are in correct orientation
+    
+    Input: Xarray Dataset
+            - dimensions: (time, lon, lat, pfull)
+            - variables: ucomp, vcomp, temp
+    
+    Output: Xarray DataSet with required name changes
+            - dimensions: (time, lon, lat, level)
+            - variables: u,v,t
+    """
+    
+    # flip dimensions if required
+    if (ds.level[0] - ds.level[1]) < 0:
+        # default: [1000,0]
+        ds = ds.sel(level=slice(None,None,-1))
+    if (ds.lat[0] + ds.lat[1]) > 0:
+        # default: [-90,90]
+        ds = ds.sel(lat=slice(None,None,-1))
+        
+    return ds
+
+def data_checker1000(ds):
+    
+    """
+        Function that runs through all the above checks
+    """
+    
+    ds = check_dimensions(ds)
+    ds = check_variables(ds)
+    ds = check_coords(ds)
+    
+    return ds
+
 
 
 #==================================================================================================
@@ -197,11 +234,44 @@ def regrid_dataset_3x3(ds, check_dims=False):
     # Rename
     if check_dims:
         ds = check_dimensions(ds)
+        ds = check_variables(ds)
     # build regridder
     ds_out = xr.Dataset(
         {
             'lat': (['lat'], np.arange(-90, 93, 3)),
             'lon': (['lon'], np.arange(0,360, 3))
+        }
+    )
+
+    regridder = xe.Regridder(ds, ds_out, "bilinear")
+    ds_new = regridder(ds)
+
+    # verify that the result is the same as regridding each variable one-by-one
+    for k in ds.data_vars:
+        print(k, ds_new[k].equals(regridder(ds[k])))
+
+    print('Regridding and checks complete. Dataset ready.')
+    return ds_new
+
+# regrid data to chosen degree
+def regrid_dataset(ds, deg=3, check_dims=False):
+    """
+    Input: Xarray dataset
+            - Must contain (lat, lon)
+            
+    Output: Regridded Xarray dataset 
+            to 3 deg lat lon
+    
+    """
+    # Rename
+    if check_dims:
+        ds = check_dimensions(ds)
+        ds = check_variables(ds)
+    # build regridder
+    ds_out = xr.Dataset(
+        {
+            'lat': (['lat'], np.arange(-90, 90+deg, deg)),
+            'lon': (['lon'], np.arange(0,360, deg))
         }
     )
 
