@@ -323,6 +323,83 @@ def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
 
     return r
 
+def calculate_efp_correlation(ds, data_type=None, calc_south_hemis=False, reanalysis_years=slice('1979', '2016')):
+    """ 
+    Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
+            and divergence of northward EP flux (div1)
+                - dims: (year, level, latitude) 
+    
+    Output: EFP Value
+    
+    """
+    
+    ## DATA CHECKS
+    
+    # set different data types and the corresponding EP flux name
+    data_type_mapping = {
+        'reanalysis': 'div1_pr',
+        'reanalysis_qg': 'div1_qg',
+        'pamip': 'divF',
+        'isca': 'div1'
+    }
+    if data_type not in data_type_mapping:
+        raise ValueError(f'Invalid data_type: {data_type}. Expected one of {list(data_type_mapping.keys())}.')
+    which_div1 = data_type_mapping.get(data_type)
+    
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+    # Check variables are named as required
+    correct_vars = all(var_name in ds.variables for var_name in ['ubar', which_div1])
+    if not correct_vars:
+        ds = calculate_epfluxes_ubar(ds)
+
+    # flip dimensions if required
+    ds = data.check_coords(ds)
+    
+    #----------------------------------------------------------------------------------------------
+    
+    ## CONDITIONS
+    
+    # choose hemisphere
+    if calc_south_hemis:
+        latitude_slice=slice(-72., -25.)
+        season = 'jas'
+    elif not calc_south_hemis:
+        latitude_slice=slice(25.,72.)
+        season = 'djf'
+        
+    # variable to correlate over
+    corr_dim = 'time'    
+    
+    # data-specific requirements
+    if data_type in ('reanalysis', 'reanalysis_qg'):
+        ds = ds.sel(time=reanalysis_years)
+        ds = data.seasonal_mean(ds, season=season, cut_ends=True)
+
+    elif data_type == 'pamip':
+        # Convert datetime to cftime, if required
+        if not isinstance(ds.time.values[0], cftime.datetime):
+            ds = ds.convert_calendar('noleap')
+        # Take seasonal dataset when using ensembles
+        if 'ens_ax' in ds.dims:
+            ds = data.seasonal_dataset(ds, season=season)
+            ds = ds.mean('time')
+            corr_dim='ens_ax'
+        # some datasets have put all ensembles into separate years
+        else:
+            ds = data.seasonal_mean(ds, season=season)
+
+    #----------------------------------------------------------------------------------------------
+
+    ## CALCULATIONS
+
+    # Calculate Pearson's correlation
+    corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()
+    
+    return corr
+
 
 #--------------------------------------------------------------------------------------------------
 

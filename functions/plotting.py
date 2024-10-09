@@ -646,6 +646,181 @@ def plot_isca_correlation(ds, both_hemis=False):
 
     plt.show()
     
+def plot_correlation_components(ds, season='djf', reanalysis=False, pamip=False):
     
+    ## SET UP TIME
+
+    # If required, check dimensions and variables are labelled correctly
+    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+    if not correct_dims:
+        ds = data.check_dimensions(ds, ignore_dim='lon')
+
+    if reanalysis:
+        ds = ds.sel(time=slice('1979', '2016'))
+        ds = data.seasonal_mean(ds, season=season)
+    elif pamip:
+        ds = data.seasonal_dataset(ds, season=season)
+    else:
+        print('No data type selected. Choose between reanalysis or PAMIP data.')
+        
+    # set borders
+    if season == 'djf':
+        ds = ds.sel(lat=slice(0,90))
+    elif season == 'jas':
+        ds = ds.sel(lat=slice(-90,0))
+    else:
+        print('Incorrect season specified.')
+    ds = ds.sel(level=slice(1000,50))
+
+    # set variables
+    ubar = ds.ubar
+    div1 = ds.div1_pr
+
+    # calculate correlation using built-in Xarray function
+    corr = xr.corr(div1, ubar, dim='time')
+    
+    #----------------------------------------------------------------------------------------------
+    
+    ## PLOTTING TIME
+    
+    fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(11, 5), sharey=True)
+
+    # ax1 LHS
+    #---------
+    contour = ax1.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r',
+                        levels=np.linspace(-0.9, 0.9, 19), extend='both')
+    cbar = fig.colorbar(contour, ax=ax1, location='bottom', orientation='horizontal',
+                        shrink=0.75, label='correlation', extend='both', ticks=[-0.6, -0.2, 0.2, 0.6])
+
+    # axis alterations
+    ax1.invert_yaxis()
+    ax1.set_xlabel('Latitude $(^\\circ N)$')
+    ax1.set_yscale('linear')
+    ax1.set_ylabel('Pressure (hPa)')
+    ax1.set_title('$Corr(\\bar{{u}}, \\nabla_\\phi F_\\phi)$ - DJF')
+
+    # Plot EFP box in ax1
+    rect1 = patches.Rectangle((25., 600.), 50, -400, fill=False, linewidth=2)
+    ax1.add_patch(rect1)
+
+    # ax2 RHS
+    #----------
+
+    ds.ubar.mean('time').plot.contour(ax=ax2, levels=20, yincrease=False, colors='k')
+    ds.div1_pr.mean('time').plot.contourf(ax=ax2, levels=20, yincrease=False,
+                                            cbar_kwargs={'location': 'bottom', 'shrink': 0.55, 'label': 'DivFy'})
+    ax2.set_ylabel('')
+
+    # Plot EFP box in ax2
+    rect2 = patches.Rectangle((25., 600.), 50, -400, fill=False, linewidth=2, color='limegreen')
+    ax2.add_patch(rect2)
+
+    plt.tight_layout()
+    plt.show()
+    
+# Same as above but enables multiple plots
+def plot_multiple_correlation_components(datasets_dict, data_type=None, calc_south_hemis=False):
+    """
+    Plot correlation components for multiple datasets in a big subplot.
+
+    Parameters:
+    - datasets_dict: Dictionary of datasets to plot (keys are dataset labels, values are datasets).
+    - season: The season to consider ('djf' or 'jas').
+    - reanalysis: Whether the dataset is from reanalysis.
+    - pamip: Whether the dataset is from PAMIP.
+    """
+    
+    # set different data types and the corresponding EP flux name
+    data_type_mapping = {
+        'reanalysis': 'div1_pr',
+        'reanalysis_qg': 'div1_qg',
+        'pamip': 'divF',
+        'isca': 'div1'
+    }
+    if data_type not in data_type_mapping:
+        raise ValueError(f'Invalid data_type: {data_type}. Expected one of {list(data_type_mapping.keys())}.')
+    which_div1 = data_type_mapping.get(data_type)
+
+    # Number of datasets
+    N = len(datasets_dict)
+    
+    # Set up the figure with 2 columns per dataset
+    fig, axs = plt.subplots(nrows=N, ncols=2, figsize=(10,4*N), sharey=True)
+    
+    # If there's only one dataset, axs will not be a 2D array. This fixes that.
+    if N == 1:
+        axs = [axs]
+    
+    # Loop over the datasets and plot for each
+    for i, (label, ds) in enumerate(datasets_dict.items()):
+        
+        ## SET UP TIME
+        
+        # If required, check dimensions and variables are labelled correctly
+        correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+        if not correct_dims:
+            ds = data.check_dimensions(ds, ignore_dim='lon')
+            
+        # flip dimensions if required
+        ds = data.check_coords(ds)
+        
+        # Calculate Eddy Feedback Parameter (EFP) for the dataset
+        efp_value = ef.calculate_efp(ds, data_type=data_type, calc_south_hemis=calc_south_hemis)
+        
+        if 'ens_ax' in ds.dims:
+            mean = ('time', 'ens_ax')
+        else:
+            mean = ('time')
+        
+        # Set borders
+        if not calc_south_hemis:
+            ds = ds.sel(lat=slice(0,90))
+            season = 'djf'
+        else:
+            ds = ds.sel(lat=slice(-90,0))
+            season = 'jas'
+        ds = ds.sel(level=slice(1000,50))
+
+        corr = ef.calculate_efp_correlation(ds, data_type=data_type, calc_south_hemis=calc_south_hemis)
+        
+        
+        ## PLOTTING TIME
+
+        # Left-hand subplot (correlation)
+        ax1 = axs[i][0]
+        contour = ax1.contourf(corr.lat.values, corr.level.values, corr, cmap='RdBu_r',
+                               levels=np.linspace(-0.9, 0.9, 19), extend='both')
+        cbar = fig.colorbar(contour, ax=ax1, location='bottom', orientation='horizontal',
+                            shrink=0.75, label='correlation', extend='both', ticks=[-0.6, -0.2, 0.2, 0.6])
+
+        # Axis alterations
+        ax1.invert_yaxis()
+        ax1.set_xlabel('Latitude $(^\\circ N)$')
+        ax1.set_yscale('linear')
+        ax1.set_ylabel('Pressure (hPa)')
+        ax1.set_title(f'{label} ({efp_value}): $Corr(\\bar{{u}}, \\nabla_\\phi F_\\phi)$ - {season.upper()}')
+
+        # Plot EFP box
+        rect1 = patches.Rectangle((25., 600.), 50, -400, fill=False, linewidth=2)
+        ax1.add_patch(rect1)
+
+        # Right-hand subplot (mean fields)
+        ax2 = axs[i][1]
+        ds.ubar.mean(mean).plot.contour(ax=ax2, levels=20, yincrease=False, colors='k')
+        ds[which_div1].mean(mean).plot.contourf(ax=ax2, levels=20, yincrease=False,
+                                              cbar_kwargs={'location': 'bottom', 'shrink': 0.75, 'label': 'DivFy'})
+        ax2.set_title(f'{label} ({efp_value}): Zonal Mean - {season.upper()}')
+
+        # Plot EFP box
+        rect2 = patches.Rectangle((25., 600.), 50, -400, fill=False, linewidth=2, color='limegreen')
+        ax2.add_patch(rect2)
+
+        # Remove Y-label on the right-hand subplots
+        ax2.set_ylabel('')
+
+    # Adjust layout to avoid overlapping
+    plt.tight_layout()
+    plt.show()
+
     
 #==================================================================================================
