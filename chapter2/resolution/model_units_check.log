@@ -1,0 +1,56 @@
+2024-10-09 16:14:43,168 - INFO - Checking CESM1-WACCM-SC
+2024-10-09 16:14:44,455 - ERROR - ISSUE: CESM1-WACCM-SC - ua not found in dataset
+2024-10-09 16:14:44,456 - INFO - CESM1-WACCM-SC: ua: Variable not found
+2024-10-09 16:14:44,693 - ERROR - ISSUE: CESM1-WACCM-SC - epfy not found in dataset
+2024-10-09 16:14:44,694 - INFO - CESM1-WACCM-SC: epfy: Variable not found
+2024-10-09 16:14:44,694 - INFO - Checking CESM2
+2024-10-09 16:14:48,088 - INFO - CESM2: ua: m s-1
+2024-10-09 16:14:51,206 - INFO - CESM2: epfy: m3 s-2
+2024-10-09 16:14:51,206 - INFO - Checking CNRM-CM6-1
+2024-10-09 16:14:59,950 - INFO - CNRM-CM6-1: ua: m s-1
+2024-10-09 16:15:13,965 - INFO - CNRM-CM6-1: epfy: m^3/s^2
+2024-10-09 16:15:13,965 - INFO - Checking CanESM5
+2024-10-09 16:15:24,302 - INFO - CanESM5: ua: m s-1
+2024-10-09 16:15:33,154 - INFO - CanESM5: epfy: m3 s-2
+2024-10-09 16:15:33,155 - INFO - Checking E3SMv1
+2024-10-09 16:15:33,245 - ERROR - ISSUE: E3SMv1 - ua not found in dataset
+2024-10-09 16:15:33,245 - INFO - E3SMv1: ua: Variable not found
+2024-10-09 16:15:33,277 - ERROR - ISSUE: E3SMv1 - epfy not found in dataset
+2024-10-09 16:15:33,277 - INFO - E3SMv1: epfy: Variable not found
+2024-10-09 16:15:33,277 - INFO - Checking EC-EARTH3
+2024-10-09 16:15:38,681 - INFO - EC-EARTH3: ua: m s-1
+2024-10-09 16:15:44,399 - INFO - EC-EARTH3: epfy: m3 s-2
+2024-10-09 16:15:44,399 - INFO - Checking ECHAM6.3_AWI
+2024-10-09 16:15:48,334 - INFO - ECHAM6.3_AWI: ua: m s-1
+2024-10-09 16:15:50,436 - INFO - ECHAM6.3_AWI: epfy: m^3/s^2
+2024-10-09 16:15:50,437 - INFO - Checking FGOALS-f3-L
+2024-10-09 16:15:53,095 - INFO - FGOALS-f3-L: ua: m s-1
+2024-10-09 16:15:54,357 - INFO - FGOALS-f3-L: epfy: No units specified
+2024-10-09 16:15:54,357 - INFO - Checking HadGEM3-GC31-LL
+2024-10-09 16:16:21,857 - ERROR - ISSUE: HadGEM3-GC31-LL - ua not found in dataset
+2024-10-09 16:16:21,858 - INFO - HadGEM3-GC31-LL: ua: Variable not found
+2024-10-09 16:16:25,832 - INFO - HadGEM3-GC31-LL: epfy:  
+2024-10-09 16:16:25,832 - INFO - Checking HadGEM3-GC31-MM
+2024-10-09 16:16:37,001 - INFO - HadGEM3-GC31-MM: ua: m s-1
+2024-10-09 16:16:45,981 - INFO - HadGEM3-GC31-MM: epfy: m3 s-2
+2024-10-09 16:16:45,982 - INFO - Checking IPSL-CM6A-LR
+2024-10-09 16:16:46,080 - INFO - IPSL-CM6A-LR: ua: m s-1
+2024-10-09 16:16:46,092 - INFO - IPSL-CM6A-LR: epfy: No units specified
+2024-10-09 16:16:46,101 - INFO - Checking MIROC6
+2024-10-09 16:16:49,585 - INFO - MIROC6: ua: m s-1
+2024-10-09 16:16:52,748 - INFO - MIROC6: epfy: m3 s-2
+2024-10-09 16:16:52,749 - INFO - Checking MIROC6_mass
+2024-10-09 16:16:52,749 - ERROR - Error opening dataset for MIROC6_mass, variable ua: no files to open
+2024-10-09 16:16:54,819 - INFO - MIROC6_mass: epfy: m3 s-2
+2024-10-09 16:16:54,819 - INFO - Checking NorESM2-LM
+2024-10-09 16:17:01,905 - INFO - NorESM2-LM: ua: m s-1
+2024-10-09 16:17:07,924 - INFO - NorESM2-LM: epfy: m3 s-2
+2024-10-09 16:17:07,925 - INFO - Checking OpenIFS-1279
+2024-10-09 16:17:07,925 - ERROR - Error opening dataset for OpenIFS-1279, variable ua: no files to open
+2024-10-09 16:17:08,980 - INFO - OpenIFS-1279: epfy: m^3/s^2
+2024-10-09 16:17:08,980 - INFO - Checking OpenIFS-159
+2024-10-09 16:17:08,981 - ERROR - Error opening dataset for OpenIFS-159, variable ua: no files to open
+2024-10-09 16:17:22,521 - INFO - OpenIFS-159: epfy: m^3/s^2
+2024-10-09 16:17:22,522 - INFO - Checking OpenIFS-511
+2024-10-09 16:17:22,522 - ERROR - Error opening dataset for OpenIFS-511, variable ua: no files to open
+2024-10-09 16:17:37,435 - INFO - OpenIFS-511: epfy: m^3/s^2

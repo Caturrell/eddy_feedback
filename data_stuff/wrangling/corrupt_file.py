@@ -8,7 +8,7 @@ import glob
 import xarray as xr
 
 # Load in file paths
-files = glob.glob('/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/monthly/1.6_pdSST-futArcSIC/ua/HadGEM3-GC31-MM_2files/*.nc')
+files = glob.glob('/home/links/ct715/data_storage/PAMIP/monthly/1.1_pdSST-pdSIC/epfy/CanESM5/*.nc')
 
 # Empty list for corrupt file paths
 bad_files = []

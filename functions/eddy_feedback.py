@@ -120,7 +120,7 @@ def pressure_scaling(da, p0=1e3, multiply_factor=True):
 
 # Calculate divergence of northward component of EP flux
 def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_factor=True,
-                      save_divFphi='divF'):
+                      save_divFphi='divFy'):
 
     """
         Calculate divergence of northward component
@@ -137,7 +137,7 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     # define DataArray
     Fphi = ds[which_Fphi]                                                       # [m3 s-2]
@@ -203,7 +203,7 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
     # Check variables are named as required
     correct_vars = all(var_name in ds.variables for var_name in ['ubar', which_div1])
     if not correct_vars:
@@ -244,6 +244,8 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
         # some datasets have put all ensembles into separate years
         else:
             ds = data.seasonal_mean(ds, season=season)
+    else:
+        raise ValueError('Unknown data type being used.')
 
     #----------------------------------------------------------------------------------------------
 
@@ -290,7 +292,7 @@ def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     # flip dimensions if required
     ds = data.check_coords(ds)
@@ -349,7 +351,7 @@ def calculate_efp_correlation(ds, data_type=None, calc_south_hemis=False, reanal
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
     # Check variables are named as required
     correct_vars = all(var_name in ds.variables for var_name in ['ubar', which_div1])
     if not correct_vars:
@@ -425,7 +427,7 @@ def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=90, calc_s
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     # choose hemisphere
     if calc_south_hemis:
@@ -495,7 +497,7 @@ def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemi
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     # choose hemisphere
     if calc_south_hemis:

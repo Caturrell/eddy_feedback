@@ -6,6 +6,7 @@
 # import os
 import sys
 import warnings
+import cftime
 import numpy as np
 import xarray as xr
 import xesmf as xe
@@ -21,58 +22,110 @@ import functions.eddy_feedback as ef
 #----------------------
 
 # Rename dimensions in Dataset and check if ds contains Isca variable notation
-def check_dimensions(ds, ignore_dim=None):
+def check_dimensions(ds):
     """
     Input: Xarray Dataset with variety of dimension labels
-            - searches for 4 in particular. Look at aos function
-               for more details
+            - searches for 4 in particular (lon, lat, pres, time).
+            - Uses aos.FindCoordNames to get dimension labels.
     
-    Output: Xarray Dataset with required variable name changes
-            - Checks for Isca labelling
+    Output: Xarray Dataset with required dimension name changes.
+            - Renames Isca labels to standard names.
     """
 
     # search for dimension labels
     dims = aos.FindCoordNames(ds)
 
-    # rename variables using dict
-    if ignore_dim == 'lon':
-        rename = {dims['lat']: 'lat', dims['pres']: 'level'}
-    else:
-        rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'}
+    # base renaming dictionary
+    try:
+        rename_dict = {
+            dims['lon']: 'lon',
+            dims['lat']: 'lat',
+            dims['pres']: 'level'
+        }
+    except KeyError:
+        rename_dict = {
+            dims['lat']: 'lat',
+            dims['pres']: 'level'
+        }
 
-    # rename dataset
-    ds = ds.rename(rename)
+    # Apply renaming
+    return ds.rename(rename_dict)
 
-    return ds
+# def check_dimensions(ds, ignore_dim=None):
+#     """
+#     Input: Xarray Dataset with variety of dimension labels
+#             - searches for 4 in particular. Look at aos function
+#                for more details
+    
+#     Output: Xarray Dataset with required variable name changes
+#             - Checks for Isca labelling
+#     """
+
+#     # search for dimension labels
+#     dims = aos.FindCoordNames(ds)
+
+#     # rename variables using dict
+#     if ignore_dim == 'lon':
+#         rename = {dims['lat']: 'lat', dims['pres']: 'level'}
+#     else:
+#         rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'}
+
+#     # rename dataset
+#     ds = ds.rename(rename)
+
+#     return ds
 
 
 # Rename dimensions in Isca to suit my function needs
 def check_variables(ds):
     """
-    Input: Xarray Dataset produced by Isca simulation
-            - dimensions: (time, lon, lat, pfull)
-            - variables: ucomp, vcomp, temp
+    Input: Xarray Dataset from Isca or PAMIP simulation
+            - dimensions: (time, lon, lat, pfull) or (time, lon, lat, level)
+            - variables: ucomp, vcomp, temp (Isca) or ua, va, ta (PAMIP)
     
-    Output: Xarray DataSet with required name changes
+    Output: Xarray DataSet with renamed dimensions and variables
             - dimensions: (time, lon, lat, level)
-            - variables: u,v,t
+            - variables: u, v, t
     """
 
-    # if-statement for Isca data
-    if 'ucomp' in ds:
-        # Set renaming dict
-        rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
-    # if-statement for PAMIP data
-    elif 'ua' in ds:
-        # Set renaming dict
-        rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
-    else:
-        rename = {}
+    rename_dict = {
+        'ucomp': 'u',  # Isca u component
+        'vcomp': 'v',  # Isca v component
+        'temp': 't',   # Isca temperature
+        'ua': 'u',     # PAMIP u component
+        'va': 'v',     # PAMIP v component
+        'ta': 't'      # PAMIP temperature
+    }
 
-    # apply changes
-    ds = ds.rename(rename)
+    # Apply renaming for variables found in the dataset
+    return ds.rename({k: v for k, v in rename_dict.items() if k in ds})
 
-    return ds
+# def check_variables(ds):
+#     """
+#     Input: Xarray Dataset produced by Isca simulation
+#             - dimensions: (time, lon, lat, pfull)
+#             - variables: ucomp, vcomp, temp
+    
+#     Output: Xarray DataSet with required name changes
+#             - dimensions: (time, lon, lat, level)
+#             - variables: u,v,t
+#     """
+
+#     # if-statement for Isca data
+#     if 'ucomp' in ds:
+#         # Set renaming dict
+#         rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
+#     # if-statement for PAMIP data
+#     elif 'ua' in ds:
+#         # Set renaming dict
+#         rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
+#     else:
+#         rename = {}
+
+#     # apply changes
+#     ds = ds.rename(rename)
+
+#     return ds
 
 def check_coords(ds):
     
@@ -89,6 +142,10 @@ def check_coords(ds):
             - variables: u,v,t
     """
     
+    # Check pressure coords are [1000,0]
+    if ds.level.max() > 1000.00:
+        ds['level'] = ds['level'] / 100
+    
     # flip dimensions if required
     if (ds.level[0] - ds.level[1]) < 0:
         # default: [1000,0]
@@ -99,15 +156,17 @@ def check_coords(ds):
         
     return ds
 
-def data_checker1000(ds):
+def data_checker1000(ds, ignore_dim=None, check_vars=True):
     
     """
         Function that runs through all the above checks
     """
     
     ds = check_dimensions(ds)
-    ds = check_variables(ds)
     ds = check_coords(ds)
+    
+    if check_vars:
+        ds = check_variables(ds)
     
     return ds
 
@@ -220,6 +279,29 @@ def seasonal_mean(ds, cut_ends=False, season=None):
 #----------------------
 # DATASET PROCESSING
 #----------------------
+
+# change time for pamip data
+def change_to_cftime(da):
+    """ Takes DataArray and converts time to a common cftime """
+    
+    # sort out time by converting required datasets to cftime.NoLeap
+    # and ensure both vars have same date and time for monthly data
+    da = da.convert_calendar('noleap')
+    
+    # # Extract the time component
+    da_times = da['time'].values
+
+    # Function to change a date to the first of the month
+    def to_first_of_month(date):
+        return cftime.DatetimeNoLeap(date.year, date.month, 1, 0, 0, 0, 0, calendar=date.calendar)
+
+    # Apply the function to all dates
+    new_times = [to_first_of_month(t) for t in da_times]
+
+    # Replace the original time component with the new times
+    da['time'] = new_times
+    
+    return da
 
 # regrid PAMIP data
 def regrid_dataset_3x3(ds, check_dims=False):

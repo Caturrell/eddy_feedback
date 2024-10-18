@@ -381,7 +381,7 @@ def plot_variance(ds, variable='ubar', remove_poles=False, top_atmos=100.,
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     #-------------------------------------------------------------------
 
@@ -473,7 +473,7 @@ def plot_reanalysis_correlation(ds, label='DJF', logscale=True, show_rect=True, 
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     # choose hemisphere
     if latitude == 'NH':
@@ -554,7 +554,7 @@ def plot_pamip_correlation(ds, take_seasonal=True, season='djf', logscale=True, 
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     if take_seasonal:
         ds = data.seasonal_dataset(ds, season=season)
@@ -653,7 +653,7 @@ def plot_correlation_components(ds, season='djf', reanalysis=False, pamip=False)
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
     if not correct_dims:
-        ds = data.check_dimensions(ds, ignore_dim='lon')
+        ds = data.check_dimensions(ds)
 
     if reanalysis:
         ds = ds.sel(time=slice('1979', '2016'))
@@ -759,7 +759,7 @@ def plot_multiple_correlation_components(datasets_dict, data_type=None, calc_sou
         # If required, check dimensions and variables are labelled correctly
         correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
         if not correct_dims:
-            ds = data.check_dimensions(ds, ignore_dim='lon')
+            ds = data.check_dimensions(ds)
             
         # flip dimensions if required
         ds = data.check_coords(ds)
