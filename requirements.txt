@@ -1,0 +1,1 @@
+-e git+ssh://git@github.com/Caturrell/eddy_feedback.git@8926270111e03a1823ad33e21d45bd58c466a22a#egg=eddy_feedback
