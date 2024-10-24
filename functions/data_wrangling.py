@@ -51,30 +51,6 @@ def check_dimensions(ds):
     # Apply renaming
     return ds.rename(rename_dict)
 
-# def check_dimensions(ds, ignore_dim=None):
-#     """
-#     Input: Xarray Dataset with variety of dimension labels
-#             - searches for 4 in particular. Look at aos function
-#                for more details
-    
-#     Output: Xarray Dataset with required variable name changes
-#             - Checks for Isca labelling
-#     """
-
-#     # search for dimension labels
-#     dims = aos.FindCoordNames(ds)
-
-#     # rename variables using dict
-#     if ignore_dim == 'lon':
-#         rename = {dims['lat']: 'lat', dims['pres']: 'level'}
-#     else:
-#         rename = {dims['lon']: 'lon', dims['lat']: 'lat', dims['pres']: 'level'}
-
-#     # rename dataset
-#     ds = ds.rename(rename)
-
-#     return ds
-
 
 # Rename dimensions in Isca to suit my function needs
 def check_variables(ds):
@@ -99,33 +75,6 @@ def check_variables(ds):
 
     # Apply renaming for variables found in the dataset
     return ds.rename({k: v for k, v in rename_dict.items() if k in ds})
-
-# def check_variables(ds):
-#     """
-#     Input: Xarray Dataset produced by Isca simulation
-#             - dimensions: (time, lon, lat, pfull)
-#             - variables: ucomp, vcomp, temp
-    
-#     Output: Xarray DataSet with required name changes
-#             - dimensions: (time, lon, lat, level)
-#             - variables: u,v,t
-#     """
-
-#     # if-statement for Isca data
-#     if 'ucomp' in ds:
-#         # Set renaming dict
-#         rename = {'ucomp': 'u', 'vcomp': 'v', 'temp': 't'}
-#     # if-statement for PAMIP data
-#     elif 'ua' in ds:
-#         # Set renaming dict
-#         rename = {'ua': 'u', 'va': 'v', 'ta': 't'}
-#     else:
-#         rename = {}
-
-#     # apply changes
-#     ds = ds.rename(rename)
-
-#     return ds
 
 def check_coords(ds):
     
@@ -178,43 +127,38 @@ def data_checker1000(ds, ignore_dim=None, check_vars=True):
 # DATASET SUBSETTING
 #----------------------
 
-
-# Subset to seasonal datasets
 def seasonal_dataset(ds, season='djf', save_ds=False, save_location='./ds.nc'):
-    """ 
-    
-    MUST NOT USE WINTER SUBSET FOR MULTI-YEAR DATASETS
-        - PAMIP/model data is OK
-        - Don't use with reanalysis
-    
-    Input: Xarray dataset for full year
-    
-    Output: Xarray dataset with required season data 
+    """
+    Subset an Xarray dataset to the specified season.
+
+    Input: 
+    - ds: Xarray dataset for the full year.
+    - season: Season to extract ('djf', 'mam', 'jja', 'son', 'jas').
+    - save_ds: Whether to save the output dataset (default: False).
+    - save_location: Location to save the dataset if save_ds is True (default: './ds.nc').
+
+    Output: Xarray dataset with the required season data.
     
     """
+    # Define season-month mappings
+    season_months = {
+        'djf': [12, 1, 2],
+        'mam': [3, 4, 5],
+        'jja': [6, 7, 8],
+        'son': [9, 10, 11],
+        'jas': [7, 8, 9]  # PAMIP SH summer
+    }
 
-    # DJF (winter) sub-dataset
-    if season == 'djf':
-        ds = ds.sel(time=ds.time.dt.month.isin([12, 1, 2]))
-    # MAM (spring) dataset
-    if season == 'mam':
-        ds = ds.sel(time=ds.time.dt.month.isin([3, 4, 5]))
-    # JJA (summer) dataset
-    if season == 'jja':
-        ds = ds.sel(time=ds.time.dt.month.isin([6, 7, 8]))
-    # SON (autumn) dataset
-    if season == 'son':
-        ds = ds.sel(time=ds.time.dt.month.isin([9, 10, 11]))
+    if season in season_months:
+        ds = ds.sel(time=ds.time.dt.month.isin(season_months[season]))
+    else:
+        raise ValueError(f'Invalid input. Season {season} is not a valid option.')
 
-    # PAMIP SH summer
-    if season == 'jas':
-        ds = ds.sel(time=ds.time.dt.month.isin([7, 8, 9]))
-
-    # save new dataset if wanted
     if save_ds:
-        ds.to_netcdf(f'{save_location}')
+        ds.to_netcdf(save_location)
 
     return ds
+
 
 # Calculate annual means
 def annual_mean(ds):
@@ -230,48 +174,97 @@ def annual_mean(ds):
 
     return ds
 
-# Calculate annual means
-def seasonal_mean(ds, cut_ends=False, season=None):
-    """ 
-    Input: Xarray Dataset or DataArray (time, ...)
-            - MUST be full year dataset
+# # Calculate annual means
+# def seasonal_mean(ds, cut_ends=False, season=None):
+#     """ 
+#     Input: Xarray Dataset or DataArray (time, ...)
+#             - MUST be full year dataset
     
-    Output: Xarray Dataset or DataArray with seasonal mean calculated
+#     Output: Xarray Dataset or DataArray with seasonal mean calculated
+    
+#     """
+
+#     # If required, check dimensions and variables are labelled correctly
+#     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
+#     if not correct_dims:
+#         ds = check_dimensions(ds)
+
+#     # remove first Jan and Feb, and final Dec to ensure FULL seasons
+#     if cut_ends:
+#         # slice data from first March to final November
+#         # (assuming dataset is JanYYYY - DecYYYY)
+#         ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', \
+#                                     f'{ds.time.dt.year[-1].values}-11'))
+
+
+#     if season == 'jas':
+#         seasonal = ds.sel(time=ds.time.dt.month.isin([7,8,9]))
+#         seasonal = seasonal.groupby('time.year').mean('time')
+#         seasonal = seasonal.rename({'year': 'time'})
+#     else:
+#         # resample data to start 1st Dec and take monthly mean
+#         seasonal = ds.resample(time='QS-DEC').mean('time').load()
+
+#     # take winter season of set and cut off last 'season'
+#     if season == 'djf':
+#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([12]))
+#     elif season =='mam':
+#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([3]))
+#     elif season =='jja':
+#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([6]))
+#     elif season =='son':
+#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([9]))
+
+#     return seasonal
+
+def seasonal_mean(ds, cut_ends=False, season=None):
+    """
+    Calculate seasonal means for an Xarray dataset.
+
+    Input: 
+    - ds: Xarray Dataset or DataArray (must be a full-year dataset).
+    - cut_ends: If True, removes incomplete seasonal data at the start and end of the dataset.
+    - season: Season to compute the mean for ('djf', 'mam', 'jja', 'son', 'jas').
+
+    Output: Xarray Dataset or DataArray with seasonal means calculated.
     
     """
+    
+    if season == None:
+        raise ValueError(f'Invalid season: {season}. Choose valid seasonal months.')
+    
+    # Check and fix dimensions if necessary
+    if not all(dim in ds.dims for dim in ['time', 'level', 'lat']):
+        ds = check_dimensions(ds)
 
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-    if not correct_dims:
-        ds = check_dimensions(ds, ignore_dim='lon')
-
-    # remove first Jan and Feb, and final Dec to ensure FULL seasons
+    # Remove incomplete seasons if cut_ends is True
     if cut_ends:
-        # slice data from first March to final November
-        # (assuming dataset is JanYYYY - DecYYYY)
-        ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', \
-                                    f'{ds.time.dt.year[-1].values}-11'))
+        start_year = ds.time.dt.year[0].values
+        end_year = ds.time.dt.year[-1].values
+        ds = ds.sel(time=slice(f'{start_year}-03', f'{end_year}-11'))
 
+    # Season-specific means
+    if season == 'jas':
+        seasonal = ds.sel(time=ds.time.dt.month.isin([7, 8, 9]))
+    else:
+        seasonal = ds.resample(time='QS-DEC').mean('time')
+
+    # Further selection of specific months for certain seasons
+    season_months = {
+        'djf': 12,
+        'mam': 3,
+        'jja': 6,
+        'son': 9
+    }
+
+    if season in season_months:
+        seasonal = seasonal.sel(time=seasonal.time.dt.month == season_months[season])
 
     if season == 'jas':
-        seasonal = ds.sel(time=ds.time.dt.month.isin([7,8,9]))
-        seasonal = seasonal.groupby('time.year').mean('time')
-        seasonal = seasonal.rename({'year': 'time'})
-    else:
-        # resample data to start 1st Dec and take monthly mean
-        seasonal = ds.resample(time='QS-DEC').mean('time').load()
-
-    # take winter season of set and cut off last 'season'
-    if season == 'djf':
-        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([12]))
-    elif season =='mam':
-        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([3]))
-    elif season =='jja':
-        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([6]))
-    elif season =='son':
-        seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([9]))
+        seasonal = seasonal.groupby('time.year').mean('time').rename({'year': 'time'})
 
     return seasonal
+
 
 
 #==================================================================================================

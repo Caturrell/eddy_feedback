@@ -193,12 +193,23 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
     data_type_mapping = {
         'reanalysis': 'div1_pr',
         'reanalysis_qg': 'div1_qg',
-        'pamip': 'divF',
+        'pamip': None,              # handle pamip separately
         'isca': 'div1'
     }
     if data_type not in data_type_mapping:
         raise ValueError(f'Invalid data_type: {data_type}. Expected one of {list(data_type_mapping.keys())}.')
-    which_div1 = data_type_mapping.get(data_type)
+    
+    # catch other pamip definition
+    # Check if 'divF' or 'divFy' exists in the dataset and set which_div1
+    if data_type == 'pamip':
+        if 'divF' in ds.variables:
+            which_div1 = 'divF'
+        elif 'divFy' in ds.variables:
+            which_div1 = 'divFy'
+        else:
+            raise ValueError("Neither 'divF' nor 'divFy' found in dataset for pamip data type.")
+    else:
+        which_div1 = data_type_mapping.get(data_type)
     
     # If required, check dimensions and variables are labelled correctly
     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
