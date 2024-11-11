@@ -10,7 +10,7 @@ import os
 from isca import DryCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 NCORES = 16
-RESOLUTION = 'T85', 40  # (horizontal resolution, levels in pressure)
+RESOLUTION = 'T42', 40  # (horizontal resolution, levels in pressure)
 
 # select timestep based on chosen resolution
 timestep = {
