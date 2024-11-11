@@ -174,49 +174,8 @@ def annual_mean(ds):
 
     return ds
 
-# # Calculate annual means
-# def seasonal_mean(ds, cut_ends=False, season=None):
-#     """ 
-#     Input: Xarray Dataset or DataArray (time, ...)
-#             - MUST be full year dataset
-    
-#     Output: Xarray Dataset or DataArray with seasonal mean calculated
-    
-#     """
 
-#     # If required, check dimensions and variables are labelled correctly
-#     correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-#     if not correct_dims:
-#         ds = check_dimensions(ds)
-
-#     # remove first Jan and Feb, and final Dec to ensure FULL seasons
-#     if cut_ends:
-#         # slice data from first March to final November
-#         # (assuming dataset is JanYYYY - DecYYYY)
-#         ds = ds.sel(time=slice(f'{ds.time.dt.year[0].values}-3', \
-#                                     f'{ds.time.dt.year[-1].values}-11'))
-
-
-#     if season == 'jas':
-#         seasonal = ds.sel(time=ds.time.dt.month.isin([7,8,9]))
-#         seasonal = seasonal.groupby('time.year').mean('time')
-#         seasonal = seasonal.rename({'year': 'time'})
-#     else:
-#         # resample data to start 1st Dec and take monthly mean
-#         seasonal = ds.resample(time='QS-DEC').mean('time').load()
-
-#     # take winter season of set and cut off last 'season'
-#     if season == 'djf':
-#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([12]))
-#     elif season =='mam':
-#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([3]))
-#     elif season =='jja':
-#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([6]))
-#     elif season =='son':
-#         seasonal = seasonal.sel(time=seasonal.time.dt.month.isin([9]))
-
-#     return seasonal
-
+# Calculate seasonal means
 def seasonal_mean(ds, cut_ends=False, season=None):
     """
     Calculate seasonal means for an Xarray dataset.

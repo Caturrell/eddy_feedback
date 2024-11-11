@@ -255,6 +255,8 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
         # some datasets have put all ensembles into separate years
         else:
             ds = data.seasonal_mean(ds, season=season)
+    elif data_type == 'isca':
+        ds = ds
     else:
         raise ValueError('Unknown data type being used.')
 

@@ -10,8 +10,15 @@ import os
 from isca import DryCodeBase, DiagTable, Experiment, Namelist, GFDL_BASE
 
 NCORES = 16
-RESOLUTION = 'T42', 40  # (horizontal resolution, levels in pressure)
-dt = 600
+RESOLUTION = 'T85', 40  # (horizontal resolution, levels in pressure)
+
+# select timestep based on chosen resolution
+timestep = {
+    'T42': 600,
+    'T85': 300,
+    'T170': 150
+}
+dt = timestep[RESOLUTION[0]]
 
 # a CodeBase can be a directory on the computer,
 # useful for iterative development
@@ -57,10 +64,11 @@ diag.add_file('atmos_daily', 1, 'days', time_units='days')
 diag.add_field('dynamics', 'ps', time_avg=True)
 diag.add_field('dynamics', 'bk')
 diag.add_field('dynamics', 'pk')
+diag.add_field('dynamics', 'zsurf')
+diag.add_field('dynamics', 'temp', time_avg=True)
 
 diag.add_field('dynamics', 'ucomp', time_avg=True)  
-diag.add_field('dynamics', 'vcomp', time_avg=True)  
-diag.add_field('dynamics', 'temp', time_avg=True)  
+diag.add_field('dynamics', 'vcomp', time_avg=True)
 diag.add_field('dynamics', 'omega', time_avg=True)  
 
 exp.diag_table = diag
@@ -80,12 +88,12 @@ namelist = Namelist({
     },
 
     'spectral_dynamics_nml': {
-        'damping_order'           : 4,                      # default: 2
-        'water_correction_limit'  : 200.e2,                 # default: 0
+        'damping_order'           : 2,                      # default: 2
+        'water_correction_limit'  : 0,                      # default: 0
         'reference_sea_level_press': 1.0e5,                 # default: 101325
         'valid_range_t'           : [100., 800.],           # default: (100, 500)
         'initial_sphum'           : 0.0,                    # default: 0
-        'vert_coord_option'       : 'uneven_sigma',         # default: 'even_sigma'
+        'vert_coord_option'       : 'even_sigma',           # default: 'even_sigma'
         'scale_heights': 6.0,
         'exponent': 7.5,
         'surf_res': 0.5
@@ -138,6 +146,17 @@ num_months = 1 + (12 * YEARS)
 
 #Lets do a run!
 if __name__ == '__main__':
+    
+    print(f'\nThe experiment name is {exp_name}. Do you wish to continue?')
+    
+    # Pause the script and wait for user confirmation to continue
+    user_input = input("Press Enter to continue, or type 'exit' to stop: ")
+    if user_input.lower() == 'exit':
+        print("Exiting script.")
+        exit()  # Exits the script
+    else:
+        print("Continuing script...")
+    
     exp.run(1, num_cores=NCORES, use_restart=False)
     for i in range(2, num_months):
         exp.run(i, num_cores=NCORES)  # use the restart i-1 by default
