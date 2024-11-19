@@ -1,6 +1,6 @@
 """
 
-python /home/links/ct715/eddy_feedback/isca/scripts
+python /home/links/ct715/eddy_feedback/isca_scripts/held_suarez.py
 
 """
 
@@ -78,7 +78,7 @@ exp.diag_table = diag
 namelist = Namelist({
     'main_nml': {
         'dt_atmos': dt,
-        'days': 30,
+        'days': 360,
         'calendar': 'thirty_day',
         'current_date': [2000,1,1,0,0,0]
     },

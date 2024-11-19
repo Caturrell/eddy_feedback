@@ -105,7 +105,7 @@ def check_coords(ds):
         
     return ds
 
-def data_checker1000(ds, ignore_dim=None, check_vars=True):
+def data_checker1000(ds, check_vars=False):
     
     """
         Function that runs through all the above checks
