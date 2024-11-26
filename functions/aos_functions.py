@@ -240,10 +240,10 @@ def ComputeEPfluxDivXr(u,v,t,lon='infer',lat='infer',pres='infer',time='time',re
 	if not isinstance(wave,list) and wave < 0:
 		new_order = ['k'] + new_order
 	# give the DataArrays their names
-	ep1_cart.name, ep1_cart.units = 'epfy', 'm2 s-2'
-	ep2_cart.name. ep2_cart.units = 'epfz', 'm.hPa s-2'
-	div1.name, div1.units = 'divFy', 'm s-2'
-	div2.name, div2.units = 'divFz', 'm s-2'
+	ep1_cart.name = 'epfy'
+	ep2_cart.name = 'epfz'
+	div1.name = 'divFy'
+	div2.name = 'divFz'
 	return ep1_cart.transpose(*new_order),ep2_cart.transpose(*new_order),div1.transpose(*new_order),div2.transpose(*new_order)
 
 

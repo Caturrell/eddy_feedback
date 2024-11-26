@@ -355,6 +355,7 @@ def plot_epfluxes_div(ds, label='EP flux and northward divergence of EP Flux', w
         plt.gca().add_patch(rect)
 
     plt.show()
+    
 
 
 

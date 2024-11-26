@@ -4,6 +4,7 @@
 """
 # pylint: disable=invalid-name
 import cftime
+import warnings
 import numpy as np
 import xarray as xr
 
@@ -177,7 +178,7 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 # Calculate Eddy Feedback Parameter for reanalysis and Isca data
 def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=True,
-                  reanalysis_years=slice('1979', '2016')):
+                  reanalysis_years=slice('1979', '2016'), which_div1='div1_pr'):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
@@ -191,10 +192,10 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
     
     # set different data types and the corresponding EP flux name
     data_type_mapping = {
-        'reanalysis': 'div1_pr',
+        'reanalysis': which_div1,
         'reanalysis_qg': 'div1_qg',
         'pamip': None,              # handle pamip separately
-        'isca': 'div1'
+        'isca': 'divFy'
     }
     if data_type not in data_type_mapping:
         raise ValueError(f'Invalid data_type: {data_type}. Expected one of {list(data_type_mapping.keys())}.')
@@ -264,27 +265,27 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
 
     ## CALCULATIONS
 
-    # Calculate Pearson's correlation
-    corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()
+    try:
+        # Example of suppressing warnings locally
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+            # Calculation prone to RuntimeWarning
+            corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()
+            corr = corr**2
 
-    # correlation squared
-    corr = corr**2
+        corr = corr.sel(lat=latitude_slice)
+        corr = corr.sel(level=slice(600., 200.))
 
-    # take EFP latitude slice
-    corr = corr.sel(lat=latitude_slice)
-    corr = corr.sel(level=slice(600., 200.))
+        if take_level_mean:
+            corr = corr.mean('level')
 
-    if take_level_mean:
-        corr = corr.mean('level')
+        weights = np.cos(np.deg2rad(corr.lat))
+        eddy_feedback_param = corr.weighted(weights).mean('lat')
 
-    # Calculate weighted latitude average
-    weights = np.cos( np.deg2rad(corr.lat) )
-    eddy_feedback_param = corr.weighted(weights).mean('lat')
-
-    if take_level_mean is False:
-        return eddy_feedback_param
-
-    return eddy_feedback_param.values.round(4)
+        return eddy_feedback_param.values.round(4)
+    
+    except Exception as e:
+        raise RuntimeError(f"An error occurred during calculation: {e}")
 
 # Calculate EFP without taking the latitude average
 def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,

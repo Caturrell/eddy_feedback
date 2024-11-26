@@ -7,6 +7,7 @@
 import sys
 import warnings
 import cftime
+import datetime
 import numpy as np
 import xarray as xr
 import xesmf as xe

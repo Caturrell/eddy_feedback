@@ -1,0 +1,19 @@
+2024-11-25 09:54:43,403 - INFO - Starting EFP calculation
+2024-11-25 09:54:43,404 - DEBUG - Checking data type...
+2024-11-25 09:54:43,426 - DEBUG - Incorrect dimensions found, running check_dimensions...
+2024-11-25 09:54:43,474 - DEBUG - Applying conditions...
+2024-11-25 09:54:43,475 - DEBUG - Handling reanalysis data...
+2024-11-25 09:54:43,928 - DEBUG - Starting calculations...
+2024-11-25 09:54:44,209 - WARNING - /home/links/ct715/miniforge3/envs/eddy/lib/python3.12/site-packages/dask/array/numpy_compat.py:51: RuntimeWarning: invalid value encountered in divide
+2024-11-25 09:54:44,215 - DEBUG - Correlation calculated: <xarray.DataArray (level: 37, lat: 145)>
+array([[nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       ...,
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan],
+       [nan, nan, nan, ..., nan, nan, nan]])
+Coordinates:
+  * level    (level) float32 1e+03 975.0 950.0 925.0 900.0 ... 5.0 3.0 2.0 1.0
+  * lat      (lat) float32 -90.0 -88.75 -87.5 -86.25 ... 86.25 87.5 88.75 90.0
+2024-11-25 09:54:44,221 - INFO - EFP calculation completed successfully
