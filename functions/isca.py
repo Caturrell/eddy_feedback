@@ -67,11 +67,10 @@ def standardise_isca_data(exp_name, path_to_dir):
         )
         
         # run data through my data checker (to ensure dims are named consistently)
-        logging.info('Datasets open. Processing data...')
         dataset = data.data_checker1000(dataset)
         
         # save dataset
-        logging.info('Data processed. Saving as one netCDF file...')
+        logging.info('Datasets open and data processed. Saving as one netCDF file...')
         dataset.to_netcdf(save_netCDF)
         
         # move raw data to processed folder
@@ -98,7 +97,6 @@ def create_EFP_components_dataset(exp_name, path_to_dir):
     path_to_dataset = PATH / exp_folder 
     
     # open dataset and choose desired variables
-    logging.info('Opening dataset and subsetting data...')
     ds = xr.open_mfdataset(
         path_to_dataset / dataset_name,
         parallel=True,
@@ -111,7 +109,7 @@ def create_EFP_components_dataset(exp_name, path_to_dir):
     ds = data.data_checker1000(ds, check_vars=True)
     
     # Calculate EP fluxes
-    logging.info('Variables chosen and renamed. Calculating EP fluxes...')
+    logging.info('Dataset open and initial checks complete. Calculating EP fluxes...')
     ds = ef.calculate_epfluxes_ubar(ds)
     ds = ds.rename({
         'ep1': 'epfy',

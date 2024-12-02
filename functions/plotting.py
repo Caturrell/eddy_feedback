@@ -139,7 +139,8 @@ def plot_ubar(ds, label='Zonal-mean zonal wind', figsize=(9,5),
 def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsize=(9,5),
                      latitude=None, top_atmos=0., orientation='horizontal', location='bottom',
                      extend='both', shrink=0.5, levels=21, skip_lat=1, skip_pres=1, yscale='linear',
-                     round_sf=None, savefig=False, fig_label=None, season=None, plot_arrows=True):
+                     round_sf=None, savefig=False, fig_label=None, season=None, plot_arrows=True,
+                     arrow_loc=(0.85,1.05)):
 
     """
     Input: Xarray DataSet containing ubar and epfluxes
@@ -217,8 +218,8 @@ def plot_ubar_epflux(ds, label='Meridional plane zonal wind and EP flux', figsiz
     if plot_arrows:
         Fphi = ds.ep1.mean(('time')).isel(skip)
         Fp = ds.ep2.mean(('time')).isel(skip)
-        aos.PlotEPfluxArrows(lat, p, Fphi, Fp,
-                     fig, ax, pivot='mid', yscale=yscale)
+        aos.PlotEPfluxArrows(lat, p, Fphi, Fp, fig, ax, 
+                             pivot='mid', arrow_loc=arrow_loc, yscale=yscale)
     else:
         plt.gca().invert_yaxis()
         plt.yscale(yscale)

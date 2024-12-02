@@ -4,7 +4,8 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 
-def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, pivot='tail',scale=None,quiv_args=None):
+def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',yscale='linear',invert_y=True, newax=False, 
+                     pivot='tail', arrow_loc=(0.85,1.05), scale=None,quiv_args=None):
 	"""Correctly scales the Eliassen-Palm flux vectors for plotting on a latitude-pressure or latitude-height axis.
 		x,y,ep1,ep2 assumed to be xarray.DataArrays.
 
@@ -97,7 +98,7 @@ def PlotEPfluxArrows(x,y,ep1,ep2,fig,ax,xlim=None,ylim=None,xscale='linear',ysca
 	else:
 		U = scale
 	if U is not None: # when running inside a script, the figure might not exist and therefore U is None
-		ax.quiverkey(Q,0.85,1.05,U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
+		ax.quiverkey(Q,arrow_loc[0],arrow_loc[1],U/width,label=r'{0:.1e}$\,m^3$'.format(U),labelpos='E',coordinates='axes')
 	if invert_y:
 		ax.invert_yaxis()
 	if xlim is not None:

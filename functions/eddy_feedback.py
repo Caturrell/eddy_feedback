@@ -29,14 +29,8 @@ def calculate_ubar(ds):
             calculated and added as variable
     """
 
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-    # Check variables are named as required
-    correct_vars = all(var_name in ds.variables for var_name in ['u', 'v', 't'])
-    if not correct_vars:
-        ds = data.check_variables(ds)
+    # Run data through data checker
+    ds = data.data_checker1000(ds)
         
     # Calculate longitudinal mean for ubar
     ds['ubar'] = ds.u.mean('lon')
@@ -58,14 +52,8 @@ def calculate_epfluxes_ubar(ds, primitive=True):
 
     ## CONDITIONS
 
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'lon'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-    # Check variables are named as required
-    correct_vars = all(var_name in ds.variables for var_name in ['u', 'v', 't'])
-    if not correct_vars:
-        ds = data.check_variables(ds)
+    # Run data through data checker
+    ds = data.data_checker1000(ds)
 
 
     # check if ubar is in dataset also
