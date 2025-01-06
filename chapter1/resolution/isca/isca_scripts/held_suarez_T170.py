@@ -1,6 +1,6 @@
 """
 
-python /home/links/ct715/eddy_feedback/isca_scripts/held_suarez.py
+python /home/links/ct715/eddy_feedback/chapter1/resolution/isca/isca_scripts/held_suarez_T170.py
 
 """
 
@@ -14,7 +14,9 @@ RESOLUTION = 'T170', 40  # (horizontal resolution, levels in pressure)
 
 # select timestep based on chosen resolution
 timestep = {
+    'T21': 1200,
     'T42': 600,
+    'T63': 450,
     'T85': 300,
     'T170': 150
 }
@@ -44,10 +46,8 @@ cb.compile()  # compile the source code to working directory $GFDL_WORK/codebase
 
 # Choose number of years
 YEARS = 100
-# Set equator-to-pole temperature gradient
-DELH = 60.                      # default: 60K
 
-exp_name = f'HS_{RESOLUTION[0]}_{YEARS}y_{int(DELH)}delh'
+exp_name = f'HS_{RESOLUTION[0]}_{YEARS}y'
 exp = Experiment(exp_name, codebase=cb)
 
 # exp.inputfiles = [os.path.join(GFDL_BASE,'input/land_masks/era_land_t42.nc')]
@@ -103,7 +103,7 @@ namelist = Namelist({
     'hs_forcing_nml': {
         't_zero': 315.,    # temperature at reference pressure at equator (default 315K)
         't_strat': 200.,   # stratosphere temperature (default 200K)
-        'delh': DELH,       # equator-pole temp gradient (default 60K)
+        'delh': 60.,       # equator-pole temp gradient (default 60K)
         'delv': 10.,       # lapse rate (default 10K)
         'eps': 0.,         # stratospheric latitudinal variation (default 0K)
         'sigma_b': 0.7,    # boundary layer friction height (default p/ps = sigma = 0.7)
@@ -116,10 +116,10 @@ namelist = Namelist({
         'do_conserve_energy':   True,  # convert dissipated momentum into heat (default True)
     },
     
-    'spectral_init_cond_nml':{
-         'topog_file_name': 'era_land_t42.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
-         'topography_option': 'input' #!Tell model to get topography from input file
-    },
+    # 'spectral_init_cond_nml':{
+    #      'topog_file_name': 'era_land_t42.nc', #Name of land input file, which will also contain topography if generated using Isca's `land_file_generator_fn.py' routine.
+    #      'topography_option': 'input' #!Tell model to get topography from input file
+    # },
 
     'diag_manager_nml': {
         'mix_snapshot_average_fields': False
@@ -141,9 +141,6 @@ exp.set_resolution(*RESOLUTION)
 #--------------------------------------------------------------------------------------------------
 
 
-# Calculate number of months
-num_months = 1 + (12 * YEARS)
-
 #Lets do a run!
 if __name__ == '__main__':
     
@@ -158,5 +155,5 @@ if __name__ == '__main__':
         print("Continuing script...")
     
     exp.run(1, num_cores=NCORES, use_restart=False)
-    for i in range(2, num_months):
+    for i in range(2, YEARS+1):
         exp.run(i, num_cores=NCORES)  # use the restart i-1 by default

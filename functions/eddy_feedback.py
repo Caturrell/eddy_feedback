@@ -68,10 +68,10 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ucomp, vcomp, temp, do_ubar=primitive)
 
     # save variables to dataset
-    ds['ep1'] = (ep1.dims, ep1.values)
-    ds['ep2'] = (ep2.dims, ep2.values)
-    ds['div1'] = (div1.dims, div1.values)
-    ds['div2'] = (div2.dims, div2.values)
+    ds['epfy'] = (ep1.dims, ep1.values)
+    ds['epfz'] = (ep2.dims, ep2.values)
+    ds['divFy'] = (div1.dims, div1.values)
+    ds['divFz'] = (div2.dims, div2.values)
 
     # load dataset here
     ds = ds.load()
@@ -123,10 +123,8 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
         Out: xr.DataArray Div_Fphi
     """
 
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
+    # Run data through data checker
+    ds = data.data_checker1000(ds)
 
     # define DataArray
     Fphi = ds[which_Fphi]                                                       # [m3 s-2]
@@ -159,28 +157,20 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 #==================================================================================================
 
-#-----------------------------------
-# CALCULATE EDDY FEEDBACK PARAMETER
-#-----------------------------------
+#--------------------------------------
+# HELPER FUNCTIONS FOR CALCULATING EFP
+#--------------------------------------
 
-
-# Calculate Eddy Feedback Parameter for reanalysis and Isca data
-def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=True,
-                  reanalysis_years=slice('1979', '2016'), which_div1='div1_pr'):
-    """ 
-    Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
-            and divergence of northward EP flux (div1)
-                - dims: (year, level, latitude) 
-    
-    Output: EFP Value
+def _check_data_type_divFy(ds, data_type):
     
     """
-    
-    ## DATA CHECKS
+        Automatically sets the variable name for DivFy,
+        depending on data type.
+    """
     
     # set different data types and the corresponding EP flux name
     data_type_mapping = {
-        'reanalysis': which_div1,
+        'reanalysis': 'divFy',
         'reanalysis_qg': 'div1_qg',
         'pamip': None,              # handle pamip separately
         'isca': 'divFy'
@@ -200,134 +190,196 @@ def calculate_efp(ds, data_type=None, calc_south_hemis=False, take_level_mean=Tr
     else:
         which_div1 = data_type_mapping.get(data_type)
     
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-    # Check variables are named as required
-    correct_vars = all(var_name in ds.variables for var_name in ['ubar', which_div1])
-    if not correct_vars:
-        ds = calculate_epfluxes_ubar(ds)
+    return which_div1
+    
+def _process_specific_efp_data(ds, data_type, season, reanalysis_years=slice('1979', '2016')):
+    """
+    Process dataset for specific data types and seasonal settings.
 
-    # flip dimensions if required
-    ds = data.check_coords(ds)
-    
-    #----------------------------------------------------------------------------------------------
-    
-    ## CONDITIONS
-    
-    # choose hemisphere
-    if calc_south_hemis:
-        latitude_slice=slice(-72., -25.)
-        season = 'jas'
-    elif not calc_south_hemis:
-        latitude_slice=slice(25.,72.)
-        season = 'djf'
-        
-    # variable to correlate over
-    corr_dim = 'time'    
-    
-    # data-specific requirements
+    Parameters:
+    ----------
+    ds : xarray.Dataset
+        Input dataset to process.
+    data_type : str
+        Type of dataset ('reanalysis', 'reanalysis_qg', 'pamip', 'isca').
+    season : str
+        Season to extract (e.g., 'djf', 'jas').
+    reanalysis_years : slice, optional
+        Time range for reanalysis data (default: slice('1979', '2016')).
+
+    Returns:
+    -------
+    xarray.Dataset
+        Processed dataset.
+    str
+        Dimension for correlation ('time' or 'ens_ax').
+    """
+    corr_dim = 'time'  # Default dimension for correlation
+
     if data_type in ('reanalysis', 'reanalysis_qg'):
         ds = ds.sel(time=reanalysis_years)
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
 
     elif data_type == 'pamip':
-        # Convert datetime to cftime, if required
+        # Ensure time coordinate uses the correct calendar
         if not isinstance(ds.time.values[0], cftime.datetime):
             ds = ds.convert_calendar('noleap')
-        # Take seasonal dataset when using ensembles
+        
+        # Handle ensembles if present
         if 'ens_ax' in ds.dims:
             ds = data.seasonal_dataset(ds, season=season)
             ds = ds.mean('time')
-            corr_dim='ens_ax'
-        # some datasets have put all ensembles into separate years
-        else:
+            corr_dim = 'ens_ax'
+        else:  # Handle datasets with ensembles as separate years
             ds = data.seasonal_mean(ds, season=season)
+
     elif data_type == 'isca':
-        ds = ds
+        ds = data.seasonal_mean(ds, season=season)
+
     else:
-        raise ValueError('Unknown data type being used.')
+        raise ValueError(f"Unsupported data type: {data_type}. Expected 'reanalysis', 'reanalysis_qg', 'pamip', or 'isca'.")
 
-    #----------------------------------------------------------------------------------------------
+    return ds, corr_dim
 
-    ## CALCULATIONS
+    
+def _process_hemisphere(ds, calc_south_hemis):
+    """
+    Helper function to handle hemisphere-specific slicing and seasonal processing.
 
+    Parameters:
+    ----------
+    ds : xarray.Dataset
+        Dataset to process.
+    calc_south_hemis : bool
+        If True, process for the Southern Hemisphere.
+    cut_pole : int or float
+        Latitude cutoff from the pole.
+
+    Returns:
+    -------
+    xarray.Dataset
+        Processed dataset for the selected hemisphere and season.
+    """
+    
+    season = 'jas' if calc_south_hemis else 'djf'
+    lat_slice = slice(-90, 0) if calc_south_hemis else slice(0, 90)
+    efp_lat_slice = slice(-75, -25) if calc_south_hemis else slice(25,75)
+
+    return ds.sel(lat=lat_slice), season, efp_lat_slice
+
+
+#==================================================================================================
+
+#-----------------------------------
+# CALCULATE EDDY FEEDBACK PARAMETER
+#-----------------------------------
+
+
+def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, which_div1=None):
+    """
+    Calculate Eddy Feedback Parameter for reanalysis and Isca data.
+
+    Parameters:
+    ----------
+    ds : xarray.Dataset
+        Dataset containing zonal-mean zonal wind (`ubar`) and divergence of northward EP flux (`which_div1`).
+        Expected dimensions: (time, level, latitude).
+    data_type : str
+        Type of data ('reanalysis', 'reanalysis_qg', 'pamip', 'isca').
+    calc_south_hemis : bool, optional
+        If True, calculate for the Southern Hemisphere (default: False).
+    take_level_mean : bool, optional
+        If True, average over levels after calculations (default: True).
+    reanalysis_years : slice, optional
+        Years to consider for reanalysis datasets (default: slice('1979', '2016')).
+    which_div1 : str, optional
+        Variable name for the divergence of northward EP flux (default: 'div1_pr').
+
+    Returns:
+    -------
+    float
+        Eddy Feedback Parameter (rounded to 4 decimal places).
+    """
+    # Validate and preprocess data
+    ds = data.data_checker1000(ds)
+    if which_div1 != None:
+        pass
+    else:
+        which_div1 = _check_data_type_divFy(ds, data_type=data_type)
+
+
+    # Ensure required variables exist
+    if not all(var in ds.variables for var in ['ubar', which_div1]):
+        ds = calculate_epfluxes_ubar(ds)
+
+    # Apply hemisphere-specific processing
+    ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
+
+    # Data-specific preprocessing
+    ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
+    
+    #---------------------------------
+    # Compute Eddy Feedback Parameter
+    
     try:
-        # Example of suppressing warnings locally
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            # Calculation prone to RuntimeWarning
-            corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()
-            corr = corr**2
+            corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
 
-        corr = corr.sel(lat=latitude_slice)
-        corr = corr.sel(level=slice(600., 200.))
-
+        corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
         if take_level_mean:
             corr = corr.mean('level')
 
         weights = np.cos(np.deg2rad(corr.lat))
-        eddy_feedback_param = corr.weighted(weights).mean('lat')
+        efp = corr.weighted(weights).mean('lat')
 
-        return eddy_feedback_param.values.round(4)
-    
+        return efp.values.round(4)
     except Exception as e:
-        raise RuntimeError(f"An error occurred during calculation: {e}")
+        raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
 
-# Calculate EFP without taking the latitude average
-def calculate_efp_latitude(ds, calc_south_hemis=False, cut_pole=90,
-                                which_div1='div1', level_mean=True):
 
-    """ 
-    Input: Xarray Dataset containing ubar and div1 
-            - either div1_pr or div1_qg 
-            - dims: (time, level, lat)
-                - lat: [-90,90]; level: [1000,0] 
-
-    Output: Plot showing EFP over selected latitudes
-    
+def calculate_efp_latitude(ds, calc_south_hemis=False, which_div1='div1_pr', take_level_mean=True):
     """
+    Calculate the Eddy Feedback Parameter (EFP) for specific latitudes without taking a latitude average.
 
-    ## CONDITIONS
+    Parameters:
+    ----------
+    ds : xarray.Dataset
+        Dataset containing `ubar` and `which_div1` variables.
+        Expected dimensions: (time, level, latitude).
+    calc_south_hemis : bool, optional
+        If True, calculate for the Southern Hemisphere (default: False).
+    cut_pole : int or float, optional
+        Latitude cutoff from the pole (default: 90, full hemisphere).
+    which_div1 : str, optional
+        Variable name for the divergence of northward EP flux (default: 'div1').
+    level_mean : bool, optional
+        If True, average over levels after calculations (default: True).
 
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
+    Returns:
+    -------
+    xarray.DataArray
+        Eddy Feedback Parameter squared over the selected latitudes.
+    """
+    # Validate and preprocess data
+    ds = data.data_checker1000(ds)
 
-    # flip dimensions if required
-    ds = data.check_coords(ds)
+    # Apply hemisphere-specific processing
+    ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
+    ds = data.seasonal_mean(ds, season=season)
 
-    # choose hemisphere
-    if calc_south_hemis:
-        # take time average
-        ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_dataset(ds, season='jas')
-        # take lat slice
-        ds = ds.sel( lat=slice(-cut_pole, 0) )
-    else:
-        # take time avg
-        ds = ds.sel(time=slice('1979', '2016'))
-        ds = data.seasonal_mean(ds, season='djf')
-        # take lat slice
-        ds = ds.sel( lat=slice(0, cut_pole) )
-
-    #----------------------------------------------------------------------
-
-    ## Calculations
+    # Correlation and variance calculation
     corr = xr.corr(ds[which_div1], ds['ubar'], dim='time')
     corr = corr.sel(level=slice(600., 200.))
 
-    if level_mean:
+    if take_level_mean:
         corr = corr.mean('level')
 
-    # calculate variance explained
-    r = corr**2
+    # Return the variance explained (EFP)
+    return corr**2
 
-    return r
 
-def calculate_efp_correlation(ds, data_type=None, calc_south_hemis=False, reanalysis_years=slice('1979', '2016')):
+def calculate_efp_correlation(ds, data_type=None, calc_south_hemis=False, which_div1='div1_pr'):
     """ 
     Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
             and divergence of northward EP flux (div1)
@@ -337,210 +389,27 @@ def calculate_efp_correlation(ds, data_type=None, calc_south_hemis=False, reanal
     
     """
     
-    ## DATA CHECKS
-    
-    # set different data types and the corresponding EP flux name
-    data_type_mapping = {
-        'reanalysis': 'div1_pr',
-        'reanalysis_qg': 'div1_qg',
-        'pamip': 'divF',
-        'isca': 'div1'
-    }
-    if data_type not in data_type_mapping:
-        raise ValueError(f'Invalid data_type: {data_type}. Expected one of {list(data_type_mapping.keys())}.')
-    which_div1 = data_type_mapping.get(data_type)
-    
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-    # Check variables are named as required
-    correct_vars = all(var_name in ds.variables for var_name in ['ubar', which_div1])
-    if not correct_vars:
+    # Validate and preprocess data
+    ds = _check_data_type_divFy(ds, data_type=data_type)
+    ds = data.data_checker1000(ds)
+
+    # Ensure required variables exist
+    if not all(var in ds.variables for var in ['ubar', which_div1]):
         ds = calculate_epfluxes_ubar(ds)
 
-    # flip dimensions if required
-    ds = data.check_coords(ds)
-    
-    #----------------------------------------------------------------------------------------------
-    
-    ## CONDITIONS
-    
-    # choose hemisphere
-    if calc_south_hemis:
-        latitude_slice=slice(-72., -25.)
-        season = 'jas'
-    elif not calc_south_hemis:
-        latitude_slice=slice(25.,72.)
-        season = 'djf'
-        
-    # variable to correlate over
-    corr_dim = 'time'    
-    
-    # data-specific requirements
-    if data_type in ('reanalysis', 'reanalysis_qg'):
-        ds = ds.sel(time=reanalysis_years)
-        ds = data.seasonal_mean(ds, season=season, cut_ends=True)
+    # Apply hemisphere-specific processing
+    ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
 
-    elif data_type == 'pamip':
-        # Convert datetime to cftime, if required
-        if not isinstance(ds.time.values[0], cftime.datetime):
-            ds = ds.convert_calendar('noleap')
-        # Take seasonal dataset when using ensembles
-        if 'ens_ax' in ds.dims:
-            ds = data.seasonal_dataset(ds, season=season)
-            ds = ds.mean('time')
-            corr_dim='ens_ax'
-        # some datasets have put all ensembles into separate years
-        else:
-            ds = data.seasonal_mean(ds, season=season)
-
-    #----------------------------------------------------------------------------------------------
-
-    ## CALCULATIONS
+    # Data-specific preprocessing
+    ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
+    
+    #---------------------------------
+    # Compute Eddy Feedback Parameter CORRELATION
 
     # Calculate Pearson's correlation
     corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()
     
     return corr
-
-
-#--------------------------------------------------------------------------------------------------
-
-# PAMIP FUNCTIONS
-
-
-# Calculate Eddy feedback parameter for PAMIP data
-def calculate_efp_pamip(ds, which_div1='divF', season='djf', cut_pole=90, calc_south_hemis=False,
-                        usual_mean=True):
-
-    """ 
-    Input: Xarray DataSet containing zonal-mean zonal wind (ubar)
-            and divergence of northward EP flux (div1)
-                - dims: (time, level, lat) 
-                    - lat: [-90,90]; level: [1000,0]
-    
-    Output: EFP Value
-    
-    """
-
-    ## CONDITIONS
-
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-
-    # choose hemisphere
-    if calc_south_hemis:
-        ds = ds.sel( lat=slice(-cut_pole, 0) )
-        latitude_slice=slice(-72., -25.)
-        season = 'jas'
-    else:
-        ds = ds.sel( lat=slice(0, cut_pole) )
-        latitude_slice=slice(25.,72.)
-
-    # Convert datetime to cftime, if required
-    if not isinstance(ds.time.values[0], cftime.datetime):
-        ds = ds.convert_calendar('noleap')
-
-    # Take seasonal dataset when using ensembles
-    if 'ens_ax' in ds.dims:
-        ds = data.seasonal_dataset(ds, season=season)
-        ds = ds.mean('time')
-    # some datasets have put all ensembles into separate years
-    else:
-        if calc_south_hemis:
-            ds = data.seasonal_dataset(ds, season='jas')
-            ds = ds.groupby('time.year').mean('time')
-            ds = ds.rename({'year': 'ens_ax'})
-        else:
-            ds = data.seasonal_mean(ds, season=season, cut_ends=False)
-            ds = ds.rename({'time': 'ens_ax'})
-
-    #-------------------------------------------------------------------------------
-
-    ## CALCULATIONS
-
-    # Calculate Pearson's correlation
-    corr = xr.corr(ds[which_div1], ds.ubar, dim='ens_ax').load()
-
-    # correlation squared
-    corr = corr**2
-
-    # take EFP latitude slice and level mean
-    corr = corr.sel( lat=latitude_slice )
-    corr = corr.sel( level=slice(600., 200.) )
-    corr = corr.mean('level')
-
-    # Calculate weighted latitude average
-    weights = np.cos( np.deg2rad(corr.lat) )
-    eddy_feedback_param = corr.weighted(weights).mean('lat')
-
-    eddy_feedback_param.load()
-
-    return eddy_feedback_param.values.round(4)
-
-
-# Calculate EFP for PAMIP data without taking latitudinal average
-def calculate_efp_lat_pamip(ds, which_div1='divF', season='djf', calc_south_hemis=False,
-                            usual_mean=True, cut_pole=90):
-
-    """ 
-    Input: Xarray Dataset containing PAMIP data for ubar and div1 
-            - dims: (ens_ax, time, level, lat) 
-
-    Output: Plot showing EFP over selected latitudes
-    
-    """
-
-    ## CONDITIONS
-
-    # If required, check dimensions and variables are labelled correctly
-    correct_dims = all(dim_name in ds.dims for dim_name in ['time', 'level', 'lat', 'ens_ax'])
-    if not correct_dims:
-        ds = data.check_dimensions(ds)
-
-    # choose hemisphere
-    if calc_south_hemis:
-        ds = ds.sel( lat=slice(-cut_pole, 0) )
-        season='jas'
-    else:
-        ds = ds.sel( lat=slice(0, cut_pole) )
-
-    # Convert datetime to cftime, if required
-    if not isinstance(ds.time.values[0], cftime.datetime):
-        ds = ds.convert_calendar('noleap')
-
-    # Take seasonal dataset when using ensembles
-    if usual_mean:
-        ds = data.seasonal_dataset(ds, season=season)
-        ds = ds.mean('time')
-    # some datasets have put all ensembles into separate years
-    else:
-        if calc_south_hemis:
-            ds = data.seasonal_dataset(ds, season='jas')
-            ds = ds.groupby('time.year').mean('time')
-            ds = ds.rename({'year': 'ens_ax'})
-        else:
-            ds = data.seasonal_mean(ds, season=season, cut_ends=False)
-            ds = ds.rename({'time': 'ens_ax'})
-
-    #----------------------------------------------------------------------
-
-    ## CALCULATIONS
-
-    # Calculate correlation
-    corr = xr.corr(ds[which_div1], ds['ubar'], dim='ens_ax')
-
-    # Calculate
-    corr = corr.sel(level=slice(600., 200.))
-    corr = corr.mean('level')
-
-    # calculate variance explained
-    r = corr**2
-
-    return r
 
 
 #==================================================================================================

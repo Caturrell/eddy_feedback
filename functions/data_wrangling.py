@@ -106,13 +106,16 @@ def check_coords(ds):
         
     return ds
 
-def data_checker1000(ds, check_vars=False):
+def data_checker1000(ds, check_vars=True):
     
     """
         Function that runs through all the above checks
     """
     
+    # Check dimensions are labelled in my convention
     ds = check_dimensions(ds)
+        
+    # check coordinates are correct orientation
     ds = check_coords(ds)
     
     if check_vars:
