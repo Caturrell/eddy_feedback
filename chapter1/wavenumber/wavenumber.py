@@ -69,7 +69,10 @@ def plot_wavenumber_EFP_components(ax, ds, data_type=None, which_div1='div1_pr',
     # ax.contourf(ds.lat, ds.level, ds[which_div1].mean('time'), levels=20, yincrease=False)
     
     ds.ubar.mean('time').plot.contour(levels=20, colors='k', ax=ax)
-    contourf = ds[which_div1].mean('time').plot.contourf(levels=np.linspace(-5e-5, 5e-5, 21), ax=ax, add_colorbar=False)
+    
+    # colour_levels=np.linspace(-5e-5, 5e-5, 21)
+    colour_levels=21
+    contourf = ds[which_div1].mean('time').plot.contourf(levels=colour_levels, ax=ax, add_colorbar=False)
 
     # Plot EFP box
     rect = patches.Rectangle((25., 600.), 50, -400, fill=False, linewidth=2, color='limegreen')

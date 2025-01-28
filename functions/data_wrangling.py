@@ -35,6 +35,11 @@ def check_dimensions(ds):
 
     # search for dimension labels
     dims = aos.FindCoordNames(ds)
+    
+    if 't' in ds.dims:
+        ds = ds.rename({'t': 'time'})
+    elif 'record' in ds.dims:
+        ds = ds.rename({'record': 'ens_ax'})
 
     # base renaming dictionary
     try:

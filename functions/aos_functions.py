@@ -452,15 +452,15 @@ def FindCoordNames(ds):
 	ldims = [d.lower() for d in odims]
 	dim_names = {}
 	# check for longitude
-	for lon in ['longitude','lon','xt_ocean','lon_sub1']:
+	for lon in ['longitude','lon','xt_ocean','lon_sub1','longitude_1']:
 		if lon in ldims:
 			indx = ldims.index(lon)
 			dim_names['lon'] = odims[indx]
-	for lat in ['latitude','lat','yt_ocean','lat_sub1']:
+	for lat in ['latitude','lat','yt_ocean','lat_sub1','latitude_1']:
 		if lat in ldims:
 			indx = ldims.index(lat)
 			dim_names['lat'] = odims[indx]
-	for plev in ['level','pres','pfull','lev','plev', 'pressure']:
+	for plev in ['level','pres','pfull','lev','plev', 'pressure', 'p_1']:
 		if plev in ldims:
 			indx = ldims.index(plev)
 			dim_names['pres'] = odims[indx]

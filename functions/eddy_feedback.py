@@ -38,7 +38,7 @@ def calculate_ubar(ds):
     return ds
 
 # Calculate EP fluxes
-def calculate_epfluxes_ubar(ds, primitive=True):
+def calculate_epfluxes_ubar(ds, primitive=True, which_div1='divFy'):
 
     """
     Input: Xarray dataset
@@ -60,21 +60,22 @@ def calculate_epfluxes_ubar(ds, primitive=True):
     if not 'ubar' in ds:
         ds = calculate_ubar(ds)
 
-    ucomp = ds.u
-    vcomp = ds.v
-    temp = ds.t
+    if not which_div1 in ds:
+        ucomp = ds.u
+        vcomp = ds.v
+        temp = ds.t
 
-    # calculate ep fluxes using aostools
-    ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ucomp, vcomp, temp, do_ubar=primitive)
+        # calculate ep fluxes using aostools
+        ep1, ep2, div1, div2 = aos.ComputeEPfluxDivXr(ucomp, vcomp, temp, do_ubar=primitive)
 
-    # save variables to dataset
-    ds['epfy'] = (ep1.dims, ep1.values)
-    ds['epfz'] = (ep2.dims, ep2.values)
-    ds['divFy'] = (div1.dims, div1.values)
-    ds['divFz'] = (div2.dims, div2.values)
+        # save variables to dataset
+        ds['epfy'] = (ep1.dims, ep1.values)
+        ds['epfz'] = (ep2.dims, ep2.values)
+        ds['divFy'] = (div1.dims, div1.values)
+        ds['divFz'] = (div2.dims, div2.values)
 
-    # load dataset here
-    ds = ds.load()
+        # load dataset here
+        ds = ds.load()
 
     return ds
 
@@ -310,7 +311,7 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
 
     # Ensure required variables exist
     if not all(var in ds.variables for var in ['ubar', which_div1]):
-        ds = calculate_epfluxes_ubar(ds)
+        ds = calculate_epfluxes_ubar(ds, which_div1=which_div1)
 
     # Apply hemisphere-specific processing
     ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
