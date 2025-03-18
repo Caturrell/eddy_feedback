@@ -10,3 +10,4 @@ functions/data_wrangling.py
 functions/eddy_feedback.py
 functions/isca.py
 functions/plotting.py
+functions/process.py
