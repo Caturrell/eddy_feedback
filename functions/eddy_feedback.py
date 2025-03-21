@@ -193,7 +193,7 @@ def _check_data_type_divFy(ds, data_type):
     
     return which_div1
     
-def _process_specific_efp_data(ds, data_type, season, reanalysis_years=slice('1979', '2016')):
+def _process_specific_efp_data(ds, data_type, season, limit_reanalysis=True):
     """
     Process dataset for specific data types and seasonal settings.
 
@@ -218,7 +218,9 @@ def _process_specific_efp_data(ds, data_type, season, reanalysis_years=slice('19
     corr_dim = 'time'  # Default dimension for correlation
 
     if data_type in ('reanalysis', 'reanalysis_qg'):
-        ds = ds.sel(time=reanalysis_years)
+        if limit_reanalysis:
+            reanalysis_years=slice('1979', '2016')
+            ds = ds.sel(time=reanalysis_years)
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
 
     elif data_type == 'pamip':
@@ -276,7 +278,7 @@ def _process_hemisphere(ds, calc_south_hemis):
 #-----------------------------------
 
 
-def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, which_div1=None):
+def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, which_div1=None, bootstrapping=False):
     """
     Calculate Eddy Feedback Parameter for reanalysis and Isca data.
 
@@ -291,6 +293,8 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
         If True, calculate for the Southern Hemisphere (default: False).
     take_level_mean : bool, optional
         If True, average over levels after calculations (default: True).
+        If None, calculate at 500 hPa
+        If False, return level array.
     reanalysis_years : slice, optional
         Years to consider for reanalysis datasets (default: slice('1979', '2016')).
     which_div1 : str, optional
@@ -317,7 +321,13 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
     ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
 
     # Data-specific preprocessing
-    ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
+    if bootstrapping:
+        if data_type == 'pamip':
+            ds, corr_dim = ds, 'ens_ax'
+        else:
+            ds, corr_dim = ds, 'time'
+    else:  
+        ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
     
     #---------------------------------
     # Compute Eddy Feedback Parameter
@@ -330,6 +340,9 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
         corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
         if take_level_mean:
             corr = corr.mean('level')
+        if take_level_mean == None: 
+            corr = corr.sel(level=500., method='nearest')
+
 
         weights = np.cos(np.deg2rad(corr.lat))
         efp = corr.weighted(weights).mean('lat')
