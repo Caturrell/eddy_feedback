@@ -136,12 +136,11 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 
     # convert lat to radians take np.cos and multiply by Fphi (inside derivative)
-    lat_rads = np.deg2rad(ds.lat.values)
+    lat_rads = np.deg2rad(ds.lat)
     coslat = np.cos(lat_rads)
     F_coslat = Fphi * coslat
 
-    # calc derivative and convert lat dimension to radians
-    F_coslat['lat'] = lat_rads
+    # calculate derivative
     deriv1 = F_coslat.differentiate('lat')                                      # [m2 s-2]
 
     # Divide by a cos(φ)
@@ -193,7 +192,7 @@ def _check_data_type_divFy(ds, data_type):
     
     return which_div1
     
-def _process_specific_efp_data(ds, data_type, season, reanalysis_years=slice('1979', '2016')):
+def _process_specific_efp_data(ds, data_type, season, limit_reanalysis=True):
     """
     Process dataset for specific data types and seasonal settings.
 
@@ -218,7 +217,9 @@ def _process_specific_efp_data(ds, data_type, season, reanalysis_years=slice('19
     corr_dim = 'time'  # Default dimension for correlation
 
     if data_type in ('reanalysis', 'reanalysis_qg'):
-        ds = ds.sel(time=reanalysis_years)
+        if limit_reanalysis:
+            reanalysis_years=slice('1979', '2016')
+            ds = ds.sel(time=reanalysis_years)
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
 
     elif data_type == 'pamip':
@@ -276,7 +277,8 @@ def _process_hemisphere(ds, calc_south_hemis):
 #-----------------------------------
 
 
-def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, which_div1=None):
+def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None, 
+                  bootstrapping=False, slice_500hPa=False):
     """
     Calculate Eddy Feedback Parameter for reanalysis and Isca data.
 
@@ -291,6 +293,8 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
         If True, calculate for the Southern Hemisphere (default: False).
     take_level_mean : bool, optional
         If True, average over levels after calculations (default: True).
+        If None, calculate at 500 hPa
+        If False, return level array.
     reanalysis_years : slice, optional
         Years to consider for reanalysis datasets (default: slice('1979', '2016')).
     which_div1 : str, optional
@@ -317,24 +321,39 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
     ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
 
     # Data-specific preprocessing
-    ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
+    if bootstrapping:
+        if data_type == 'pamip':
+            ds, corr_dim = ds, 'ens_ax'
+        else:
+            ds, corr_dim = ds, 'time'
+    else:  
+        ds, corr_dim = _process_specific_efp_data(ds, data_type=data_type, season=season)
     
     #---------------------------------
     # Compute Eddy Feedback Parameter
     
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
+        if slice_500hPa:
+            ds = ds.sel(level=500., method='nearest')
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
 
-        corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
-        if take_level_mean:
+            corr = corr.sel(lat=efp_lat_slice)
+            weights = np.cos(np.deg2rad(corr.lat))
+            efp = corr.weighted(weights).mean('lat')
+        else:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
+
+            corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
             corr = corr.mean('level')
 
-        weights = np.cos(np.deg2rad(corr.lat))
-        efp = corr.weighted(weights).mean('lat')
+            weights = np.cos(np.deg2rad(corr.lat))
+            efp = corr.weighted(weights).mean('lat')
 
-        return efp.values.round(4)
+        return round(float(efp.values), 4)
     except Exception as e:
         raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
 
