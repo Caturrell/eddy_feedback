@@ -385,7 +385,6 @@ if __name__ == '__main__':
             exp_list.append(exp_name)
         else:
             pass
-    exp_list.remove('HS_T170_100y_60delh')
     
     # set path and experiment name
     for item in exp_list:

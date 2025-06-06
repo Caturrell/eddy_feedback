@@ -10,7 +10,7 @@ import cftime
 import datetime
 import numpy as np
 import xarray as xr
-import xesmf as xe
+# import xesmf as xe
 
 sys.path.append('/home/users/cturrell/documents/eddy_feedback')
 import functions.aos_functions as aos
@@ -201,9 +201,17 @@ def seasonal_mean(ds, cut_ends=False, season=None):
     if season == None:
         raise ValueError(f'Invalid season: {season}. Choose valid seasonal months.')
     
+    # Define required dimensions that should always be present
+    required_dims = ['time', 'lat']
+
+    # If 'level' is present in the dataset, include it in the check
+    if 'level' in ds.dims:
+        required_dims.append('level')
+
     # Check and fix dimensions if necessary
-    if not all(dim in ds.dims for dim in ['time', 'level', 'lat']):
+    if not all(dim in ds.dims for dim in required_dims):
         ds = check_dimensions(ds)
+
 
     # Remove incomplete seasons if cut_ends is True
     if cut_ends:
@@ -264,69 +272,69 @@ def change_to_cftime(da):
     
     return da
 
-# regrid PAMIP data
-def regrid_dataset_3x3(ds, check_dims=False):
-    """
-    Input: Xarray dataset
-            - Must contain (lat, lon)
+# # regrid PAMIP data
+# def regrid_dataset_3x3(ds, check_dims=False):
+#     """
+#     Input: Xarray dataset
+#             - Must contain (lat, lon)
             
-    Output: Regridded Xarray dataset 
-            to 3 deg lat lon
+#     Output: Regridded Xarray dataset 
+#             to 3 deg lat lon
     
-    """
-    # Rename
-    if check_dims:
-        ds = check_dimensions(ds)
-        ds = check_variables(ds)
-    # build regridder
-    ds_out = xr.Dataset(
-        {
-            'lat': (['lat'], np.arange(-90, 93, 3)),
-            'lon': (['lon'], np.arange(0,360, 3))
-        }
-    )
+#     """
+#     # Rename
+#     if check_dims:
+#         ds = check_dimensions(ds)
+#         ds = check_variables(ds)
+#     # build regridder
+#     ds_out = xr.Dataset(
+#         {
+#             'lat': (['lat'], np.arange(-90, 93, 3)),
+#             'lon': (['lon'], np.arange(0,360, 3))
+#         }
+#     )
 
-    regridder = xe.Regridder(ds, ds_out, "bilinear")
-    ds_new = regridder(ds)
+#     regridder = xe.Regridder(ds, ds_out, "bilinear")
+#     ds_new = regridder(ds)
 
-    # verify that the result is the same as regridding each variable one-by-one
-    for k in ds.data_vars:
-        print(k, ds_new[k].equals(regridder(ds[k])))
+#     # verify that the result is the same as regridding each variable one-by-one
+#     for k in ds.data_vars:
+#         print(k, ds_new[k].equals(regridder(ds[k])))
 
-    print('Regridding and checks complete. Dataset ready.')
-    return ds_new
+#     print('Regridding and checks complete. Dataset ready.')
+#     return ds_new
 
-# regrid data to chosen degree
-def regrid_dataset(ds, deg=3, check_dims=False):
-    """
-    Input: Xarray dataset
-            - Must contain (lat, lon)
+# # regrid data to chosen degree
+# def regrid_dataset(ds, deg=3, check_dims=False):
+#     """
+#     Input: Xarray dataset
+#             - Must contain (lat, lon)
             
-    Output: Regridded Xarray dataset 
-            to 3 deg lat lon
+#     Output: Regridded Xarray dataset 
+#             to 3 deg lat lon
     
-    """
-    # Rename
-    if check_dims:
-        ds = check_dimensions(ds)
-        ds = check_variables(ds)
-    # build regridder
-    ds_out = xr.Dataset(
-        {
-            'lat': (['lat'], np.arange(-90, 90+deg, deg)),
-            'lon': (['lon'], np.arange(0,360, deg))
-        }
-    )
+#     """
+#     # Rename
+#     if check_dims:
+#         ds = check_dimensions(ds)
+#         ds = check_variables(ds)
+#     # build regridder
+#     ds_out = xr.Dataset(
+#         {
+#             'lat': (['lat'], np.arange(-90, 90+deg, deg)),
+#             'lon': (['lon'], np.arange(0,360, deg))
+#         }
+#     )
 
-    regridder = xe.Regridder(ds, ds_out, "bilinear")
-    ds_new = regridder(ds)
+#     regridder = xe.Regridder(ds, ds_out, "bilinear")
+#     ds_new = regridder(ds)
 
-    # verify that the result is the same as regridding each variable one-by-one
-    for k in ds.data_vars:
-        print(k, ds_new[k].equals(regridder(ds[k])))
+#     # verify that the result is the same as regridding each variable one-by-one
+#     for k in ds.data_vars:
+#         print(k, ds_new[k].equals(regridder(ds[k])))
 
-    print('Regridding and checks complete. Dataset ready.')
-    return ds_new
+#     print('Regridding and checks complete. Dataset ready.')
+#     return ds_new
 
 
 

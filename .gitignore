@@ -1,9 +1,11 @@
 *.nc
 *.npy
 *.pdf
+*.png
 *.pyc
 *.zip
 *.err
 *.out
 *.csv
+*.nfs*
 venv/

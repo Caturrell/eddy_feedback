@@ -172,14 +172,14 @@ def plot_wavenumber_EFP_correlation(ax, ds, data_type, logscale=True, show_rect=
 
     # axis alterations
     ax.invert_yaxis()
-    ax.set_xlabel(' $(^\\circ N)$')
+    ax.set_xlabel('Latitude $(^\\circ N)$', fontsize=14)
     if logscale:
         ax.set_yscale('log')
-        ax.set_ylabel('Log pressure (hPa)')
+        ax.set_ylabel('Log pressure (hPa)', fontsize=14)
     else:
-        ax.set_ylabel('Pressure (hPa)')
+        ax.set_ylabel('Pressure (hPa)', fontsize=14)
     
-    ax.set_title(f'{title}')
+    ax.set_title(f'{title}', fontsize=14)
 
     # Plot EFP box
     if show_rect:

@@ -48,11 +48,12 @@ path_dir = '/home/links/ct715/data_storage/PAMIP/processed_monthly/efp_pd_non-re
 
 # extract model names
 files = os.listdir(path_dir)
-models = [os.path.basename(f).split('_')[0] for f in files]
-models.sort()
+models = ['CESM1-WACCM-SC']
+# models = [os.path.basename(f).split('_')[0] for f in files]
+# models.sort()
 
-models.remove('CESM1-WACCM-SC')
-models.remove('E3SMv1')
+# models.remove('ECHAM6.3')
+# models.remove('E3SMv1')
 
 # Create dictionary containing each model name and dataset
 pamip_datasets = {}
@@ -72,6 +73,8 @@ for model in models:
     
     jas = dw.seasonal_mean(ds, season='jas')
     jas_pamip[model] = jas
+
+
 
 # Initialize a dictionary to store the bootstrap results for each model
 bootstrap_results_djf = {}
@@ -93,7 +96,9 @@ bootstrap_results_jas = {}
 #     for i, item in enumerate(bootstrap_djfsets):
 #         if i % 100 == 0:
 #             logging.info(f'Processing bootstrap sample {i+1}/{len(bootstrap_djfsets)} for model: {model} (DJF)')
-#         efp = ef.calculate_efp(item, data_type='pamip')
+#         if model == 'CESM1-WACCM-SC':
+#             item = item.rename({'time': 'ens_ax'})
+#         efp = ef.calculate_efp(item, data_type='pamip', bootstrapping=True)
 #         efp_values.append(efp)
         
 #     # save the efp values
@@ -104,6 +109,26 @@ bootstrap_results_jas = {}
 #     # Store the EFP values in the dictionary
 #     bootstrap_results_djf[model] = efp_values
 #     logging.info(f'Completed bootstrap resampling for model: {model} (DJF)')
+
+# # Convert bootstrap results to a DataFrame for plotting
+# bootstrap_df_djf = pd.DataFrame({
+#     'Model': np.repeat(list(bootstrap_results_djf.keys()), [len(v) for v in bootstrap_results_djf.values()]),
+#     'EFP': np.concatenate(list(bootstrap_results_djf.values()))
+# })
+
+# # Plot the bootstrap results as violin plots using Seaborn
+# plt.figure(figsize=(12, 6))
+# sns.violinplot(x='Model', y='EFP', data=bootstrap_df_djf)
+# plt.xticks(rotation=90)
+# plt.title('Bootstrap EFP Values for Each Model (DJF)')
+# plt.xlabel('Model')
+# plt.ylabel('EFP')
+# plt.tight_layout()
+
+# # Save the plot
+# plot_path = '/home/links/ct715/eddy_feedback/chapter1/saffin/bootstrap/plots/bootstrap_djf_efp_violinplots.pdf'
+# plt.savefig(plot_path)
+# logging.info(f'Saved DJF violin plot at {plot_path}')
 
 
 ## SH ##
@@ -121,7 +146,8 @@ for model, ds in jas_pamip.items():
     for i, item in enumerate(bootstrap_jassets):
         if i % 100 == 0:
             logging.info(f'Processing bootstrap sample {i+1}/{len(bootstrap_jassets)} for model: {model} (JAS)')
-        # pdb.set_trace()
+        if model == 'CESM1-WACCM-SC':
+            item = item.rename({'time': 'ens_ax'})
         efp = ef.calculate_efp(item, data_type='pamip', calc_south_hemis=True, bootstrapping=True)
         efp_values.append(efp)
         
@@ -134,30 +160,11 @@ for model, ds in jas_pamip.items():
     bootstrap_results_jas[model] = efp_values
     logging.info(f'Completed bootstrap resampling for model: {model} (JAS)')
 
-# # Convert bootstrap results to a DataFrame for plotting
-# bootstrap_df_djf = pd.DataFrame({
-#     'Model': np.repeat(list(bootstrap_results_djf.keys()), [len(v) for v in bootstrap_results_djf.values()]),
-#     'EFP': np.concatenate(list(bootstrap_results_djf.values()))
-# })
 
 bootstrap_df_jas = pd.DataFrame({
     'Model': np.repeat(list(bootstrap_results_jas.keys()), [len(v) for v in bootstrap_results_jas.values()]),
     'EFP': np.concatenate(list(bootstrap_results_jas.values()))
 })
-
-# # Plot the bootstrap results as violin plots using Seaborn
-# plt.figure(figsize=(12, 6))
-# sns.violinplot(x='Model', y='EFP', data=bootstrap_df_djf)
-# plt.xticks(rotation=90)
-# plt.title('Bootstrap EFP Values for Each Model (DJF)')
-# plt.xlabel('Model')
-# plt.ylabel('EFP')
-# plt.tight_layout()
-
-# # Save the plot
-# plot_path = '/home/links/ct715/eddy_feedback/chapter1/saffin/bootstrap/plots/bootstrap_djf_efp_violinplots.pdf'
-# plt.savefig(plot_path)
-# logging.info(f'Saved DJF violin plot at {plot_path}')
 
 # Plot the bootstrap results as violin plots using Seaborn for JAS
 plt.figure(figsize=(12, 6))

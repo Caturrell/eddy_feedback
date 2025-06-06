@@ -136,12 +136,11 @@ def calculate_divFphi(ds, which_Fphi='epfy', apply_scaling=False, multiply_facto
 
 
     # convert lat to radians take np.cos and multiply by Fphi (inside derivative)
-    lat_rads = np.deg2rad(ds.lat.values)
+    lat_rads = np.deg2rad(ds.lat)
     coslat = np.cos(lat_rads)
     F_coslat = Fphi * coslat
 
-    # calc derivative and convert lat dimension to radians
-    F_coslat['lat'] = lat_rads
+    # calculate derivative
     deriv1 = F_coslat.differentiate('lat')                                      # [m2 s-2]
 
     # Divide by a cos(φ)
@@ -278,7 +277,8 @@ def _process_hemisphere(ds, calc_south_hemis):
 #-----------------------------------
 
 
-def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, which_div1=None, bootstrapping=False):
+def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None, 
+                  bootstrapping=False, slice_500hPa=False):
     """
     Calculate Eddy Feedback Parameter for reanalysis and Isca data.
 
@@ -333,21 +333,27 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, take_level_mean=True, w
     # Compute Eddy Feedback Parameter
     
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
+        if slice_500hPa:
+            ds = ds.sel(level=500., method='nearest')
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
 
-        corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
-        if take_level_mean:
+            corr = corr.sel(lat=efp_lat_slice)
+            weights = np.cos(np.deg2rad(corr.lat))
+            efp = corr.weighted(weights).mean('lat')
+        else:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                corr = xr.corr(ds[which_div1], ds.ubar, dim=corr_dim).load()**2
+
+            corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
             corr = corr.mean('level')
-        if take_level_mean == None: 
-            corr = corr.sel(level=500., method='nearest')
 
+            weights = np.cos(np.deg2rad(corr.lat))
+            efp = corr.weighted(weights).mean('lat')
 
-        weights = np.cos(np.deg2rad(corr.lat))
-        efp = corr.weighted(weights).mean('lat')
-
-        return efp.values.round(4)
+        return round(float(efp.values), 4)
     except Exception as e:
         raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
 
