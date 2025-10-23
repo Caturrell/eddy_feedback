@@ -56,7 +56,6 @@ models = ['CESM1-WACCM-SC']
 # models.remove('E3SMv1')
 
 # Create dictionary containing each model name and dataset
-pamip_datasets = {}
 djf_pamip = {}
 jas_pamip = {}
 for model in models:
@@ -65,8 +64,6 @@ for model in models:
     file_path = os.path.join(path_dir, f'{model}_*.nc')
     # open xarray dataset
     ds = xr.open_mfdataset(file_path, parallel=True, chunks={'time':31})
-    # Add dataset to dictionary with required model name
-    pamip_datasets[model] = ds
     
     djf = dw.seasonal_mean(ds, season='djf')
     djf_pamip[model] = djf

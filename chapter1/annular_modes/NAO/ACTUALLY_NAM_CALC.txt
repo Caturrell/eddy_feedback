@@ -1,0 +1,1 @@
+These are NAM calculations, not NAO. See NAO MSLP for proper NAO calculations.

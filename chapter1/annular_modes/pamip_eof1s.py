@@ -53,6 +53,8 @@ def compute_anomalies(ds_model, season, months, vertical_average=False):
     var_anoms = u_ens - u_ens.mean(dim='ens_ax')
     var_anoms = var_anoms.mean('lon').sel(lat=slice(-85, 0), level=slice(1000, 100)).rename({'ens_ax': 'time'})
     
+    import pdb; pdb.set_trace()  # Debugging breakpoint
+    
     if vertical_average:
         dp = var_anoms.level.diff('level')
         var_anoms = (var_anoms * dp).sum('level') / dp.sum('level')

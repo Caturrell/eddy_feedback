@@ -172,6 +172,7 @@ def _check_data_type_divFy(ds, data_type):
     data_type_mapping = {
         'reanalysis': 'divFy',
         'reanalysis_qg': 'div1_qg',
+        'reanalysis_fulltime': 'divFy',  # Full time reanalysis data
         'pamip': None,              # handle pamip separately
         'isca': 'divFy'
     }
@@ -192,7 +193,7 @@ def _check_data_type_divFy(ds, data_type):
     
     return which_div1
     
-def _process_specific_efp_data(ds, data_type, season, limit_reanalysis=True):
+def _process_specific_efp_data(ds, data_type, season):
     """
     Process dataset for specific data types and seasonal settings.
 
@@ -216,8 +217,8 @@ def _process_specific_efp_data(ds, data_type, season, limit_reanalysis=True):
     """
     corr_dim = 'time'  # Default dimension for correlation
 
-    if data_type in ('reanalysis', 'reanalysis_qg'):
-        if limit_reanalysis:
+    if data_type in ('reanalysis', 'reanalysis_qg', 'reanalysis_fulltime'):
+        if not data_type == 'reanalysis_fulltime':
             reanalysis_years=slice('1979', '2016')
             ds = ds.sel(time=reanalysis_years)
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
@@ -323,6 +324,8 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None,
     # Data-specific preprocessing
     if bootstrapping:
         if data_type == 'pamip':
+            if 'ens_ax' not in ds.dims:
+                ds = ds.rename({'time': 'ens_ax'})
             ds, corr_dim = ds, 'ens_ax'
         else:
             ds, corr_dim = ds, 'time'

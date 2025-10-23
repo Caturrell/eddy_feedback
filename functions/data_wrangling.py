@@ -25,37 +25,33 @@ import functions.eddy_feedback as ef
 # Rename dimensions in Dataset and check if ds contains Isca variable notation
 def check_dimensions(ds):
     """
-    Input: Xarray Dataset with variety of dimension labels
-            - searches for 4 in particular (lon, lat, pres, time).
-            - Uses aos.FindCoordNames to get dimension labels.
-    
-    Output: Xarray Dataset with required dimension name changes.
-            - Renames Isca labels to standard names.
+    Input: Xarray Dataset with various dimension labels.
+        - Uses aos.FindCoordNames to get coordinate names.
+        - Searches for and renames: lon, lat, pres, time.
+
+    Output: Xarray Dataset with renamed dimensions (if needed).
     """
 
-    # search for dimension labels
+    # Search for dimension labels
     dims = aos.FindCoordNames(ds)
-    
+
+    # Rename time or ensemble dimensions if necessary
     if 't' in ds.dims:
         ds = ds.rename({'t': 'time'})
     elif 'record' in ds.dims:
         ds = ds.rename({'record': 'ens_ax'})
 
-    # base renaming dictionary
-    try:
-        rename_dict = {
-            dims['lon']: 'lon',
-            dims['lat']: 'lat',
-            dims['pres']: 'level'
-        }
-    except KeyError:
-        rename_dict = {
-            dims['lat']: 'lat',
-            dims['pres']: 'level'
-        }
+    # Construct rename dictionary based on available keys
+    rename_dict = {}
+    if 'lon' in dims and dims['lon'] in ds.dims:
+        rename_dict[dims['lon']] = 'lon'
+    if 'lat' in dims and dims['lat'] in ds.dims:
+        rename_dict[dims['lat']] = 'lat'
+    if 'pres' in dims and dims['pres'] in ds.dims:
+        rename_dict[dims['pres']] = 'level'
 
-    # Apply renaming
     return ds.rename(rename_dict)
+
 
 
 # Rename dimensions in Isca to suit my function needs
@@ -83,32 +79,36 @@ def check_variables(ds):
     return ds.rename({k: v for k, v in rename_dict.items() if k in ds})
 
 def check_coords(ds):
-    
     """
-    
-    Check coordinates are in correct orientation
-    
+    Check coordinates are in correct orientation.
+
     Input: Xarray Dataset
-            - dimensions: (time, lon, lat, pfull)
-            - variables: ucomp, vcomp, temp
-    
-    Output: Xarray DataSet with required name changes
-            - dimensions: (time, lon, lat, level)
-            - variables: u,v,t
+        - Expected standardized dimensions: (time, lon, lat, level)
+        - Expected variables: ucomp, vcomp, temp
+
+    Output: Xarray Dataset with adjusted coordinates and variable names.
+        - Standardized dimension orientation.
+        - Variables renamed to: u, v, t
     """
-    
-    # Check pressure coords are [1000,0]
-    if ds.level.max() > 1000.00:
-        ds['level'] = ds['level'] / 100
-    
-    # flip dimensions if required
-    if (ds.level[0] - ds.level[1]) < 0:
-        # default: [1000,0]
-        ds = ds.sel(level=slice(None,None,-1))
-    if (ds.lat[0] + ds.lat[1]) > 0:
-        # default: [-90,90]
-        ds = ds.sel(lat=slice(None,None,-1))
-        
+
+    # --- Handle pressure levels ---
+    if 'level' in ds.dims:
+        level = ds['level']
+        # Scale down pressure levels if they appear in Pa
+        if level.max() > 1000.00:
+            ds['level'] = level / 100
+
+        # Ensure levels are ordered from high to low (e.g., [1000 → 0])
+        if (ds.level[0] - ds.level[1]) < 0:
+            ds = ds.sel(level=slice(None, None, -1))
+
+    # --- Handle latitude orientation ---
+    if 'lat' in ds.dims:
+        lat = ds['lat']
+        # Ensure latitude is ordered from south to north (e.g., [-90 → 90])
+        if (lat[0] + lat[1]) > 0:
+            ds = ds.sel(lat=slice(None, None, -1))
+
     return ds
 
 def data_checker1000(ds, check_vars=True):
@@ -128,7 +128,15 @@ def data_checker1000(ds, check_vars=True):
     
     return ds
 
-
+def longitude_adjustment(ds):
+    
+    """
+    Adjust the longitude coordinates of an Xarray dataset to ensure they are in the range [-180, 180].
+    """
+    
+    ds.coords['lon'] = (ds.coords['lon'] + 180) % 360 - 180
+    ds = ds.sortby(ds.lon)
+    return ds
 
 #==================================================================================================
 
@@ -185,7 +193,7 @@ def annual_mean(ds):
 
 
 # Calculate seasonal means
-def seasonal_mean(ds, cut_ends=False, season=None):
+def seasonal_mean(ds, cut_ends=False, season=None, take_mean=False):
     """
     Calculate seasonal means for an Xarray dataset.
 
@@ -239,7 +247,10 @@ def seasonal_mean(ds, cut_ends=False, season=None):
     if season == 'jas':
         seasonal = seasonal.groupby('time.year').mean('time').rename({'year': 'time'})
 
-    return seasonal
+    if take_mean:
+        return seasonal.mean('time')
+    else:
+        return seasonal
 
 
 
