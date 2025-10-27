@@ -1,0 +1,58 @@
+2025-10-23 11:29:33,528 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/efp_processing.log
+2025-10-23 11:29:33,528 - INFO - Starting EFP data processing pipeline
+2025-10-23 11:29:33,545 - INFO - Output directory ensured: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit
+2025-10-23 11:29:33,550 - INFO - Found 21 models to process
+2025-10-23 11:29:33,550 - INFO - Processing model 1/21: ACCESS-CM2
+2025-10-23 11:29:33,557 - INFO - Processing model: ACCESS-CM2, experiment: 1085_1115
+2025-10-23 11:29:40,977 - INFO - Successfully saved EFP data for ACCESS-CM2 - 1085_1115 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/ACCESS-CM2_efp_500hPa.nc
+2025-10-23 11:29:41,000 - INFO - Processing model 2/21: ACCESS-ESM1-5
+2025-10-23 11:29:41,057 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/ACCESS-ESM1-5/0296_0326/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:41,058 - INFO - Processing model 3/21: AWI-ESM-1-1-LR
+2025-10-23 11:29:41,061 - INFO - Processing model: AWI-ESM-1-1-LR, experiment: 1855_1885
+2025-10-23 11:29:42,618 - INFO - Successfully saved EFP data for AWI-ESM-1-1-LR - 1855_1885 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/AWI-ESM-1-1-LR_efp_500hPa.nc
+2025-10-23 11:29:42,649 - INFO - Processing model 4/21: CMCC-CM2-SR5
+2025-10-23 11:29:42,653 - INFO - Processing model: CMCC-CM2-SR5, experiment: 1850_1880
+2025-10-23 11:29:43,644 - INFO - Successfully saved EFP data for CMCC-CM2-SR5 - 1850_1880 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/CMCC-CM2-SR5_efp_500hPa.nc
+2025-10-23 11:29:43,672 - INFO - Processing model 5/21: CMCC-ESM2
+2025-10-23 11:29:43,690 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/CMCC-ESM2/1850_1880/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:43,691 - INFO - Processing model 6/21: EC-Earth3
+2025-10-23 11:29:43,696 - INFO - Processing model: EC-Earth3, experiment: 2259_2288
+2025-10-23 11:29:45,565 - INFO - Successfully saved EFP data for EC-Earth3 - 2259_2288 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/EC-Earth3_efp_500hPa.nc
+2025-10-23 11:29:45,595 - INFO - Processing model 7/21: EC-Earth3-CC
+2025-10-23 11:29:45,605 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/EC-Earth3-CC/1850_1879/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:45,606 - INFO - Processing model 8/21: EC-Earth3-LR
+2025-10-23 11:29:45,613 - INFO - Processing model: EC-Earth3-LR, experiment: 2219_2248
+2025-10-23 11:29:47,275 - INFO - Successfully saved EFP data for EC-Earth3-LR - 2219_2248 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/EC-Earth3-LR_efp_500hPa.nc
+2025-10-23 11:29:47,309 - INFO - Processing model 9/21: EC-Earth3-Veg
+2025-10-23 11:29:47,314 - INFO - Processing model: EC-Earth3-Veg, experiment: 1850_1879
+2025-10-23 11:29:48,928 - INFO - Successfully saved EFP data for EC-Earth3-Veg - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/EC-Earth3-Veg_efp_500hPa.nc
+2025-10-23 11:29:48,958 - INFO - Processing model 10/21: EC-Earth3-Veg-LR
+2025-10-23 11:29:48,962 - INFO - Processing model: EC-Earth3-Veg-LR, experiment: 2300_2329
+2025-10-23 11:29:51,130 - INFO - Successfully saved EFP data for EC-Earth3-Veg-LR - 2300_2329 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/EC-Earth3-Veg-LR_efp_500hPa.nc
+2025-10-23 11:29:51,161 - INFO - Processing model 11/21: GFDL-CM4
+2025-10-23 11:29:51,166 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/GFDL-CM4/0386_0416/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:51,166 - INFO - Processing model 12/21: IPSL-CM5A2-INCA
+2025-10-23 11:29:51,178 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM5A2-INCA/1870_1899/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:51,178 - INFO - Processing model 13/21: IPSL-CM6A-LR
+2025-10-23 11:29:51,183 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-LR/1870_1899/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:51,183 - INFO - Processing model 14/21: KIOST-ESM
+2025-10-23 11:29:51,188 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/KIOST-ESM/3180_3209/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:51,193 - INFO - Processing model 15/21: MIROC6
+2025-10-23 11:29:51,216 - INFO - Processing model: MIROC6, experiment: 3350_3380
+2025-10-23 11:29:51,980 - INFO - Successfully saved EFP data for MIROC6 - 3350_3380 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/MIROC6_efp_500hPa.nc
+2025-10-23 11:29:52,007 - INFO - Processing model 16/21: MPI-ESM-1-2-HAM
+2025-10-23 11:29:52,011 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MPI-ESM-1-2-HAM/1850_1879/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:52,012 - INFO - Processing model 17/21: MPI-ESM1-2-HR
+2025-10-23 11:29:52,024 - INFO - Processing model: MPI-ESM1-2-HR, experiment: 1850_1880
+2025-10-23 11:29:52,805 - INFO - Successfully saved EFP data for MPI-ESM1-2-HR - 1850_1880 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/MPI-ESM1-2-HR_efp_500hPa.nc
+2025-10-23 11:29:52,834 - INFO - Processing model 18/21: MPI-ESM1-2-LR
+2025-10-23 11:29:52,838 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MPI-ESM1-2-LR/1850_1879/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:52,841 - INFO - Processing model 19/21: MRI-ESM2-0
+2025-10-23 11:29:52,847 - INFO - Processing model: MRI-ESM2-0, experiment: 1850_1879
+2025-10-23 11:29:53,639 - INFO - Successfully saved EFP data for MRI-ESM2-0 - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/MRI-ESM2-0_efp_500hPa.nc
+2025-10-23 11:29:53,681 - INFO - Processing model 20/21: NorESM2-LM
+2025-10-23 11:29:53,685 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-LM/1701_1730/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:53,687 - INFO - Processing model 21/21: NorESM2-MM
+2025-10-23 11:29:53,698 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1329/6hrPlevPt/efp_500hPa.nc
+2025-10-23 11:29:53,703 - INFO - Processing completed. Successfully processed 10/21 models
+2025-10-23 11:29:53,707 - WARNING - Failed to process 11 models

@@ -1,0 +1,590 @@
+{
+  "efp_nh": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  },
+  "efp_nh_123": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  },
+  "efp_nh_gt3": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  },
+  "efp_sh": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  },
+  "efp_sh_123": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  },
+  "efp_sh_gt3": {
+    "DJF": {
+      "efp": NaN,
+      "months": [
+        12,
+        1,
+        2
+      ]
+    },
+    "JFM": {
+      "efp": NaN,
+      "months": [
+        1,
+        2,
+        3
+      ]
+    },
+    "FMA": {
+      "efp": NaN,
+      "months": [
+        2,
+        3,
+        4
+      ]
+    },
+    "MAM": {
+      "efp": NaN,
+      "months": [
+        3,
+        4,
+        5
+      ]
+    },
+    "AMJ": {
+      "efp": NaN,
+      "months": [
+        4,
+        5,
+        6
+      ]
+    },
+    "MJJ": {
+      "efp": NaN,
+      "months": [
+        5,
+        6,
+        7
+      ]
+    },
+    "JJA": {
+      "efp": NaN,
+      "months": [
+        6,
+        7,
+        8
+      ]
+    },
+    "JAS": {
+      "efp": NaN,
+      "months": [
+        7,
+        8,
+        9
+      ]
+    },
+    "ASO": {
+      "efp": NaN,
+      "months": [
+        8,
+        9,
+        10
+      ]
+    },
+    "SON": {
+      "efp": NaN,
+      "months": [
+        9,
+        10,
+        11
+      ]
+    },
+    "OND": {
+      "efp": NaN,
+      "months": [
+        10,
+        11,
+        12
+      ]
+    },
+    "NDJ": {
+      "efp": NaN,
+      "months": [
+        11,
+        12,
+        1
+      ]
+    }
+  }
+}
