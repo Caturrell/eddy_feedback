@@ -9,4 +9,3 @@
 *.csv
 *.nfs*
 venv/
-*.json
