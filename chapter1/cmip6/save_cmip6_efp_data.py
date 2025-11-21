@@ -24,16 +24,16 @@ logger.info(f"Log file location: {log_file}")
 def setup_paths():
     """Setup and validate input/output paths"""
     main_path = Path('/gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2')
-    save_path = Path('/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit')
+    base_save_path = Path('/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit')
     
     if not main_path.exists():
         logger.error(f"Main data path does not exist: {main_path}")
         raise FileNotFoundError(f"Main data path not found: {main_path}")
     
-    save_path.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Output directory ensured: {save_path}")
+    base_save_path.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Base output directory ensured: {base_save_path}")
     
-    return main_path, save_path
+    return main_path, base_save_path
 
 def get_model_list(main_path):
     """Get list of models, excluding EFP_data directory"""
@@ -46,48 +46,101 @@ def get_model_list(main_path):
         logger.error(f"Error reading model list from {main_path}: {e}")
         raise
 
-def process_model(model, main_path, save_path):
-    """Process EFP data for a single model"""
+def calculate_experiment_length(experiment_name):
+    """
+    Calculate experiment length from experiment name.
+    Assumes format like 'YYYY_YYYY' where the difference gives the length.
+    Returns '30y' or '100y'.
+    """
+    try:
+        # Split by underscore and extract the two years
+        parts = experiment_name.split('_')
+        
+        # Find the two numeric parts (years)
+        years = [int(part) for part in parts if part.isdigit()]
+        
+        if len(years) < 2:
+            logger.warning(f"Could not extract two years from experiment name: {experiment_name}")
+            return None
+        
+        # Calculate the difference between the two years
+        year_diff = abs(years[1] - years[0])
+        
+        # Determine if it's 30 or 100 years
+        if year_diff in [29, 30]:
+            return '30y'
+        elif year_diff in [99, 100]:
+            return '100y'
+        else:
+            logger.warning(f"Unexpected year difference {year_diff} for experiment: {experiment_name}")
+            return 'other'
+            
+    except Exception as e:
+        logger.error(f"Error calculating experiment length for {experiment_name}: {e}")
+        return None
+
+def process_model(model, main_path, base_save_path):
+    """Process EFP data for a single model, handling multiple experiments"""
     model_path = main_path / model
     
     try:
-        # Check experiment directory
-        experiments = os.listdir(model_path)
-        if len(experiments) > 1:
-            error_msg = f"More than one experiment found for model {model}: {experiments}"
-            logger.error(error_msg)
-            raise ValueError(error_msg)
+        # Get all experiments for this model
+        experiments = sorted(os.listdir(model_path))
+        logger.info(f"Found {len(experiments)} experiment(s) for model {model}: {experiments}")
         
-        experiment = experiments[0]
-        efp_file = model_path / experiment / '6hrPlevPt' / 'efp_500hPa.nc'
+        success_count = 0
         
-        if not efp_file.exists():
-            logger.warning(f"File not found: {efp_file}")
-            return False
+        # Loop over all experiments
+        for experiment in experiments:
+            try:
+                # Calculate experiment length
+                experiment_length = calculate_experiment_length(experiment)
+                
+                if experiment_length is None:
+                    logger.error(f"Could not determine experiment length for {experiment}, skipping")
+                    continue
+                
+                # Create the appropriate subdirectory
+                save_path = base_save_path / experiment_length
+                save_path.mkdir(parents=True, exist_ok=True)
+                logger.info(f"Using output directory: {save_path}")
+                
+                efp_file = model_path / experiment / '6hrPlevPt' / 'efp_500hPa.nc'
+                
+                if not efp_file.exists():
+                    logger.warning(f"File not found: {efp_file}")
+                    continue
+                
+                # Process the data
+                logger.info(f"Processing model: {model}, experiment: {experiment} (length: {experiment_length})")
+                
+                with xr.open_dataset(efp_file) as ds:
+                    # Extract EFP variables
+                    efp_vars = [var for var in ds.data_vars if var.startswith('efp_ucomp_div1_QG_')]
+                    
+                    if not efp_vars:
+                        logger.warning(f"No EFP variables found in {efp_file}")
+                        continue
+                    
+                    ds_efp = ds[efp_vars]
+                    
+                    # Save the processed data with both model and experiment in filename
+                    output_file = save_path / f'{model}_{experiment}_efp_500hPa.nc'
+                    ds_efp.to_netcdf(output_file)
+                    logger.info(f"Successfully saved EFP data for {model} - {experiment} to {output_file}")
+                    
+                    # Log some basic info about the saved data
+                    logger.debug(f"Variables saved: {list(ds_efp.data_vars.keys())}")
+                    logger.debug(f"Data dimensions: {dict(ds_efp.dims)}")
+                    
+                success_count += 1
+                
+            except Exception as e:
+                logger.error(f"Error processing experiment {experiment} for model {model}: {e}", exc_info=True)
+                continue
         
-        # Process the data
-        logger.info(f"Processing model: {model}, experiment: {experiment}")
-        
-        with xr.open_dataset(efp_file) as ds:
-            # Extract EFP variables
-            efp_vars = [var for var in ds.data_vars if var.startswith('efp_ucomp_div1_QG_')]
-            
-            if not efp_vars:
-                logger.warning(f"No EFP variables found in {efp_file}")
-                return False
-            
-            ds_efp = ds[efp_vars]
-            
-            # Save the processed data
-            output_file = save_path / f'{model}_efp_500hPa.nc'
-            ds_efp.to_netcdf(output_file)
-            logger.info(f"Successfully saved EFP data for {model} - {experiment} to {output_file}")
-            
-            # Log some basic info about the saved data
-            logger.debug(f"Variables saved: {list(ds_efp.data_vars.keys())}")
-            logger.debug(f"Data dimensions: {dict(ds_efp.dims)}")
-            
-        return True
+        # Return True if at least one experiment was processed successfully
+        return success_count > 0
         
     except Exception as e:
         logger.error(f"Error processing model {model}: {e}", exc_info=True)
@@ -99,7 +152,7 @@ def main():
     
     try:
         # Setup paths
-        main_path, save_path = setup_paths()
+        main_path, base_save_path = setup_paths()
         
         # Get model list
         models = get_model_list(main_path)
@@ -109,7 +162,7 @@ def main():
         for i, model in enumerate(models, 1):
             logger.info(f"Processing model {i}/{len(models)}: {model}")
             
-            if process_model(model, main_path, save_path):
+            if process_model(model, main_path, base_save_path):
                 success_count += 1
         
         # Summary

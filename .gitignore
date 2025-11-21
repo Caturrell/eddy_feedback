@@ -6,6 +6,5 @@
 *.zip
 *.err
 *.out
-*.csv
 *.nfs*
 venv/
