@@ -17,7 +17,6 @@ def seasonal_mean(ds, months, cut_ends=False, take_mean=False):
     
     if not (isinstance(months, list) and all(isinstance(m, int) and 1 <= m <= 12 for m in months)):
         raise ValueError(f"`months` must be a list of 3 integers between 1–12. Got: {months}")
-
     if len(months) != 3:
         raise ValueError(f"`months` must have exactly 3 elements. Got: {months}")
 
@@ -38,7 +37,6 @@ def seasonal_mean(ds, months, cut_ends=False, take_mean=False):
 
     season_year = assign_season_year(ds_season['time'])
     ds_season.coords['season_year'] = ('time', season_year.data)
-
     result = ds_season.groupby('season_year').mean('time')
     result = result.rename({'season_year': 'time'})
 
@@ -49,9 +47,10 @@ def seasonal_mean(ds, months, cut_ends=False, take_mean=False):
         return result
     
 
-def calculate_efp_annual_cycle(ds, months, calc_south_hemis=False, which_div1=None, time_slice=None, cut_ends=False):
+def calculate_efp_annual_cycle(ds, months, calc_south_hemis=False, which_div1=None, time_slice=None, cut_ends=False, slice_500hPa=False):
     hemi = 'Southern' if calc_south_hemis else 'Northern'
-    logger.info(f"Calculating EFP annual cycle for {hemi} Hemisphere, div1: {which_div1}, months: {months}")
+    mode = "500hPa" if slice_500hPa else "mean-level"
+    logger.info(f"Calculating EFP annual cycle for {hemi} Hemisphere, div1: {which_div1}, mode: {mode}, months: {months}")
     
     if calc_south_hemis:
         ds = ds.sel(lat=slice(-90, 0))
@@ -66,20 +65,20 @@ def calculate_efp_annual_cycle(ds, months, calc_south_hemis=False, which_div1=No
     else:
         logger.info(f"Using full time period: {ds.time.min().values} to {ds.time.max().values}")
         
-    # calc seasonal means
     ds = seasonal_mean(ds, months=months, cut_ends=cut_ends)
-    # Remove first and last month to avoid incomplete seasons
-    # ds = ds.isel(time=slice(1, -1))
     logger.info(f"Seasonal means calculated. Dataset shape: {ds.sizes}")
 
-    logger.debug("Computing correlation and EFP.")
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             corr = xr.corr(ds[which_div1], ds.ubar, dim='time').load()**2
 
-        corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
-        corr = corr.mean('level')
+        if slice_500hPa:
+            corr = corr.sel(lat=efp_lat_slice)
+            corr = corr.sel(level=500., method='nearest')
+        else:
+            corr = corr.sel(lat=efp_lat_slice, level=slice(600., 200.))
+            corr = corr.mean('level')
 
         weights = np.cos(np.deg2rad(corr.lat))
         efp = corr.weighted(weights).mean('lat')
@@ -97,6 +96,10 @@ def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None):
     logger.info(f"Starting computation of seasonal EFPs. Output directory: {output_dir}")
     os.makedirs(output_dir, exist_ok=True)
 
+    # dedicated 500 hPa output directory
+    output_dir_500 = "/home/links/ct715/eddy_feedback/chapter1/annual_cycle/various_efp_methods/data/500hPa_efp"
+    os.makedirs(output_dir_500, exist_ok=True)
+
     season_month_dict = {
         'DJF': [12,1,2], 'JFM': [1,2,3], 'FMA': [2,3,4], 'MAM': [3,4,5],
         'AMJ': [4,5,6], 'MJJ': [5,6,7], 'JJA': [6,7,8], 'JAS': [7,8,9],
@@ -104,23 +107,47 @@ def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None):
     }
 
     configs = [
-        ('efp_pr_nh',      'div1_pr',     False),
-        ('efp_QG_nh',      'div1_QG',     False),
-        ('efp_pr_sh',      'div1_pr',     True),
-        ('efp_QG_sh',      'div1_QG',     True),
+        ('efp_pr_nh', 'div1_pr', False),
+        ('efp_QG_nh', 'div1_QG', False),
+        ('efp_pr_sh', 'div1_pr', True),
+        ('efp_QG_sh', 'div1_QG', True),
     ]
 
-    # dictionary to hold all results
-    all_results = {}
+    # Mean-level JSON (saved per dataset/time slice)
+    json_mean = os.path.join(output_dir, "efp_results.json")
+    # 500 hPa JSON (saved to global directory)
+    # use dataset/time_slice info for unique filename
+    slice_name = "full" if time_slice is None else f"{time_slice.start}_{time_slice.stop}".replace('-', '')
+    json_500 = os.path.join(output_dir_500, f"efp_results_500hPa_{slice_name}.json")
+
+    if os.path.exists(json_mean):
+        logger.info(f"{json_mean} already exists — skipping mean-level calculation.")
+        with open(json_mean) as f:
+            all_results = json.load(f)
+    else:
+        all_results = {}
+
+    if os.path.exists(json_500):
+        logger.info(f"{json_500} already exists — skipping 500 hPa calculation.")
+        with open(json_500) as f:
+            all_results_500 = json.load(f)
+    else:
+        all_results_500 = {}
 
     for key, which_div1, calc_south_hemis in configs:
-        logger.info(f"Processing configuration: {key}")
-        result = {}
+        if key not in all_results:
+            all_results[key] = {}
+        if key not in all_results_500:
+            all_results_500[key] = {}
 
         for season, months in season_month_dict.items():
-            logger.info(f"-> Computing result for config={key}, season={season}, months={months}")
-            
-            # subset incomplete seasons
+            logger.info(f"-> Processing {key}, season={season}")
+
+            # skip if both already done
+            if season in all_results[key] and season in all_results_500[key]:
+                logger.info(f"   Both mean and 500hPa EFPs already exist for {key}-{season}, skipping.")
+                continue
+
             if season == 'DJF':
                 start_year = dataset.time.dt.year[0].values
                 end_year = dataset.time.dt.year[-1].values
@@ -129,37 +156,35 @@ def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None):
                 start_year = dataset.time.dt.year[0].values
                 end_year = dataset.time.dt.year[-1].values
                 dataset = dataset.sel(time=slice(f'{start_year}-02', f'{end_year}-10'))
-                
-            # Calculate EFP for the current season
-            efp = calculate_efp_annual_cycle(
-                dataset,
-                months=months,
-                calc_south_hemis=calc_south_hemis,
-                which_div1=which_div1,
-                time_slice=time_slice,
-                cut_ends=False
-            )
 
-            result[season] = {
-                "efp": efp,
-                "months": months
-            }
+            # mean-level
+            if season not in all_results[key]:
+                efp_mean = calculate_efp_annual_cycle(
+                    dataset, months=months, calc_south_hemis=calc_south_hemis,
+                    which_div1=which_div1, time_slice=time_slice, cut_ends=False, slice_500hPa=False
+                )
+                all_results[key][season] = {"efp": efp_mean, "months": months}
 
-        all_results[key] = result
+            # 500 hPa
+            if season not in all_results_500[key]:
+                efp_500 = calculate_efp_annual_cycle(
+                    dataset, months=months, calc_south_hemis=calc_south_hemis,
+                    which_div1=which_div1, time_slice=time_slice, cut_ends=False, slice_500hPa=True
+                )
+                all_results_500[key][season] = {"efp": efp_500, "months": months}
 
-    # Save all results into a single JSON file
-    json_path = os.path.join(output_dir, "efp_results.json")
-    with open(json_path, "w") as f:
+    with open(json_mean, "w") as f:
         json.dump(all_results, f, indent=2)
+    with open(json_500, "w") as f:
+        json.dump(all_results_500, f, indent=2)
 
-    logger.info(f"Saved all results to JSON: {json_path}")
+    logger.info(f"Saved mean-level EFPs to: {json_mean}")
+    logger.info(f"Saved 500 hPa EFPs to: {json_500}")
     logger.info("Completed all configurations.")
-    return all_results
-
+    return all_results, all_results_500
 
 
 if __name__ == "__main__":
-    # setup logging
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)-8s %(message)s",
@@ -167,35 +192,25 @@ if __name__ == "__main__":
     )
     logger.info("Script started.")
     
-    # Import data
     path = '/home/links/ct715/data_storage/reanalysis/jra55_daily/various_efp_methods'
     logger.info(f"Loading dataset from: {path}")
     
-    # import 6h data
     data_path = os.path.join(path, '6h_*.nc')
     ds6h = xr.open_mfdataset(data_path)
     ds6h = dw.data_checker1000(ds6h, check_vars=False)
     
-    # import daily data
     data_path = os.path.join(path, 'daily_*.nc')
     day = xr.open_mfdataset(data_path)
     day = dw.data_checker1000(day, check_vars=False)
     
-    datasets = [ds6h]#, day]
+    datasets = [ds6h]  # add day if needed
 
     logger.info("Datasets loaded and preprocessed.")
 
-    # Loop over time slices
-    time_slices = [
-        slice('1958', '2016'),
-        slice('1979', '2016')
-    ]
+    time_slices = [slice('1958', '2016'), slice('1979', '2016')]
 
     for idx, dataset in enumerate(datasets):
-        
-        # set path name
         folder = 'daily_efp' if dataset is day else '6hourly_efp'
-        
         logger.info(f"Processing dataset {idx+1}/{len(datasets)}")
 
         for time_slice in time_slices:
@@ -203,8 +218,6 @@ if __name__ == "__main__":
             ts_str = f"{time_slice.start}_{time_slice.stop}".replace('-', '')
             save_dir = f'/home/links/ct715/eddy_feedback/chapter1/annual_cycle/various_efp_methods/data/{folder}/{ts_str}'
             os.makedirs(save_dir, exist_ok=True)
-
-            results = compute_and_save_efp_seasonal(dataset, output_dir=save_dir, time_slice=time_slice)
+            compute_and_save_efp_seasonal(dataset, output_dir=save_dir, time_slice=time_slice)
 
     logger.info("Script completed.")
-

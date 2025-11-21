@@ -308,7 +308,9 @@ def ComputeVertEddyXr(v,t,p='level',p0=1e3,lon='lon',time='time',ref='mean',wave
 def GetWavesXr(x,y=None,wave=-1,dim='infer',anomaly=None):
 	"""Get Fourier mode decomposition of x, or <x*y>, where <.> is zonal mean.
 
-		If y!=None, returns Fourier mode contributions (amplitudes) to co-spectrum zonal mean of x*y. Dimension along which Fourier is performed is either gone (wave>=0) or has len(axis)/2+1 due to Fourier symmetry for real signals (wave<0).
+		If y!=None, returns Fourier mode contributions (amplitudes) to co-spectrum zonal mean of x*y. 
+  				Dimension along which Fourier is performed is either gone (wave>=0) 
+      			or has len(axis)/2+1 due to Fourier symmetry for real signals (wave<0).
 
 		If y=None and wave>=0, returns real space contribution of given wave mode. Output has same shape as input.
 		If y=None and wave<0, returns real space contributions for all waves. Output has additional first dimension corresponding to each wave.
