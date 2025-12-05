@@ -38,7 +38,7 @@ def setup_paths():
 def get_model_list(main_path):
     """Get list of models, excluding EFP_data directory"""
     try:
-        main_files = [f for f in os.listdir(main_path) if f != 'EFP_data']
+        main_files = [f for f in os.listdir(main_path) if f not in ['EFP_data', 'EFP_data_mk2']]
         models = sorted(main_files)  # Sort for consistent processing order
         logger.info(f"Found {len(models)} models to process")
         return models

@@ -48,7 +48,7 @@ df = pd.DataFrame(rows)
 df = df.sort_values("model").reset_index(drop=True)
 
 # save CSV summary in base dir
-csv_path = os.path.join(base_dir, "cmip6_efp_winters_30y.csv")
+csv_path = os.path.join(base_dir, "cmip6_6h_efp_winters_30y.csv")
 df.to_csv(csv_path, index=False)
 
 print(f"✅ Saved summary CSV to {csv_path}")

@@ -197,11 +197,14 @@ def ComputeEPfluxDivXr(u,v,t,lon='infer',lat='infer',pres='infer',time='time',re
 		upvp = GetWavesXr(u,v,dim=lon,wave=wave)
 	#
 	## compute the horizontal component
+	ep1_cart = -upvp
+ 
 	if do_ubar:
 		shear = ubar.differentiate(pres,edge_order=2) # [m/s.hPa]
+		ep1_cart = ep1_cart + shear*vertEddy # [m2/s2 + m/s.hPa*m.hPa/s] = [m2/s2]
 	else:
 		shear = 0.
-	ep1_cart = -upvp + shear*vertEddy # [m2/s2 + m/s.hPa*m.hPa/s] = [m2/s2]
+	
 	#
 	## compute vertical component of EP flux.
 	## at first, keep it in Cartesian coordinates, ie ep2_cart = f [v'theta'] / [theta]_p + ...
