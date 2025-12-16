@@ -101,9 +101,14 @@ def process_model(model, main_path, base_save_path):
                     continue
                 
                 # Create the appropriate subdirectory
-                save_path = base_save_path / experiment_length
+                save_path = base_save_path / experiment_length / '6h_efp'
                 save_path.mkdir(parents=True, exist_ok=True)
                 logger.info(f"Using output directory: {save_path}")
+                
+                output_file = save_path /  f'{model}_{experiment_length}_efp_500hPa.nc'
+                if output_file.exists():
+                    logger.info(f"Output file already exists, skipping: {output_file}")
+                    continue
                 
                 efp_file = model_path / experiment / '6hrPlevPt' / 'efp_500hPa.nc'
                 
@@ -125,7 +130,6 @@ def process_model(model, main_path, base_save_path):
                     ds_efp = ds[efp_vars]
                     
                     # Save the processed data with both model and experiment in filename
-                    output_file = save_path / f'{model}_{experiment}_efp_500hPa.nc'
                     ds_efp.to_netcdf(output_file)
                     logger.info(f"Successfully saved EFP data for {model} - {experiment} to {output_file}")
                     

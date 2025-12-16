@@ -143,9 +143,9 @@ def process_model(model, main_path, base_save_path):
                 # Calculate experiment length
                 experiment_length = calculate_experiment_length(experiment)
                 
-                if experiment_length == '100y':
-                    logger.info(f"Skipping 100-year experiment: {experiment}")
-                    continue
+                # if experiment_length == '100y':
+                #     logger.info(f"Skipping 100-year experiment: {experiment}")
+                #     continue
                 
                 if experiment_length is None:
                     logger.error(f"Could not determine experiment length for {experiment}, skipping")

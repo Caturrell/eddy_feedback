@@ -41,44 +41,6 @@ def load_monthly_data(data_path):
     return datasets
 
 
-# def load_daily_data(data_path, model_list, chunks={'time': 100}):
-#     """Load daily data (multiple files per model) with chunking."""
-#     datasets = {}
-    
-#     for model in model_list:
-#         model_path = os.path.join(data_path, model)
-        
-#         logger.info(f"Loading daily: {model} ({len(os.listdir(model_path))} files)")
-#         file_paths = os.path.join(model_path, '*.nc')
-        
-#         # Open with explicit chunking for lazy loading
-#         # ds = xr.open_mfdataset(
-#         #     file_paths, 
-#         #     combine='nested', 
-#         #     compat='override', 
-#         #     decode_times=True,
-#         #     chunks=chunks  # Keep data lazy with dask
-#         # )
-        
-#         # Open data with different method
-#         ds = xr.open_mfdataset(
-#             file_paths, 
-#             combine='by_coords',
-#             chunks={'time': 12}  
-#         )
-        
-#         # run data through checker
-#         # ds = dw.data_checker1000(ds, check_vars=False)
-
-#         if 'ubar' not in ds:
-#             logger.info(f"Calculating ubar for {model}")
-#             # Keep this lazy - don't compute yet
-#             ds['ubar'] = ds.ucomp.mean(dim='lon')
-        
-#         datasets[model] = ds
-    
-#     return datasets
-
 def process_seasonal_data(ds, variables=['ubar', 'div1_QG'],
                           level=500.,
                           lat_range=(25, 75)):
@@ -152,13 +114,9 @@ def plot_all_models_batch(data_path, model_list, title_prefix,
             
             ds = dw.data_checker1000(ds, check_vars=False)
             
-            
             if 'ubar' not in ds:
                 logger.info(f"Calculating ubar for {model}")
                 ds['ubar'] = ds.ucomp.mean(dim='lon')
-            # if 'vbar' not in ds:
-            #     logger.info(f"Calculating vbar for {model}")
-            #     ds['vbar'] = ds.vcomp.mean(dim='lon')
             
             # Process and plot
             ds_processed = process_seasonal_data(ds, variables=variables)
@@ -197,44 +155,30 @@ def main():
     daily_path = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/daily_averages'
     save_plot_path = '/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/plots/missing_time_data'
     
-    # Model classifications
-    # models_1_0 = [
-    #     'ACCESS-CM2',
-    #     'ACCESS-ESM1-5',
-    #     'AWI-ESM-1-1-LR',
-    #     'CMCC-CM2-SR5',
-    #     'CMCC-ESM2',
-    #     'EC-Earth3-CC',
-    #     'EC-Earth3-LR',
-    #     'EC-Earth3-Veg-LR',
-    #     'EC-Earth3-Veg',
-    #     'MIROC6',
-    #     'MRI-ESM2-0'
-    # ]
-
-    # models_other_list = [
-    #     'GFDL-CM4',
-    #     'IPSL-CM5A2-INCA',
-    #     'IPSL-CM6A-LR',
-    #     'KIOST-ESM',
-    #     'MPI-ESM-1-2-HAM',
-    #     'MPI-ESM1-2-HR',
-    #     'MPI-ESM1-2-LR',
-    #     'NorESM2-LM'
-    # ]
-    
+    # Model list
     models = [
-    'AWI-ESM-1-1-LR', 'CMCC-CM2-SR5', 'EC-Earth3', 'EC-Earth3-LR', 
-    'EC-Earth3-Veg-LR', 'IPSL-CM6A-LR', 'MPI-ESM-1-2-HAM', 'MPI-ESM1-2-LR', 
-    'NorESM2-LM', 'CanESM5-1', 'CMCC-ESM2', 'EC-Earth3-CC', 'EC-Earth3-Veg', 
-    'IPSL-CM5A2-INCA', 'IPSL-CM6A-MR1', 'MPI-ESM1-2-HR', 'MRI-ESM2-0', 
-    'NorESM2-MM'
-]
+        'AWI-ESM-1-1-LR',
+        'CMCC-CM2-SR5',
+        'CMCC-ESM2',
+        'CanESM5-1',
+        'EC-Earth3',
+        'EC-Earth3-CC',
+        'EC-Earth3-LR',
+        'EC-Earth3-Veg',
+        'EC-Earth3-Veg-LR',
+        'IPSL-CM5A2-INCA',
+        'IPSL-CM6A-LR',
+        'IPSL-CM6A-MR1',
+        'MPI-ESM-1-2-HAM',
+        'MPI-ESM1-2-HR',
+        'MPI-ESM1-2-LR',
+        'MRI-ESM2-0',
+        'NorESM2-LM',
+        'NorESM2-MM'
+    ]
     
-    
-    # vars_to_plot = ['ubar', 'vbar']
+    # Variables to plot
     vars_to_plot = ['ubar', 'div1_QG']
-    
     
     # Load monthly averaged data (smaller, okay to load all at once)
     logger.info("=== Loading Monthly Averaged Data ===")
@@ -242,15 +186,18 @@ def main():
     
     # Plot monthly data
     logger.info("=== Plotting Monthly Data ===")
-    fig1 = plot_all_models(datasets_monthly, models, 
-                           'Daily models with 100y', variables=vars_to_plot)
-    plt.savefig(f'{save_plot_path}/100y_working_models_monthly_{vars_to_plot[0]}_{vars_to_plot[1]}.png', dpi=300, bbox_inches='tight')
+    fig1 = plot_all_models(
+        datasets_monthly, 
+        models, 
+        'CMIP6 Models (Monthly Averaged)', 
+        variables=vars_to_plot
+    )
+    plt.savefig(
+        f'{save_plot_path}/100y_models_monthly_{vars_to_plot[0]}_{vars_to_plot[1]}.png', 
+        dpi=300, 
+        bbox_inches='tight'
+    )
     plt.close(fig1)
-    
-    # fig2 = plot_all_models(datasets_monthly, models_1_0, 
-    #                        'Working Models (Monthly Averaged)', variables=vars_to_plot)
-    # plt.savefig(f'{save_plot_path}/100y_efp_1.0_monthly_{vars_to_plot[0]}_{vars_to_plot[1]}.png', dpi=300, bbox_inches='tight')
-    # plt.close(fig2)
     
     # Clean up monthly data
     for ds in datasets_monthly.values():
@@ -259,23 +206,14 @@ def main():
     
     # Plot daily data - process one model at a time
     logger.info("=== Plotting Daily Data ===")
-    fig3 = plot_all_models_batch(
+    fig2 = plot_all_models_batch(
         daily_path, 
         models, 
-        'Models with EFP = 1.0 (Daily Averages)',
-        save_path=f'{save_plot_path}/100y_efp_1.0_daily_{vars_to_plot[0]}_{vars_to_plot[1]}.png',
+        'CMIP6 Models (Daily Averages)',
+        save_path=f'{save_plot_path}/100y_models_daily_{vars_to_plot[0]}_{vars_to_plot[1]}.png',
         variables=vars_to_plot
     )
-    plt.close(fig3)
-    
-    # fig4 = plot_all_models_batch(
-    #     daily_path, 
-    #     models_other_list, 
-    #     'Working Models (Daily Averages)',
-    #     save_path=f'{save_plot_path}/100y_efp_other_daily_{vars_to_plot[0]}_{vars_to_plot[1]}.png',
-    #     variables=vars_to_plot
-    # )
-    # plt.close(fig4)
+    plt.close(fig2)
     
     logger.info("=== Complete ===")
 

@@ -2,7 +2,7 @@ import xarray as xr
 import os
 import json
 
-path = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y'
+path = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp'
 
 # month mapping for each season code
 season_months = {
@@ -92,11 +92,11 @@ for i, (model_name, model_ds) in enumerate(ds.items(), 1):
     print(f"  Result keys: {list(result.keys())}")
     
     # save JSON per model
-    save_path = '/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/data/30y'
+    save_path = '/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/data/100y/6h'
     save_dir = os.path.join(save_path, f'{model_name}')
     os.makedirs(save_dir, exist_ok=True)
     
-    out_file = os.path.join(save_dir, f"{model_name}_efp_results_CMIP6_piControl_30y.json")
+    out_file = os.path.join(save_dir, f"{model_name}_efp_results_CMIP6_piControl_100y.json")
     with open(out_file, "w") as f:
         json.dump(result, f, indent=2)
     

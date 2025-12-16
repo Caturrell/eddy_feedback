@@ -15335,3 +15335,581 @@ PermissionError: [Errno 13] Permission denied: '/gws/nopw/j04/arctic_connect/ctu
 2025-12-01 11:58:03,903 - INFO - Skipping 100-year experiment: 1300_1399
 2025-12-01 11:58:03,903 - INFO - Processing completed. Successfully processed 20/22 models
 2025-12-01 11:58:03,903 - WARNING - Failed to process 2 models
+2025-12-05 12:39:34,497 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/efp_processing.log
+2025-12-05 12:39:34,497 - INFO - Starting EFP data processing pipeline
+2025-12-05 12:39:34,739 - INFO - Base output directory ensured: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit
+2025-12-05 12:39:34,741 - INFO - Found 22 models to process
+2025-12-05 12:39:34,741 - INFO - Processing model 1/22: ACCESS-CM2
+2025-12-05 12:39:34,742 - INFO - Found 1 experiment(s) for model ACCESS-CM2: ['1085_1115']
+2025-12-05 12:39:34,743 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:34,744 - INFO - Processing model: ACCESS-CM2, experiment: 1085_1115 (length: 30y)
+2025-12-05 12:39:40,734 - INFO - Successfully saved EFP data for ACCESS-CM2 - 1085_1115 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-CM2_30y_efp_500hPa.nc
+2025-12-05 12:39:40,750 - INFO - Processing model 2/22: ACCESS-ESM1-5
+2025-12-05 12:39:40,752 - INFO - Found 1 experiment(s) for model ACCESS-ESM1-5: ['0296_0326']
+2025-12-05 12:39:40,753 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:40,754 - INFO - Processing model: ACCESS-ESM1-5, experiment: 0296_0326 (length: 30y)
+2025-12-05 12:39:42,976 - INFO - Successfully saved EFP data for ACCESS-ESM1-5 - 0296_0326 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-ESM1-5_30y_efp_500hPa.nc
+2025-12-05 12:39:42,995 - INFO - Processing model 3/22: AWI-ESM-1-1-LR
+2025-12-05 12:39:42,998 - INFO - Found 2 experiment(s) for model AWI-ESM-1-1-LR: ['1855_1885', '1855_1955']
+2025-12-05 12:39:42,998 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:43,000 - INFO - Processing model: AWI-ESM-1-1-LR, experiment: 1855_1885 (length: 30y)
+2025-12-05 12:39:45,157 - INFO - Successfully saved EFP data for AWI-ESM-1-1-LR - 1855_1885 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/AWI-ESM-1-1-LR_30y_efp_500hPa.nc
+2025-12-05 12:39:45,177 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:45,179 - INFO - Processing model: AWI-ESM-1-1-LR, experiment: 1855_1955 (length: 100y)
+2025-12-05 12:39:46,869 - INFO - Successfully saved EFP data for AWI-ESM-1-1-LR - 1855_1955 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/AWI-ESM-1-1-LR_100y_efp_500hPa.nc
+2025-12-05 12:39:46,889 - INFO - Processing model 4/22: CMCC-CM2-SR5
+2025-12-05 12:39:46,891 - INFO - Found 2 experiment(s) for model CMCC-CM2-SR5: ['1850_1880', '1850_1950']
+2025-12-05 12:39:46,892 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:46,894 - INFO - Processing model: CMCC-CM2-SR5, experiment: 1850_1880 (length: 30y)
+2025-12-05 12:39:47,331 - INFO - Successfully saved EFP data for CMCC-CM2-SR5 - 1850_1880 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-CM2-SR5_30y_efp_500hPa.nc
+2025-12-05 12:39:47,356 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:47,358 - INFO - Processing model: CMCC-CM2-SR5, experiment: 1850_1950 (length: 100y)
+2025-12-05 12:39:47,917 - INFO - Successfully saved EFP data for CMCC-CM2-SR5 - 1850_1950 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-CM2-SR5_100y_efp_500hPa.nc
+2025-12-05 12:39:47,935 - INFO - Processing model 5/22: CMCC-ESM2
+2025-12-05 12:39:47,937 - INFO - Found 2 experiment(s) for model CMCC-ESM2: ['1850_1880', '1850_1950']
+2025-12-05 12:39:47,937 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:47,939 - INFO - Processing model: CMCC-ESM2, experiment: 1850_1880 (length: 30y)
+2025-12-05 12:39:48,992 - INFO - Successfully saved EFP data for CMCC-ESM2 - 1850_1880 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-ESM2_30y_efp_500hPa.nc
+2025-12-05 12:39:49,010 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:49,011 - INFO - Processing model: CMCC-ESM2, experiment: 1850_1950 (length: 100y)
+2025-12-05 12:39:50,681 - INFO - Successfully saved EFP data for CMCC-ESM2 - 1850_1950 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-ESM2_100y_efp_500hPa.nc
+2025-12-05 12:39:50,700 - INFO - Processing model 6/22: CanESM5-1
+2025-12-05 12:39:50,702 - INFO - Found 1 experiment(s) for model CanESM5-1: ['6000_6100']
+2025-12-05 12:39:50,703 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:50,704 - INFO - Processing model: CanESM5-1, experiment: 6000_6100 (length: 100y)
+2025-12-05 12:39:54,272 - INFO - Successfully saved EFP data for CanESM5-1 - 6000_6100 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CanESM5-1_100y_efp_500hPa.nc
+2025-12-05 12:39:54,292 - INFO - Processing model 7/22: EC-Earth3
+2025-12-05 12:39:54,293 - INFO - Found 2 experiment(s) for model EC-Earth3: ['2259_2288', '2259_2358']
+2025-12-05 12:39:54,294 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:54,295 - INFO - Processing model: EC-Earth3, experiment: 2259_2288 (length: 30y)
+2025-12-05 12:39:56,889 - INFO - Successfully saved EFP data for EC-Earth3 - 2259_2288 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3_30y_efp_500hPa.nc
+2025-12-05 12:39:56,909 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:56,911 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/EC-Earth3/2259_2358/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:39:56,913 - INFO - Processing model 8/22: EC-Earth3-CC
+2025-12-05 12:39:56,915 - INFO - Found 2 experiment(s) for model EC-Earth3-CC: ['1850_1879', '1850_1949']
+2025-12-05 12:39:56,916 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:56,917 - INFO - Processing model: EC-Earth3-CC, experiment: 1850_1879 (length: 30y)
+2025-12-05 12:39:57,804 - INFO - Successfully saved EFP data for EC-Earth3-CC - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-CC_30y_efp_500hPa.nc
+2025-12-05 12:39:57,821 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:39:57,822 - INFO - Processing model: EC-Earth3-CC, experiment: 1850_1949 (length: 100y)
+2025-12-05 12:39:59,660 - INFO - Successfully saved EFP data for EC-Earth3-CC - 1850_1949 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-CC_100y_efp_500hPa.nc
+2025-12-05 12:39:59,679 - INFO - Processing model 9/22: EC-Earth3-LR
+2025-12-05 12:39:59,681 - INFO - Found 2 experiment(s) for model EC-Earth3-LR: ['2219_2248', '2219_2318']
+2025-12-05 12:39:59,682 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:39:59,683 - INFO - Processing model: EC-Earth3-LR, experiment: 2219_2248 (length: 30y)
+2025-12-05 12:40:01,906 - INFO - Successfully saved EFP data for EC-Earth3-LR - 2219_2248 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-LR_30y_efp_500hPa.nc
+2025-12-05 12:40:01,930 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:01,931 - INFO - Processing model: EC-Earth3-LR, experiment: 2219_2318 (length: 100y)
+2025-12-05 12:40:04,174 - INFO - Successfully saved EFP data for EC-Earth3-LR - 2219_2318 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-LR_100y_efp_500hPa.nc
+2025-12-05 12:40:04,193 - INFO - Processing model 10/22: EC-Earth3-Veg
+2025-12-05 12:40:04,196 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg: ['1850_1879', '1850_1949']
+2025-12-05 12:40:04,198 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:04,199 - INFO - Processing model: EC-Earth3-Veg, experiment: 1850_1879 (length: 30y)
+2025-12-05 12:40:05,233 - INFO - Successfully saved EFP data for EC-Earth3-Veg - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg_30y_efp_500hPa.nc
+2025-12-05 12:40:05,251 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:05,253 - INFO - Processing model: EC-Earth3-Veg, experiment: 1850_1949 (length: 100y)
+2025-12-05 12:40:07,860 - INFO - Successfully saved EFP data for EC-Earth3-Veg - 1850_1949 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg_100y_efp_500hPa.nc
+2025-12-05 12:40:07,879 - INFO - Processing model 11/22: EC-Earth3-Veg-LR
+2025-12-05 12:40:07,882 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg-LR: ['2300_2329', '2300_2399']
+2025-12-05 12:40:07,884 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:07,886 - INFO - Processing model: EC-Earth3-Veg-LR, experiment: 2300_2329 (length: 30y)
+2025-12-05 12:40:08,410 - INFO - Successfully saved EFP data for EC-Earth3-Veg-LR - 2300_2329 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg-LR_30y_efp_500hPa.nc
+2025-12-05 12:40:08,429 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:08,430 - INFO - Processing model: EC-Earth3-Veg-LR, experiment: 2300_2399 (length: 100y)
+2025-12-05 12:40:10,082 - INFO - Successfully saved EFP data for EC-Earth3-Veg-LR - 2300_2399 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg-LR_100y_efp_500hPa.nc
+2025-12-05 12:40:10,104 - INFO - Processing model 12/22: GFDL-CM4
+2025-12-05 12:40:10,106 - INFO - Found 1 experiment(s) for model GFDL-CM4: ['0386_0416']
+2025-12-05 12:40:10,107 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:10,108 - INFO - Processing model: GFDL-CM4, experiment: 0386_0416 (length: 30y)
+2025-12-05 12:40:10,773 - INFO - Successfully saved EFP data for GFDL-CM4 - 0386_0416 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/GFDL-CM4_30y_efp_500hPa.nc
+2025-12-05 12:40:10,792 - INFO - Processing model 13/22: IPSL-CM5A2-INCA
+2025-12-05 12:40:10,794 - INFO - Found 2 experiment(s) for model IPSL-CM5A2-INCA: ['1870_1899', '1870_1970']
+2025-12-05 12:40:10,795 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:10,796 - INFO - Processing model: IPSL-CM5A2-INCA, experiment: 1870_1899 (length: 30y)
+2025-12-05 12:40:12,260 - INFO - Successfully saved EFP data for IPSL-CM5A2-INCA - 1870_1899 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM5A2-INCA_30y_efp_500hPa.nc
+2025-12-05 12:40:12,278 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:12,280 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM5A2-INCA/1870_1970/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:12,281 - INFO - Processing model 14/22: IPSL-CM6A-LR
+2025-12-05 12:40:12,283 - INFO - Found 2 experiment(s) for model IPSL-CM6A-LR: ['1870_1899', '1870_1970']
+2025-12-05 12:40:12,283 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:12,284 - INFO - Processing model: IPSL-CM6A-LR, experiment: 1870_1899 (length: 30y)
+2025-12-05 12:40:14,043 - INFO - Successfully saved EFP data for IPSL-CM6A-LR - 1870_1899 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM6A-LR_30y_efp_500hPa.nc
+2025-12-05 12:40:14,061 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:14,062 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-LR/1870_1970/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:14,064 - INFO - Processing model 15/22: KIOST-ESM
+2025-12-05 12:40:14,065 - INFO - Found 1 experiment(s) for model KIOST-ESM: ['3180_3209']
+2025-12-05 12:40:14,065 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:14,067 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/KIOST-ESM/3180_3209/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:14,067 - INFO - Processing model 16/22: MIROC6
+2025-12-05 12:40:14,068 - INFO - Found 1 experiment(s) for model MIROC6: ['3350_3380']
+2025-12-05 12:40:14,068 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:14,069 - INFO - Processing model: MIROC6, experiment: 3350_3380 (length: 30y)
+2025-12-05 12:40:15,494 - INFO - Successfully saved EFP data for MIROC6 - 3350_3380 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MIROC6_30y_efp_500hPa.nc
+2025-12-05 12:40:15,513 - INFO - Processing model 17/22: MPI-ESM-1-2-HAM
+2025-12-05 12:40:15,514 - INFO - Found 2 experiment(s) for model MPI-ESM-1-2-HAM: ['1850_1879', '1850_1950']
+2025-12-05 12:40:15,515 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:15,517 - INFO - Processing model: MPI-ESM-1-2-HAM, experiment: 1850_1879 (length: 30y)
+2025-12-05 12:40:17,431 - INFO - Successfully saved EFP data for MPI-ESM-1-2-HAM - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM-1-2-HAM_30y_efp_500hPa.nc
+2025-12-05 12:40:17,448 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:17,450 - INFO - Processing model: MPI-ESM-1-2-HAM, experiment: 1850_1950 (length: 100y)
+2025-12-05 12:40:19,158 - INFO - Successfully saved EFP data for MPI-ESM-1-2-HAM - 1850_1950 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM-1-2-HAM_100y_efp_500hPa.nc
+2025-12-05 12:40:19,177 - INFO - Processing model 18/22: MPI-ESM1-2-HR
+2025-12-05 12:40:19,180 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-HR: ['1850_1880', '1850_1950']
+2025-12-05 12:40:19,182 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:19,183 - INFO - Processing model: MPI-ESM1-2-HR, experiment: 1850_1880 (length: 30y)
+2025-12-05 12:40:23,543 - INFO - Successfully saved EFP data for MPI-ESM1-2-HR - 1850_1880 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-HR_30y_efp_500hPa.nc
+2025-12-05 12:40:23,561 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:23,562 - INFO - Processing model: MPI-ESM1-2-HR, experiment: 1850_1950 (length: 100y)
+2025-12-05 12:40:25,404 - INFO - Successfully saved EFP data for MPI-ESM1-2-HR - 1850_1950 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-HR_100y_efp_500hPa.nc
+2025-12-05 12:40:25,422 - INFO - Processing model 19/22: MPI-ESM1-2-LR
+2025-12-05 12:40:25,424 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-LR: ['1850_1879', '1850_1950']
+2025-12-05 12:40:25,425 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:25,427 - INFO - Processing model: MPI-ESM1-2-LR, experiment: 1850_1879 (length: 30y)
+2025-12-05 12:40:27,455 - INFO - Successfully saved EFP data for MPI-ESM1-2-LR - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-LR_30y_efp_500hPa.nc
+2025-12-05 12:40:27,473 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:27,475 - INFO - Processing model: MPI-ESM1-2-LR, experiment: 1850_1950 (length: 100y)
+2025-12-05 12:40:29,154 - INFO - Successfully saved EFP data for MPI-ESM1-2-LR - 1850_1950 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-LR_100y_efp_500hPa.nc
+2025-12-05 12:40:29,173 - INFO - Processing model 20/22: MRI-ESM2-0
+2025-12-05 12:40:29,193 - INFO - Found 2 experiment(s) for model MRI-ESM2-0: ['1850_1879', '1850_1949']
+2025-12-05 12:40:29,196 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:29,198 - INFO - Processing model: MRI-ESM2-0, experiment: 1850_1879 (length: 30y)
+2025-12-05 12:40:31,192 - INFO - Successfully saved EFP data for MRI-ESM2-0 - 1850_1879 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MRI-ESM2-0_30y_efp_500hPa.nc
+2025-12-05 12:40:31,211 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:31,212 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MRI-ESM2-0/1850_1949/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:31,213 - INFO - Processing model 21/22: NorESM2-LM
+2025-12-05 12:40:31,215 - INFO - Found 2 experiment(s) for model NorESM2-LM: ['1701_1730', '1701_1800']
+2025-12-05 12:40:31,215 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:31,216 - INFO - Processing model: NorESM2-LM, experiment: 1701_1730 (length: 30y)
+2025-12-05 12:40:32,245 - INFO - Successfully saved EFP data for NorESM2-LM - 1701_1730 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/NorESM2-LM_30y_efp_500hPa.nc
+2025-12-05 12:40:32,265 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:32,266 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-LM/1701_1800/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:32,267 - INFO - Processing model 22/22: NorESM2-MM
+2025-12-05 12:40:32,270 - INFO - Found 2 experiment(s) for model NorESM2-MM: ['1300_1329', '1300_1399']
+2025-12-05 12:40:32,270 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-05 12:40:32,271 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1329/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:32,271 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-05 12:40:32,272 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1399/6hrPlevPt/efp_500hPa.nc
+2025-12-05 12:40:32,272 - INFO - Processing completed. Successfully processed 20/22 models
+2025-12-05 12:40:32,272 - WARNING - Failed to process 2 models
+2025-12-09 09:04:55,739 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/efp_processing.log
+2025-12-09 09:04:55,740 - INFO - Starting EFP data processing pipeline
+2025-12-09 09:04:56,217 - INFO - Base output directory ensured: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit
+2025-12-09 09:04:56,219 - INFO - Found 23 models to process
+2025-12-09 09:04:56,219 - INFO - Processing model 1/23: ACCESS-CM2
+2025-12-09 09:04:56,220 - INFO - Found 1 experiment(s) for model ACCESS-CM2: ['1085_1115']
+2025-12-09 09:04:56,221 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,221 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-CM2_30y_efp_500hPa.nc
+2025-12-09 09:04:56,221 - INFO - Processing model 2/23: ACCESS-ESM1-5
+2025-12-09 09:04:56,222 - INFO - Found 1 experiment(s) for model ACCESS-ESM1-5: ['0296_0326']
+2025-12-09 09:04:56,222 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,222 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-ESM1-5_30y_efp_500hPa.nc
+2025-12-09 09:04:56,222 - INFO - Processing model 3/23: AWI-ESM-1-1-LR
+2025-12-09 09:04:56,223 - INFO - Found 2 experiment(s) for model AWI-ESM-1-1-LR: ['1855_1885', '1855_1955']
+2025-12-09 09:04:56,223 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,224 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/AWI-ESM-1-1-LR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,224 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,224 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/AWI-ESM-1-1-LR_100y_efp_500hPa.nc
+2025-12-09 09:04:56,224 - INFO - Processing model 4/23: CMCC-CM2-SR5
+2025-12-09 09:04:56,225 - INFO - Found 2 experiment(s) for model CMCC-CM2-SR5: ['1850_1880', '1850_1950']
+2025-12-09 09:04:56,225 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,226 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-CM2-SR5_30y_efp_500hPa.nc
+2025-12-09 09:04:56,226 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,226 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-CM2-SR5_100y_efp_500hPa.nc
+2025-12-09 09:04:56,226 - INFO - Processing model 5/23: CMCC-ESM2
+2025-12-09 09:04:56,227 - INFO - Found 2 experiment(s) for model CMCC-ESM2: ['1850_1880', '1850_1950']
+2025-12-09 09:04:56,227 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,227 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-ESM2_30y_efp_500hPa.nc
+2025-12-09 09:04:56,227 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,228 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-ESM2_100y_efp_500hPa.nc
+2025-12-09 09:04:56,228 - INFO - Processing model 6/23: CanESM5-1
+2025-12-09 09:04:56,229 - INFO - Found 1 experiment(s) for model CanESM5-1: ['6000_6100']
+2025-12-09 09:04:56,229 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,229 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CanESM5-1_100y_efp_500hPa.nc
+2025-12-09 09:04:56,229 - INFO - Processing model 7/23: EC-Earth3
+2025-12-09 09:04:56,230 - INFO - Found 2 experiment(s) for model EC-Earth3: ['2259_2288', '2259_2358']
+2025-12-09 09:04:56,230 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,230 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3_30y_efp_500hPa.nc
+2025-12-09 09:04:56,230 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,231 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/EC-Earth3/2259_2358/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,231 - INFO - Processing model 8/23: EC-Earth3-CC
+2025-12-09 09:04:56,232 - INFO - Found 2 experiment(s) for model EC-Earth3-CC: ['1850_1879', '1850_1949']
+2025-12-09 09:04:56,232 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,233 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-CC_30y_efp_500hPa.nc
+2025-12-09 09:04:56,233 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,233 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-CC_100y_efp_500hPa.nc
+2025-12-09 09:04:56,233 - INFO - Processing model 9/23: EC-Earth3-LR
+2025-12-09 09:04:56,234 - INFO - Found 2 experiment(s) for model EC-Earth3-LR: ['2219_2248', '2219_2318']
+2025-12-09 09:04:56,234 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,234 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-LR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,234 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,235 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-LR_100y_efp_500hPa.nc
+2025-12-09 09:04:56,235 - INFO - Processing model 10/23: EC-Earth3-Veg
+2025-12-09 09:04:56,235 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg: ['1850_1879', '1850_1949']
+2025-12-09 09:04:56,236 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,236 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg_30y_efp_500hPa.nc
+2025-12-09 09:04:56,236 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,236 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg_100y_efp_500hPa.nc
+2025-12-09 09:04:56,236 - INFO - Processing model 11/23: EC-Earth3-Veg-LR
+2025-12-09 09:04:56,237 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg-LR: ['2300_2329', '2300_2399']
+2025-12-09 09:04:56,237 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,237 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg-LR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,237 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,237 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg-LR_100y_efp_500hPa.nc
+2025-12-09 09:04:56,237 - INFO - Processing model 12/23: GFDL-CM4
+2025-12-09 09:04:56,238 - INFO - Found 1 experiment(s) for model GFDL-CM4: ['0386_0416']
+2025-12-09 09:04:56,238 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,239 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/GFDL-CM4_30y_efp_500hPa.nc
+2025-12-09 09:04:56,239 - INFO - Processing model 13/23: IPSL-CM5A2-INCA
+2025-12-09 09:04:56,239 - INFO - Found 2 experiment(s) for model IPSL-CM5A2-INCA: ['1870_1899', '1870_1970']
+2025-12-09 09:04:56,239 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,240 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM5A2-INCA_30y_efp_500hPa.nc
+2025-12-09 09:04:56,240 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,241 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM5A2-INCA/1870_1970/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,241 - INFO - Processing model 14/23: IPSL-CM6A-LR
+2025-12-09 09:04:56,241 - INFO - Found 2 experiment(s) for model IPSL-CM6A-LR: ['1870_1899', '1870_1970']
+2025-12-09 09:04:56,241 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,242 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM6A-LR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,242 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,242 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-LR/1870_1970/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,243 - INFO - Processing model 15/23: IPSL-CM6A-MR1
+2025-12-09 09:04:56,243 - INFO - Found 1 experiment(s) for model IPSL-CM6A-MR1: ['1870_1970']
+2025-12-09 09:04:56,243 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,244 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-MR1/1870_1970/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,244 - INFO - Processing model 16/23: KIOST-ESM
+2025-12-09 09:04:56,245 - INFO - Found 1 experiment(s) for model KIOST-ESM: ['3180_3209']
+2025-12-09 09:04:56,245 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,246 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/KIOST-ESM/3180_3209/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,246 - INFO - Processing model 17/23: MIROC6
+2025-12-09 09:04:56,247 - INFO - Found 1 experiment(s) for model MIROC6: ['3350_3380']
+2025-12-09 09:04:56,247 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,247 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MIROC6_30y_efp_500hPa.nc
+2025-12-09 09:04:56,247 - INFO - Processing model 18/23: MPI-ESM-1-2-HAM
+2025-12-09 09:04:56,248 - INFO - Found 2 experiment(s) for model MPI-ESM-1-2-HAM: ['1850_1879', '1850_1950']
+2025-12-09 09:04:56,248 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,248 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM-1-2-HAM_30y_efp_500hPa.nc
+2025-12-09 09:04:56,248 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,248 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM-1-2-HAM_100y_efp_500hPa.nc
+2025-12-09 09:04:56,248 - INFO - Processing model 19/23: MPI-ESM1-2-HR
+2025-12-09 09:04:56,249 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-HR: ['1850_1880', '1850_1950']
+2025-12-09 09:04:56,249 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,249 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-HR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,249 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,250 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-HR_100y_efp_500hPa.nc
+2025-12-09 09:04:56,250 - INFO - Processing model 20/23: MPI-ESM1-2-LR
+2025-12-09 09:04:56,250 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-LR: ['1850_1879', '1850_1950']
+2025-12-09 09:04:56,250 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,251 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-LR_30y_efp_500hPa.nc
+2025-12-09 09:04:56,251 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,251 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-LR_100y_efp_500hPa.nc
+2025-12-09 09:04:56,251 - INFO - Processing model 21/23: MRI-ESM2-0
+2025-12-09 09:04:56,252 - INFO - Found 2 experiment(s) for model MRI-ESM2-0: ['1850_1879', '1850_1949']
+2025-12-09 09:04:56,252 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,252 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MRI-ESM2-0_30y_efp_500hPa.nc
+2025-12-09 09:04:56,252 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,253 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MRI-ESM2-0/1850_1949/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,253 - INFO - Processing model 22/23: NorESM2-LM
+2025-12-09 09:04:56,254 - INFO - Found 2 experiment(s) for model NorESM2-LM: ['1701_1730', '1701_1800']
+2025-12-09 09:04:56,254 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,254 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/NorESM2-LM_30y_efp_500hPa.nc
+2025-12-09 09:04:56,254 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,255 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-LM/1701_1800/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,255 - INFO - Processing model 23/23: NorESM2-MM
+2025-12-09 09:04:56,256 - INFO - Found 2 experiment(s) for model NorESM2-MM: ['1300_1329', '1300_1399']
+2025-12-09 09:04:56,256 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-09 09:04:56,257 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1329/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,257 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-09 09:04:56,258 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1399/6hrPlevPt/efp_500hPa.nc
+2025-12-09 09:04:56,258 - INFO - Processing completed. Successfully processed 0/23 models
+2025-12-09 09:04:56,258 - WARNING - Failed to process 23 models
+2025-12-11 12:30:13,320 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/efp_processing.log
+2025-12-11 12:30:13,320 - INFO - Starting EFP data processing pipeline
+2025-12-11 12:30:13,566 - INFO - Base output directory ensured: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit
+2025-12-11 12:30:13,568 - INFO - Found 23 models to process
+2025-12-11 12:30:13,568 - INFO - Processing model 1/23: ACCESS-CM2
+2025-12-11 12:30:13,569 - INFO - Found 1 experiment(s) for model ACCESS-CM2: ['1085_1115']
+2025-12-11 12:30:13,569 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,570 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-CM2_30y_efp_500hPa.nc
+2025-12-11 12:30:13,570 - INFO - Processing model 2/23: ACCESS-ESM1-5
+2025-12-11 12:30:13,571 - INFO - Found 1 experiment(s) for model ACCESS-ESM1-5: ['0296_0326']
+2025-12-11 12:30:13,571 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,571 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-ESM1-5_30y_efp_500hPa.nc
+2025-12-11 12:30:13,571 - INFO - Processing model 3/23: AWI-ESM-1-1-LR
+2025-12-11 12:30:13,572 - INFO - Found 2 experiment(s) for model AWI-ESM-1-1-LR: ['1855_1885', '1855_1955']
+2025-12-11 12:30:13,572 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,573 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/AWI-ESM-1-1-LR_30y_efp_500hPa.nc
+2025-12-11 12:30:13,573 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:13,574 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/AWI-ESM-1-1-LR_100y_efp_500hPa.nc
+2025-12-11 12:30:13,574 - INFO - Processing model 4/23: CMCC-CM2-SR5
+2025-12-11 12:30:13,575 - INFO - Found 2 experiment(s) for model CMCC-CM2-SR5: ['1850_1880', '1850_1950']
+2025-12-11 12:30:13,575 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,575 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-CM2-SR5_30y_efp_500hPa.nc
+2025-12-11 12:30:13,575 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:13,575 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-CM2-SR5_100y_efp_500hPa.nc
+2025-12-11 12:30:13,575 - INFO - Processing model 5/23: CMCC-ESM2
+2025-12-11 12:30:13,576 - INFO - Found 2 experiment(s) for model CMCC-ESM2: ['1850_1880', '1850_1950']
+2025-12-11 12:30:13,576 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,577 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-ESM2_30y_efp_500hPa.nc
+2025-12-11 12:30:13,577 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:13,577 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-ESM2_100y_efp_500hPa.nc
+2025-12-11 12:30:13,577 - INFO - Processing model 6/23: CanESM5-1
+2025-12-11 12:30:13,578 - INFO - Found 1 experiment(s) for model CanESM5-1: ['6000_6100']
+2025-12-11 12:30:13,578 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:13,578 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CanESM5-1_100y_efp_500hPa.nc
+2025-12-11 12:30:13,578 - INFO - Processing model 7/23: EC-Earth3
+2025-12-11 12:30:13,579 - INFO - Found 2 experiment(s) for model EC-Earth3: ['2259_2288', '2259_2358']
+2025-12-11 12:30:13,579 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:13,580 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3_30y_efp_500hPa.nc
+2025-12-11 12:30:13,580 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:13,581 - INFO - Processing model: EC-Earth3, experiment: 2259_2358 (length: 100y)
+2025-12-11 12:30:17,194 - INFO - Successfully saved EFP data for EC-Earth3 - 2259_2358 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3_100y_efp_500hPa.nc
+2025-12-11 12:30:17,215 - INFO - Processing model 8/23: EC-Earth3-CC
+2025-12-11 12:30:17,218 - INFO - Found 2 experiment(s) for model EC-Earth3-CC: ['1850_1879', '1850_1949']
+2025-12-11 12:30:17,220 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,222 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-CC_30y_efp_500hPa.nc
+2025-12-11 12:30:17,222 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:17,222 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-CC_100y_efp_500hPa.nc
+2025-12-11 12:30:17,222 - INFO - Processing model 9/23: EC-Earth3-LR
+2025-12-11 12:30:17,230 - INFO - Found 2 experiment(s) for model EC-Earth3-LR: ['2219_2248', '2219_2318']
+2025-12-11 12:30:17,230 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,231 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-LR_30y_efp_500hPa.nc
+2025-12-11 12:30:17,231 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:17,231 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-LR_100y_efp_500hPa.nc
+2025-12-11 12:30:17,231 - INFO - Processing model 10/23: EC-Earth3-Veg
+2025-12-11 12:30:17,232 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg: ['1850_1879', '1850_1949']
+2025-12-11 12:30:17,233 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,233 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg_30y_efp_500hPa.nc
+2025-12-11 12:30:17,233 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:17,233 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg_100y_efp_500hPa.nc
+2025-12-11 12:30:17,233 - INFO - Processing model 11/23: EC-Earth3-Veg-LR
+2025-12-11 12:30:17,234 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg-LR: ['2300_2329', '2300_2399']
+2025-12-11 12:30:17,235 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,235 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg-LR_30y_efp_500hPa.nc
+2025-12-11 12:30:17,235 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:17,235 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg-LR_100y_efp_500hPa.nc
+2025-12-11 12:30:17,235 - INFO - Processing model 12/23: GFDL-CM4
+2025-12-11 12:30:17,236 - INFO - Found 1 experiment(s) for model GFDL-CM4: ['0386_0416']
+2025-12-11 12:30:17,236 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,237 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/GFDL-CM4_30y_efp_500hPa.nc
+2025-12-11 12:30:17,237 - INFO - Processing model 13/23: IPSL-CM5A2-INCA
+2025-12-11 12:30:17,238 - INFO - Found 3 experiment(s) for model IPSL-CM5A2-INCA: ['1870_1871', '1870_1899', '1870_1970']
+2025-12-11 12:30:17,238 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-11 12:30:17,244 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-11 12:30:17,245 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM5A2-INCA/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:17,245 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:17,245 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM5A2-INCA_30y_efp_500hPa.nc
+2025-12-11 12:30:17,245 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:17,246 - INFO - Processing model: IPSL-CM5A2-INCA, experiment: 1870_1970 (length: 100y)
+2025-12-11 12:30:18,298 - INFO - Successfully saved EFP data for IPSL-CM5A2-INCA - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM5A2-INCA_100y_efp_500hPa.nc
+2025-12-11 12:30:18,323 - INFO - Processing model 14/23: IPSL-CM6A-LR
+2025-12-11 12:30:18,325 - INFO - Found 3 experiment(s) for model IPSL-CM6A-LR: ['1870_1871', '1870_1899', '1870_1970']
+2025-12-11 12:30:18,326 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-11 12:30:18,327 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-11 12:30:18,328 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-LR/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:18,328 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:18,328 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM6A-LR_30y_efp_500hPa.nc
+2025-12-11 12:30:18,328 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:18,329 - INFO - Processing model: IPSL-CM6A-LR, experiment: 1870_1970 (length: 100y)
+2025-12-11 12:30:19,162 - INFO - Successfully saved EFP data for IPSL-CM6A-LR - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM6A-LR_100y_efp_500hPa.nc
+2025-12-11 12:30:19,187 - INFO - Processing model 15/23: IPSL-CM6A-MR1
+2025-12-11 12:30:19,189 - INFO - Found 3 experiment(s) for model IPSL-CM6A-MR1: ['1870_1871', '1870_1900', '1870_1970']
+2025-12-11 12:30:19,190 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-11 12:30:19,190 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-11 12:30:19,191 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-MR1/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:19,191 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:19,192 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-MR1/1870_1900/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:19,193 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:19,194 - INFO - Processing model: IPSL-CM6A-MR1, experiment: 1870_1970 (length: 100y)
+2025-12-11 12:30:20,374 - INFO - Successfully saved EFP data for IPSL-CM6A-MR1 - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM6A-MR1_100y_efp_500hPa.nc
+2025-12-11 12:30:20,404 - INFO - Processing model 16/23: KIOST-ESM
+2025-12-11 12:30:20,406 - INFO - Found 1 experiment(s) for model KIOST-ESM: ['3180_3209']
+2025-12-11 12:30:20,408 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,410 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/KIOST-ESM/3180_3209/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:20,410 - INFO - Processing model 17/23: MIROC6
+2025-12-11 12:30:20,411 - INFO - Found 1 experiment(s) for model MIROC6: ['3350_3380']
+2025-12-11 12:30:20,412 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,412 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MIROC6_30y_efp_500hPa.nc
+2025-12-11 12:30:20,412 - INFO - Processing model 18/23: MPI-ESM-1-2-HAM
+2025-12-11 12:30:20,413 - INFO - Found 2 experiment(s) for model MPI-ESM-1-2-HAM: ['1850_1879', '1850_1950']
+2025-12-11 12:30:20,413 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,413 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM-1-2-HAM_30y_efp_500hPa.nc
+2025-12-11 12:30:20,413 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,414 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM-1-2-HAM_100y_efp_500hPa.nc
+2025-12-11 12:30:20,414 - INFO - Processing model 19/23: MPI-ESM1-2-HR
+2025-12-11 12:30:20,415 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-HR: ['1850_1880', '1850_1950']
+2025-12-11 12:30:20,415 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,415 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-HR_30y_efp_500hPa.nc
+2025-12-11 12:30:20,415 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,416 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-HR_100y_efp_500hPa.nc
+2025-12-11 12:30:20,416 - INFO - Processing model 20/23: MPI-ESM1-2-LR
+2025-12-11 12:30:20,417 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-LR: ['1850_1879', '1850_1950']
+2025-12-11 12:30:20,417 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,417 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-LR_30y_efp_500hPa.nc
+2025-12-11 12:30:20,417 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,417 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-LR_100y_efp_500hPa.nc
+2025-12-11 12:30:20,417 - INFO - Processing model 21/23: MRI-ESM2-0
+2025-12-11 12:30:20,418 - INFO - Found 2 experiment(s) for model MRI-ESM2-0: ['1850_1879', '1850_1949']
+2025-12-11 12:30:20,418 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,419 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MRI-ESM2-0_30y_efp_500hPa.nc
+2025-12-11 12:30:20,419 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,420 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MRI-ESM2-0/1850_1949/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:20,420 - INFO - Processing model 22/23: NorESM2-LM
+2025-12-11 12:30:20,421 - INFO - Found 2 experiment(s) for model NorESM2-LM: ['1701_1730', '1701_1800']
+2025-12-11 12:30:20,421 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,422 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/NorESM2-LM_30y_efp_500hPa.nc
+2025-12-11 12:30:20,422 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,423 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-LM/1701_1800/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:20,423 - INFO - Processing model 23/23: NorESM2-MM
+2025-12-11 12:30:20,424 - INFO - Found 2 experiment(s) for model NorESM2-MM: ['1300_1329', '1300_1399']
+2025-12-11 12:30:20,424 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-11 12:30:20,425 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1329/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:20,425 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-11 12:30:20,426 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1399/6hrPlevPt/efp_500hPa.nc
+2025-12-11 12:30:20,426 - INFO - Processing completed. Successfully processed 4/23 models
+2025-12-11 12:30:20,426 - WARNING - Failed to process 19 models
+2025-12-16 08:19:54,423 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/efp_processing.log
+2025-12-16 08:19:54,423 - INFO - Starting EFP data processing pipeline
+2025-12-16 08:19:54,686 - INFO - Base output directory ensured: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit
+2025-12-16 08:19:54,687 - INFO - Found 23 models to process
+2025-12-16 08:19:54,687 - INFO - Processing model 1/23: ACCESS-CM2
+2025-12-16 08:19:54,688 - INFO - Found 1 experiment(s) for model ACCESS-CM2: ['1085_1115']
+2025-12-16 08:19:54,689 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,689 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-CM2_30y_efp_500hPa.nc
+2025-12-16 08:19:54,689 - INFO - Processing model 2/23: ACCESS-ESM1-5
+2025-12-16 08:19:54,690 - INFO - Found 1 experiment(s) for model ACCESS-ESM1-5: ['0296_0326']
+2025-12-16 08:19:54,690 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,691 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/ACCESS-ESM1-5_30y_efp_500hPa.nc
+2025-12-16 08:19:54,691 - INFO - Processing model 3/23: AWI-ESM-1-1-LR
+2025-12-16 08:19:54,692 - INFO - Found 2 experiment(s) for model AWI-ESM-1-1-LR: ['1855_1885', '1855_1955']
+2025-12-16 08:19:54,692 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,692 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/AWI-ESM-1-1-LR_30y_efp_500hPa.nc
+2025-12-16 08:19:54,692 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,693 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/AWI-ESM-1-1-LR_100y_efp_500hPa.nc
+2025-12-16 08:19:54,693 - INFO - Processing model 4/23: CMCC-CM2-SR5
+2025-12-16 08:19:54,694 - INFO - Found 2 experiment(s) for model CMCC-CM2-SR5: ['1850_1880', '1850_1950']
+2025-12-16 08:19:54,694 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,694 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-CM2-SR5_30y_efp_500hPa.nc
+2025-12-16 08:19:54,694 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,694 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-CM2-SR5_100y_efp_500hPa.nc
+2025-12-16 08:19:54,694 - INFO - Processing model 5/23: CMCC-ESM2
+2025-12-16 08:19:54,695 - INFO - Found 2 experiment(s) for model CMCC-ESM2: ['1850_1880', '1850_1950']
+2025-12-16 08:19:54,695 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,696 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/CMCC-ESM2_30y_efp_500hPa.nc
+2025-12-16 08:19:54,696 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,696 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CMCC-ESM2_100y_efp_500hPa.nc
+2025-12-16 08:19:54,696 - INFO - Processing model 6/23: CanESM5-1
+2025-12-16 08:19:54,697 - INFO - Found 1 experiment(s) for model CanESM5-1: ['6000_6100']
+2025-12-16 08:19:54,697 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,697 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/CanESM5-1_100y_efp_500hPa.nc
+2025-12-16 08:19:54,697 - INFO - Processing model 7/23: EC-Earth3
+2025-12-16 08:19:54,698 - INFO - Found 2 experiment(s) for model EC-Earth3: ['2259_2288', '2259_2358']
+2025-12-16 08:19:54,698 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,698 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3_30y_efp_500hPa.nc
+2025-12-16 08:19:54,699 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,699 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3_100y_efp_500hPa.nc
+2025-12-16 08:19:54,699 - INFO - Processing model 8/23: EC-Earth3-CC
+2025-12-16 08:19:54,700 - INFO - Found 2 experiment(s) for model EC-Earth3-CC: ['1850_1879', '1850_1949']
+2025-12-16 08:19:54,700 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,700 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-CC_30y_efp_500hPa.nc
+2025-12-16 08:19:54,700 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,700 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-CC_100y_efp_500hPa.nc
+2025-12-16 08:19:54,700 - INFO - Processing model 9/23: EC-Earth3-LR
+2025-12-16 08:19:54,701 - INFO - Found 2 experiment(s) for model EC-Earth3-LR: ['2219_2248', '2219_2318']
+2025-12-16 08:19:54,701 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,702 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-LR_30y_efp_500hPa.nc
+2025-12-16 08:19:54,702 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,702 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-LR_100y_efp_500hPa.nc
+2025-12-16 08:19:54,702 - INFO - Processing model 10/23: EC-Earth3-Veg
+2025-12-16 08:19:54,703 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg: ['1850_1879', '1850_1949']
+2025-12-16 08:19:54,703 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,703 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg_30y_efp_500hPa.nc
+2025-12-16 08:19:54,703 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,703 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg_100y_efp_500hPa.nc
+2025-12-16 08:19:54,703 - INFO - Processing model 11/23: EC-Earth3-Veg-LR
+2025-12-16 08:19:54,704 - INFO - Found 2 experiment(s) for model EC-Earth3-Veg-LR: ['2300_2329', '2300_2399']
+2025-12-16 08:19:54,704 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,704 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/EC-Earth3-Veg-LR_30y_efp_500hPa.nc
+2025-12-16 08:19:54,705 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,705 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/EC-Earth3-Veg-LR_100y_efp_500hPa.nc
+2025-12-16 08:19:54,705 - INFO - Processing model 12/23: GFDL-CM4
+2025-12-16 08:19:54,706 - INFO - Found 2 experiment(s) for model GFDL-CM4: ['0386_0416', '0386_387']
+2025-12-16 08:19:54,706 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,706 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/GFDL-CM4_30y_efp_500hPa.nc
+2025-12-16 08:19:54,706 - WARNING - Unexpected year difference 1 for experiment: 0386_387
+2025-12-16 08:19:54,707 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-16 08:19:54,708 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/GFDL-CM4/0386_387/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:54,708 - INFO - Processing model 13/23: IPSL-CM5A2-INCA
+2025-12-16 08:19:54,709 - INFO - Found 3 experiment(s) for model IPSL-CM5A2-INCA: ['1870_1871', '1870_1899', '1870_1970']
+2025-12-16 08:19:54,709 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-16 08:19:54,709 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-16 08:19:54,710 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM5A2-INCA/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:54,710 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:54,710 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM5A2-INCA_30y_efp_500hPa.nc
+2025-12-16 08:19:54,710 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:54,711 - INFO - Processing model: IPSL-CM5A2-INCA, experiment: 1870_1970 (length: 100y)
+2025-12-16 08:19:58,464 - INFO - Successfully saved EFP data for IPSL-CM5A2-INCA - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM5A2-INCA_100y_efp_500hPa.nc
+2025-12-16 08:19:58,480 - INFO - Processing model 14/23: IPSL-CM6A-LR
+2025-12-16 08:19:58,482 - INFO - Found 3 experiment(s) for model IPSL-CM6A-LR: ['1870_1871', '1870_1899', '1870_1970']
+2025-12-16 08:19:58,483 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-16 08:19:58,483 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-16 08:19:58,484 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-LR/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:58,484 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:58,485 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/IPSL-CM6A-LR_30y_efp_500hPa.nc
+2025-12-16 08:19:58,485 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:58,485 - INFO - Processing model: IPSL-CM6A-LR, experiment: 1870_1970 (length: 100y)
+2025-12-16 08:19:59,056 - INFO - Successfully saved EFP data for IPSL-CM6A-LR - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM6A-LR_100y_efp_500hPa.nc
+2025-12-16 08:19:59,075 - INFO - Processing model 15/23: IPSL-CM6A-MR1
+2025-12-16 08:19:59,077 - INFO - Found 3 experiment(s) for model IPSL-CM6A-MR1: ['1870_1871', '1870_1900', '1870_1970']
+2025-12-16 08:19:59,078 - WARNING - Unexpected year difference 1 for experiment: 1870_1871
+2025-12-16 08:19:59,078 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/other/6h_efp
+2025-12-16 08:19:59,079 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-MR1/1870_1871/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,079 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,080 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/IPSL-CM6A-MR1/1870_1900/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,080 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,081 - INFO - Processing model: IPSL-CM6A-MR1, experiment: 1870_1970 (length: 100y)
+2025-12-16 08:19:59,750 - INFO - Successfully saved EFP data for IPSL-CM6A-MR1 - 1870_1970 to /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/IPSL-CM6A-MR1_100y_efp_500hPa.nc
+2025-12-16 08:19:59,768 - INFO - Processing model 16/23: KIOST-ESM
+2025-12-16 08:19:59,770 - INFO - Found 1 experiment(s) for model KIOST-ESM: ['3180_3209']
+2025-12-16 08:19:59,770 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,771 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/KIOST-ESM/3180_3209/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,771 - INFO - Processing model 17/23: MIROC6
+2025-12-16 08:19:59,772 - INFO - Found 1 experiment(s) for model MIROC6: ['3350_3380']
+2025-12-16 08:19:59,772 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,773 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MIROC6_30y_efp_500hPa.nc
+2025-12-16 08:19:59,773 - INFO - Processing model 18/23: MPI-ESM-1-2-HAM
+2025-12-16 08:19:59,774 - INFO - Found 2 experiment(s) for model MPI-ESM-1-2-HAM: ['1850_1879', '1850_1950']
+2025-12-16 08:19:59,774 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,774 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM-1-2-HAM_30y_efp_500hPa.nc
+2025-12-16 08:19:59,774 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,775 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM-1-2-HAM_100y_efp_500hPa.nc
+2025-12-16 08:19:59,775 - INFO - Processing model 19/23: MPI-ESM1-2-HR
+2025-12-16 08:19:59,775 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-HR: ['1850_1880', '1850_1950']
+2025-12-16 08:19:59,776 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,776 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-HR_30y_efp_500hPa.nc
+2025-12-16 08:19:59,776 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,776 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-HR_100y_efp_500hPa.nc
+2025-12-16 08:19:59,776 - INFO - Processing model 20/23: MPI-ESM1-2-LR
+2025-12-16 08:19:59,777 - INFO - Found 2 experiment(s) for model MPI-ESM1-2-LR: ['1850_1879', '1850_1950']
+2025-12-16 08:19:59,777 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,777 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MPI-ESM1-2-LR_30y_efp_500hPa.nc
+2025-12-16 08:19:59,778 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,778 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp/MPI-ESM1-2-LR_100y_efp_500hPa.nc
+2025-12-16 08:19:59,778 - INFO - Processing model 21/23: MRI-ESM2-0
+2025-12-16 08:19:59,779 - INFO - Found 2 experiment(s) for model MRI-ESM2-0: ['1850_1879', '1850_1949']
+2025-12-16 08:19:59,779 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,779 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/MRI-ESM2-0_30y_efp_500hPa.nc
+2025-12-16 08:19:59,779 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,780 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/MRI-ESM2-0/1850_1949/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,780 - INFO - Processing model 22/23: NorESM2-LM
+2025-12-16 08:19:59,781 - INFO - Found 2 experiment(s) for model NorESM2-LM: ['1701_1730', '1701_1800']
+2025-12-16 08:19:59,781 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,781 - INFO - Output file already exists, skipping: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp/NorESM2-LM_30y_efp_500hPa.nc
+2025-12-16 08:19:59,781 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,782 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-LM/1701_1800/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,782 - INFO - Processing model 23/23: NorESM2-MM
+2025-12-16 08:19:59,783 - INFO - Found 2 experiment(s) for model NorESM2-MM: ['1300_1329', '1300_1399']
+2025-12-16 08:19:59,783 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/6h_efp
+2025-12-16 08:19:59,784 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1329/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,784 - INFO - Using output directory: /gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/100y/6h_efp
+2025-12-16 08:19:59,785 - WARNING - File not found: /gws/nopw/j04/arctic_connect/sthomson/efp_6hourly_processed_data/1000hPa_100hPa_slice_inner2/NorESM2-MM/1300_1399/6hrPlevPt/efp_500hPa.nc
+2025-12-16 08:19:59,785 - INFO - Processing completed. Successfully processed 3/23 models
+2025-12-16 08:19:59,785 - WARNING - Failed to process 20 models

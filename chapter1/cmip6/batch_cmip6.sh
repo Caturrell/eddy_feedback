@@ -5,7 +5,7 @@
 #SBATCH --account=arctic_connect
 #SBATCH --partition=standard
 #SBATCH --qos=long
-#SBATCH --mem=32G  # Memory (adjust based on your needs)
+#SBATCH --mem=100G  # Memory (adjust based on your needs)
 #SBATCH --time=48:00:00  # Max wall time (adjust based on your needs)
 #SBATCH --cpus-per-task=1  # Number of cores
 
