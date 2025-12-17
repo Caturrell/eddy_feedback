@@ -20,6 +20,7 @@ import logging
 import json
 from pathlib import Path
 import pandas as pd
+import glob
 
 import functions.eddy_feedback as ef
 import functions.data_wrangling as dw
@@ -53,8 +54,12 @@ def resample_to_monthly(base_path, model_name):
     try:
         
         logger.info(f"Loading daily data for model: {model_name}")
-        model_path = os.path.join(base_path, model_name, '*.nc')
-        ds = xr.open_mfdataset(model_path, combine='nested', compat='override', decode_times=True)
+        
+        model_path = os.path.join(base_path, model_name)
+        model_files = glob.glob(os.path.join(model_path, '*.nc'))
+        
+        time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
+        ds = xr.open_mfdataset(model_files, combine='by_coords', decode_times=time_coder, chunks={'time': 31})
         
         # run data through checker
         ds = dw.data_checker1000(ds, check_vars=False)
@@ -269,7 +274,7 @@ if __name__ == "__main__":
     #==============================================================================================
     
     ## SELECT TIME PERIOD TO PROCESS ##
-    time_period = '30y'  # Options: '30y' or '100y'
+    time_period = '100y'  # Options: 30y or '100y'
     
     cmip_path = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit'
     cmip_exp_path = os.path.join(cmip_path, time_period)

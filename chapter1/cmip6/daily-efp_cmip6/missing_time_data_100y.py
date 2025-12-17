@@ -86,65 +86,65 @@ def plot_all_models(datasets, model_list, title_prefix, variables=['ubar', 'div1
     return fig
 
 
-def plot_all_models_batch(data_path, model_list, title_prefix, 
-                          variables=['ubar', 'div1_QG'], 
-                          save_path=None):
-    """
-    Plot models by loading them one at a time to avoid memory issues.
-    """
-    n_models = len(model_list)
-    fig, axes = plt.subplots(n_models, 2, figsize=(14, 5 * n_models))
+# def plot_all_models_batch(data_path, model_list, title_prefix, 
+#                           variables=['ubar', 'div1_QG'], 
+#                           save_path=None):
+#     """
+#     Plot models by loading them one at a time to avoid memory issues.
+#     """
+#     n_models = len(model_list)
+#     fig, axes = plt.subplots(n_models, 2, figsize=(14, 5 * n_models))
     
-    if n_models == 1:
-        axes = axes.reshape(1, -1)
+#     if n_models == 1:
+#         axes = axes.reshape(1, -1)
     
-    for i, model in enumerate(model_list):
-        logger.info(f"Processing model {i+1}/{n_models}: {model}")
+#     for i, model in enumerate(model_list):
+#         logger.info(f"Processing model {i+1}/{n_models}: {model}")
         
-        # Load just this one model
-        model_path = os.path.join(data_path, model)
-        file_paths = glob.glob(os.path.join(model_path, '*_dm_uvt_epfluxes.nc'))
+#         # Load just this one model
+#         model_path = os.path.join(data_path, model)
+#         file_paths = glob.glob(os.path.join(model_path, '*_dm_uvt_epfluxes.nc'))
         
-        try:
-            ds = xr.open_mfdataset(
-                file_paths, 
-                combine='by_coords',
-                chunks={'time': 12}
-            )
+#         try:
+#             ds = xr.open_mfdataset(
+#                 file_paths, 
+#                 combine='by_coords',
+#                 chunks={'time': 12}
+#             )
             
-            ds = dw.data_checker1000(ds, check_vars=False)
+#             ds = dw.data_checker1000(ds, check_vars=False)
             
-            if 'ubar' not in ds:
-                logger.info(f"Calculating ubar for {model}")
-                ds['ubar'] = ds.ucomp.mean(dim='lon')
+#             if 'ubar' not in ds:
+#                 logger.info(f"Calculating ubar for {model}")
+#                 ds['ubar'] = ds.ucomp.mean(dim='lon')
             
-            # Process and plot
-            ds_processed = process_seasonal_data(ds, variables=variables)
+#             # Process and plot
+#             ds_processed = process_seasonal_data(ds, variables=variables)
             
-            # Plot first variable
-            ds_processed[variables[0]].plot(ax=axes[i, 0])
-            axes[i, 0].set_title(f'{model} - {variables[0]}')
+#             # Plot first variable
+#             ds_processed[variables[0]].plot(ax=axes[i, 0])
+#             axes[i, 0].set_title(f'{model} - {variables[0]}')
             
-            # Plot second variable
-            ds_processed[variables[1]].plot(ax=axes[i, 1])
-            axes[i, 1].set_title(f'{model} - {variables[1]}')
+#             # Plot second variable
+#             ds_processed[variables[1]].plot(ax=axes[i, 1])
+#             axes[i, 1].set_title(f'{model} - {variables[1]}')
             
-            # Explicitly close and clear memory
-            ds.close()
-            del ds, ds_processed
+#             # Explicitly close and clear memory
+#             ds.close()
+#             del ds, ds_processed
             
-        except Exception as e:
-            logger.error(f"Failed to process {model}: {e}")
-            continue
+#         except Exception as e:
+#             logger.error(f"Failed to process {model}: {e}")
+#             continue
     
-    fig.suptitle(title_prefix, fontsize=14, y=1.00)
-    plt.tight_layout()
+#     fig.suptitle(title_prefix, fontsize=14, y=1.00)
+#     plt.tight_layout()
     
-    if save_path:
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        logger.info(f"Saved plot to {save_path}")
+#     if save_path:
+#         plt.savefig(save_path, dpi=300, bbox_inches='tight')
+#         logger.info(f"Saved plot to {save_path}")
     
-    return fig
+#     return fig
 
 
 def main():
@@ -172,9 +172,7 @@ def main():
         'MPI-ESM-1-2-HAM',
         'MPI-ESM1-2-HR',
         'MPI-ESM1-2-LR',
-        'MRI-ESM2-0',
-        'NorESM2-LM',
-        'NorESM2-MM'
+        'MRI-ESM2-0'
     ]
     
     # Variables to plot
@@ -205,15 +203,15 @@ def main():
     del datasets_monthly
     
     # Plot daily data - process one model at a time
-    logger.info("=== Plotting Daily Data ===")
-    fig2 = plot_all_models_batch(
-        daily_path, 
-        models, 
-        'CMIP6 Models (Daily Averages)',
-        save_path=f'{save_plot_path}/100y_models_daily_{vars_to_plot[0]}_{vars_to_plot[1]}.png',
-        variables=vars_to_plot
-    )
-    plt.close(fig2)
+    # logger.info("=== Plotting Daily Data ===")
+    # fig2 = plot_all_models_batch(
+    #     daily_path, 
+    #     models, 
+    #     'CMIP6 Models (Daily Averages)',
+    #     save_path=f'{save_plot_path}/100y_models_daily_{vars_to_plot[0]}_{vars_to_plot[1]}.png',
+    #     variables=vars_to_plot
+    # )
+    # plt.close(fig2)
     
     logger.info("=== Complete ===")
 

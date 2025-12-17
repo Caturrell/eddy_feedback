@@ -60,7 +60,9 @@ def resample_to_monthly(base_path, model_name):
         logger.info(f"Loading daily data for model: {model_name}")
         model_path = glob.glob(os.path.join(base_path, model_name, '*_dm_uvt_epfluxes.nc'))
         
-        ds = xr.open_mfdataset(model_path, combine='by_coords', chunks={'time':12})
+        time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
+        
+        ds = xr.open_mfdataset(model_path, combine='by_coords', chunks={'time':12}, decode_times=time_coder)
         
         # run data through checker
         ds = dw.data_checker1000(ds, check_vars=False)
@@ -197,8 +199,10 @@ def process_model(model, main_path, base_save_path):
                             files_processed += 1
                             continue
                         
+                        time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
                         
-                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 12}) as ds:
+                        
+                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 12}, decode_times=time_coder) as ds:
                             
                             # ds = ds.rename({'pfull': 'level'})
                             
