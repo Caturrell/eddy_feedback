@@ -175,7 +175,7 @@ if exp_type=='cmip6':
 
         one_member_files_dict[model_name] = {'files':files_for_model_dict, 'start_date':start_date_for_model_dict, 'end_date':end_date_for_model_dict}
 
-        logging.info(n_years_available_list)
+        logging.info(f'{n_years_available_list}\n')
         
 else:
     raise NotImplementedError(f'no valid exp type configured for {exp_type}')

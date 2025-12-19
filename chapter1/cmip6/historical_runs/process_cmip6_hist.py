@@ -2,8 +2,14 @@ import logging
 import numpy as np
 from SIT_search_for_hist import find_ensemble_list_multi_var
 import os
-import tqdm
+from tqdm import tqdm
 import xarray as xar
+import xcdat
+import xesmf as xe
+import pdb
+
+import SIT_eddy_plotting_functions as epf
+import SIT_eddy_feedback_functions as eff
 
 logger = logging.getLogger()
 if logger.hasHandlers():
@@ -80,10 +86,6 @@ if exp_type=='cmip6':
         model_path = available_models_dict_to_use[model_name]['data_dir']
         ens_ids = available_models_dict_to_use[model_name]['ens_ids']
         n_files_per_ens_member = available_models_dict_to_use[model_name]['n_files_per_ens_member']
-        
-        logging.info(f'Processing model {model_name} at {model_path}\n')
-        logging.info(f'-    Model path: {model_path}')
-        logging.info(f'-    Ensemble ID: {ens_ids}')
 
         files_for_model = []
         n_files_required_list = []
@@ -208,21 +210,30 @@ good_model_list = [model for model in model_list if model not in weird_model_lis
 logging.info(f'count (minimum {total_time_span_required}): {len(good_model_list)}')
 logging.info(good_model_list)
 
+logging.info('\n')
+logging.info('='*70)
+logging.info('='*70)
+logging.info('Finished setting up model file lists')
+logging.info('='*70)
+logging.info('='*70)
+logging.info('\n')
+
 
 
 #==============================================================================================================
 # Now loop over good models and calculate ep fluxes
 #==============================================================================================================
 
+force_ep_flux_recalculate = False
+
 omega = 2.*np.pi/86400.
 a0 = 6371000.
 do_individual_plots = True
-do_individual_corr_plots = True
-do_big_TEM_plot = True
-do_heatmap_correlations_plot = True
-do_eof_plots = True
+do_individual_corr_plots = False
+do_big_TEM_plot = False
+do_heatmap_correlations_plot = False
+do_eof_plots = False
 
-force_ep_flux_recalculate = False
 monthly_too=True
 
 ## 21 MODELS HAVE 150 YEARS OF DATA ##
@@ -235,6 +246,8 @@ for model_name in good_model_list:
     logging.info(f'Now looking at {model_name}')
     try:
     # if True:
+    
+        ## SET UP CMIP6 PARAMETERS ##
         if exp_type=='cmip6':
             start_month = start_month_dict[model_name]
             end_month   = end_month_dict[model_name]
@@ -242,7 +255,7 @@ for model_name in good_model_list:
             start_month_list_by_files = one_member_files_dict[model_name]['start_date']['ua']
             end_month_list_by_files = one_member_files_dict[model_name]['end_date']['ua']   
 
-            logging.info(f'Reading {len(files['ua'])} files for {model_name} from {start_month} to {end_month}')
+            logging.info(f'Reading {len(files["ua"])} files for {model_name} from {start_month} to {end_month}')
 
             start_month_val = int(start_month)
             end_month_val = int(end_month)        
@@ -253,19 +266,29 @@ for model_name in good_model_list:
                 slice_time=True
             else:
                 slice_time=False
+                
+                
+        ## SET UP OUTPUT DIRECTORIES ##
 
+        ## base_dir_output = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/historical'
         plot_dir = f'{base_dir_output}/{model_name}/{start_month}_{end_month}/{level_type}/'
-
         if not os.path.isdir(plot_dir):
             os.makedirs(plot_dir)
 
-        yearly_data_dir = f'{base_dir_output}/{model_name}/{start_month}_{end_month}/{level_type}/yearly_data/'
-
+        yearly_data_dir = f'{base_dir_output}/{model_name}/{start_month}_{end_month}/{level_type}/yearly_data'
         if not os.path.isdir(yearly_data_dir):
             os.makedirs(yearly_data_dir)
 
+        logging.info(f'Output directory: {yearly_data_dir}')
+
+        #-------------------------------------------------
+        ## MAIN LOOP FOR PROCESSING EACH YEARLY FILE ##
+        #-------------------------------------------------
+        
         for year_idx, start_date_val in tqdm(enumerate(start_month_list_by_files)):    
 
+
+            ## SET UP OUTPUT FILE NAMES ##
             end_date_val = end_month_list_by_files[year_idx]
 
             output_file = f'{yearly_data_dir}/{start_date_val}_{end_date_val}_epflux.nc'
@@ -279,18 +302,24 @@ for model_name in good_model_list:
             # def preprocess(ds):
             #     """Subset dataset to years 2000-2010."""
             #     return ds.sel(time=slice("1870-01-01", "1880-12-31"))
+            
+            logging.info(f'Processing files for year starting {start_date_val} to {end_date_val}')
 
+
+            # Do the calculation if output files don't exist AND we want to force recalculate
             if not os.path.isfile(output_file) or force_ep_flux_recalculate or not os.path.isfile(output_day_av_file):
                 logging.info('opening model data files')
                 time_coder = xar.coders.CFDatetimeCoder(use_cftime=True)
                 dataset = xar.open_mfdataset(files_for_year, decode_times=time_coder,
                                         parallel=False, join='inner' )#chunks={'time': 10, 'pfull':28,})
 
+                # Check and set up plev properly
                 if np.all(dataset.plev.diff('plev')>0.):
                     pfull_slice = slice(100., 1000.)
                 else:
                     pfull_slice = slice(1000., 100.)
 
+                # Check and convert plev to hPa if needed
                 if 'units' in dataset['plev'].attrs.keys():
                     if dataset['plev'].attrs['units']=='Pa':
                         dataset['plev'] = dataset['plev']/100.
@@ -299,6 +328,8 @@ for model_name in good_model_list:
 
                 do_pfull_slice = True
 
+                # Check there are enough plev levels after slicing 
+                # and reopen without plev slicing if not
                 if dataset.plev.sel(plev=pfull_slice).shape[0]<3:
                     dataset.close()
                     logging.info('re-opening model data files due to too few pfull levels')
@@ -313,6 +344,7 @@ for model_name in good_model_list:
                         new_plev[orig_plev.shape[0]:] = np.zeros(3-orig_plev.shape[0]) + np.nan
                         # pdb.set_trace()
 
+                # Check for inconsistent grids
                 inconsistent_grid = False
                 if dataset.lat.shape[0]==0:
                     logging.info('inconsistent lat values across files')
@@ -321,6 +353,9 @@ for model_name in good_model_list:
                     logging.info('inconsistent lon values across files')
                     inconsistent_grid = True
 
+
+
+                # If INCONSISTENT GRID, IDENTIFY ODD FILE AND REGRID TO COMMON GRID
                 if inconsistent_grid:
                     logging.info('need to identify which file has an inconsistent grid')
                     ds_list = []
@@ -382,25 +417,12 @@ for model_name in good_model_list:
                                 odd_lon_idx_out = np.where(not arr_lon_match)[0]                            
                             raise NotImplementedError('Help')                    
                     
-                logging.info('COMPLETE')
-                
-                if exp_type=='jra55':
+                logging.info('COMPLETED inconsistent grid check') 
 
-                    logging.info('opening OLD JRA-55 dataset to grab time bounds')
-                    old_dataset = xar.open_mfdataset(['/disca/share/sit204/jra_55/1958_2016/atmos_daily_uvtw.nc'], decode_times=time_coder,
-                                            parallel=True, chunks={'time': 50})    
-                    
-                    dataset['time_bnds'] = old_dataset['time_bnds']    
-                    logging.info('finished adding OLD JRA-55 dataset time bounds')    
 
-                    dataset = dataset.rename({
-                        'u':'ucomp',
-                        'v':'vcomp',
-                        't':'temp',
-                        'level':'pfull',
-                    })
 
-                elif exp_type=='cmip6':
+                # set up cmip6-specific variable names and attributes
+                if exp_type=='cmip6':
                     dataset = dataset.rename({
                         'ua':'ucomp',
                         'va':'vcomp',
@@ -418,6 +440,7 @@ for model_name in good_model_list:
                     elif dataset['pfull'].max().values>1000.:
                             dataset['pfull'] = dataset['pfull']/100.
                     
+                    # Check for inconsistent chunk sizes
                     chunk_size_var_dict = {}
                     ds_coords = [val for val in dataset.coords.keys()]
                     ds_vars = [val for val in dataset.variables.keys() if val not in ds_coords and 'bnds' not in val and 'bounds' not in val]
@@ -427,6 +450,8 @@ for model_name in good_model_list:
                     if not np.all(all_chunks_equal):
                         dataset = dataset.chunk(chunks={'pfull':dataset.pfull.shape[0], 'lat':dataset.lat.shape[0], 'lon':dataset.lon.shape[0]})
 
+
+                # Not sure what udt_ramp is
                 if 'udt_rdamp' in dataset.data_vars.keys():
                     include_udt_rdamp=True
                 else:
@@ -440,6 +465,7 @@ for model_name in good_model_list:
                 if do_pfull_slice:
                     dataset = dataset.sel(pfull=pfull_slice)
 
+                # Chunking stuff again? Seems a repeat of above....
                 chunk_size_var_dict = {}
                 ds_coords = [val for val in dataset.coords.keys()]
                 ds_vars = [val for val in dataset.variables.keys() if val not in ds_coords and 'bnds' not in val and 'bounds' not in val]
@@ -456,10 +482,21 @@ for model_name in good_model_list:
                 if slice_time:
                     dataset = dataset.sel(time=time_slice)
 
-                logging.info(f'This dataset has {dataset.pfull.shape[0]} plevels, {dataset.lat.shape[0]} lat points , {dataset.time.shape[0]} time points and {dataset.lon.shape[0]} longitude points')
 
+                logging.info(f'\nThis dataset: {model_name} has {dataset.pfull.shape[0]} plevels, {dataset.lat.shape[0]} lat points , {dataset.time.shape[0]} time points and {dataset.lon.shape[0]} longitude points\n')
+                
+                
+                
                 if 'temp' not in dataset.keys():
                     dataset['temp'] = xar.zeros_like(dataset['ucomp'])+np.nan
+
+
+
+
+                #-------------------------------------------------
+                ## CALCULATE EP FLUXES ##
+                #-------------------------------------------------       
+
 
                 # try:
                 epflux_ds = eff.ep_flux_calc(dataset, output_file, force_ep_flux_recalculate, include_udt_rdamp, omega, a0)
@@ -467,9 +504,9 @@ for model_name in good_model_list:
                     # logging.info(f"An error occurred: {e}")
                     # pdb.set_trace()
 
-                logging.info('merging dataset')
+                
                 dataset = xar.merge([dataset, epflux_ds])
-                logging.info('FINISHED merging dataset')
+                logging.info(f'Finished calulated EP fluxes for {model_name} and {output_file} and merged dataset.')
 
                 dataset, duplicates_found = eff.check_for_duplicate_times(dataset)
 
@@ -480,6 +517,7 @@ for model_name in good_model_list:
                 dataset = None
                 epflux_ds = None
 
+            logging.info('Calculating daily averages...')
             dataset_daily = eff.daily_average(dataset, output_day_av_file, force_ep_flux_recalculate, monthly_too=monthly_too, monthly_output_file=output_month_av_file)
 
             dataset_daily.close()
