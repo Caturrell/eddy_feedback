@@ -10,6 +10,7 @@ import cftime
 import datetime
 import numpy as np
 import xarray as xr
+from scipy.stats import pearsonr
 # import xesmf as xe
 
 sys.path.append('/home/users/cturrell/documents/eddy_feedback')
@@ -408,6 +409,13 @@ def process_pamip_monthly(model=None):
 
     ## SAVE DATASET
     ds.to_netcdf(f'/gws/nopw/j04/arctic_connect/cturrell/PAMIP_data/processed_monthly/1.6_pdSST-futArcSIC/{model}_ua_epfy_divF_r{len(ds.ens_ax)}_3x3_futArc.nc')
+    
+    
+# Function to compute and add Pearson correlation
+def add_correlation(ax, x, y, x_loc=0.05, y_loc=0.95):
+    corr, p = pearsonr(x, y)
+    ax.text(x_loc, y_loc, f"r = {corr:.2f}, p = {p:.3f}", transform=ax.transAxes, 
+            fontsize=14, verticalalignment="top", bbox=dict(facecolor="white", alpha=0.7))
 
 
 ###################################################################################################
