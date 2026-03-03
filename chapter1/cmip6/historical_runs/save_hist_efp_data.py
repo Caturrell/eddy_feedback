@@ -137,6 +137,8 @@ def main():
     """Main processing function"""
     logger.info("Starting EFP data processing pipeline")
     
+    EFP_RANGE = (1979, 2014)  # Default year range to use for EFP data
+    
     try:
         # Setup paths
         main_path, base_save_path = setup_paths()
@@ -149,7 +151,7 @@ def main():
         for i, model in enumerate(models, 1):
             logger.info(f"Processing model {i}/{len(models)}: {model}")
             
-            if process_model(model, main_path, base_save_path):
+            if process_model(model, main_path, base_save_path, year_range=EFP_RANGE):
                 success_count += 1
         
         # Summary

@@ -2,7 +2,9 @@ import xarray as xr
 import os
 import json
 
-path = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1850_2015/6h_efp'
+YEAR_RANGE = (1979, 2014)  # Default year range to use for EFP data
+
+path = f'/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/{YEAR_RANGE[0]}_{YEAR_RANGE[1]}/6h_efp'
 
 # month mapping for each season code
 season_months = {
@@ -92,11 +94,11 @@ for i, (model_name, model_ds) in enumerate(ds.items(), 1):
     print(f"  Result keys: {list(result.keys())}")
     
     # save JSON per model
-    save_path = '/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/6h'
+    save_path = f'/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/{YEAR_RANGE[0]}_{YEAR_RANGE[1]}/6h'
     save_dir = os.path.join(save_path, f'{model_name}')
     os.makedirs(save_dir, exist_ok=True)
     
-    out_file = os.path.join(save_dir, f"{model_name}_efp_CMIP6_hist_6h.json")
+    out_file = os.path.join(save_dir, f"{model_name}_efp_{YEAR_RANGE[0]}_{YEAR_RANGE[1]}_CMIP6_hist_6h.json")
     with open(out_file, "w") as f:
         json.dump(result, f, indent=2)
     

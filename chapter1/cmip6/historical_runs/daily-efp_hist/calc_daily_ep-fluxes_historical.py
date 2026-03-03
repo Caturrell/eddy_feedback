@@ -142,7 +142,7 @@ def process_model(model, main_path, base_save_path):
                 logger.info(f"Processing model: {model}, experiment: {experiment} (length: {experiment_length})")
                 
                 for daily_file in daily_data_files:
-                    
+    
                     if not (daily_data_dir / daily_file).exists():
                         logger.warning(f"File not found: {daily_file}")
                         files_failed.append(daily_file)
@@ -151,22 +151,45 @@ def process_model(model, main_path, base_save_path):
                     try:
                         logger.info(f"Processing daily data file: {daily_file}")
                         
-                        # extract years and set save file name
-                        years = daily_file.split('_')[0:2]
-                        year_str = '_'.join(years)
-                        save_file_name = f'{year_str}_dm_uvt_epfluxes.nc'
-                        
-                        # If file already exists, skip processing
-                        output_file = save_path / save_file_name
-                        if output_file.exists():
-                            logger.info(f"Output file already exists, skipping: {output_file}")
-                            files_processed += 1
-                            continue
-                        
                         time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
-                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 30}, decode_times=time_coder) as ds:
+                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 30}, 
+                                            decode_times=time_coder) as ds:
                             
-                            # ds = ds.rename({'pfull': 'level'})
+                            # SUBSET TO TARGET TIME WINDOW
+                            ds_subset = ds.sel(time=slice('1950-01-01', '2014-12-31'))
+                            
+                            # Skip if no data in window
+                            if len(ds_subset.time) == 0:
+                                logger.warning(f"Skipping {daily_file}: no data in 1950-2014 window")
+                                continue
+                            
+                            # Extract dates using string conversion (handles all datetime types)
+                            time_start_str = str(ds_subset.time[0].values)
+                            time_end_str = str(ds_subset.time[-1].values)
+
+                            # Parse YYYYMMDD from ISO format string (works for cftime, datetime64, etc.)
+                            start_str = time_start_str[:10].replace('-', '')  # "YYYY-MM-DD" -> "YYYYMMDD"
+                            end_str = time_end_str[:10].replace('-', '')
+                            year_str = f'{start_str}_{end_str}'
+                            
+                            # Log the processing
+                            n_times = len(ds_subset.time)
+                            logger.info(f"Input file:  {daily_file}")
+                            logger.info(f"Processing {n_times} timesteps: {time_start_str} to {time_end_str}")
+                            logger.info(f"Output file: {year_str}_dm_uvt_epfluxes.nc")
+                            
+                            # Create output filename from ACTUAL data
+                            save_file_name = f'{year_str}_dm_uvt_epfluxes.nc'
+                            
+                            # If file already exists, skip processing
+                            output_file = save_path / save_file_name
+                            if output_file.exists():
+                                logger.info(f"Output file already exists, skipping: {output_file}")
+                                files_processed += 1
+                                continue
+                            
+                            # Use subsetted dataset for all processing
+                            ds = ds_subset
                             
                             # subset dataset to required variables
                             vars_uvt = ['ucomp', 'vcomp', 'temp']

@@ -2,7 +2,9 @@ import os
 import json
 import pandas as pd
 
-base_dir = '/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/6h'
+YEAR_RANGE = (1979, 2014)
+
+base_dir = f'/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/{YEAR_RANGE[0]}_{YEAR_RANGE[1]}/6h'
 
 rows = []
 
@@ -13,7 +15,7 @@ for model_dir in os.listdir(base_dir):
         continue  # skip if not a directory
 
     # find JSON file in this directory
-    json_files = [f for f in os.listdir(model_path) if f.endswith('_efp_CMIP6_hist_6h.json')]
+    json_files = [f for f in os.listdir(model_path) if f.endswith(f'_efp_{YEAR_RANGE[0]}_{YEAR_RANGE[1]}_CMIP6_hist_6h.json')]
     if not json_files:
         print(f"⚠️ No JSON found in {model_path}")
         continue
@@ -48,7 +50,7 @@ df = pd.DataFrame(rows)
 df = df.sort_values("model").reset_index(drop=True)
 
 # save CSV summary in base dir
-csv_path = os.path.join(base_dir, '..', "cmip6_hist_6h_efp_winters.csv")
+csv_path = os.path.join(base_dir, '..', f"cmip6_hist_{YEAR_RANGE[0]}_{YEAR_RANGE[1]}_6h_efp_winters.csv")
 df.to_csv(csv_path, index=False)
 
 print(f"✅ Saved summary CSV to {csv_path}")

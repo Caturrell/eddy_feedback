@@ -371,3 +371,203 @@ bdb.BdbQuit
 2026-03-01 11:40:14,137 - INFO - Successfully saved EFP data for UKESM1-0-LL - 1850_2015 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1850_2015/6h_efp/UKESM1-0-LL_1850_2015_efp_500hPa.nc
 2026-03-01 11:40:14,165 - INFO - Processing completed. Successfully processed 18/26 models
 2026-03-01 11:40:14,165 - WARNING - Failed to process 8 models
+2026-03-03 14:59:29,202 - INFO - Log file location: /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/efp_processing.log
+2026-03-03 14:59:29,202 - INFO - Starting EFP data processing pipeline
+2026-03-03 14:59:29,205 - INFO - Base output directory ensured: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed
+2026-03-03 14:59:29,206 - INFO - Found 33 models to process
+2026-03-03 14:59:29,206 - INFO - Processing model 1/33: ACCESS-CM2
+2026-03-03 14:59:29,208 - INFO - Found 1 experiment(s) for model ACCESS-CM2: ['1950_2015']
+2026-03-03 14:59:29,208 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:29,215 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:29,222 - INFO - Processing model: ACCESS-CM2, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:31,826 - INFO - Successfully saved EFP data for ACCESS-CM2 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/ACCESS-CM2_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:31,854 - INFO - Processing model 2/33: ACCESS-ESM1-5
+2026-03-03 14:59:31,855 - INFO - Found 1 experiment(s) for model ACCESS-ESM1-5: ['1950_2015']
+2026-03-03 14:59:31,856 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:31,857 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:31,860 - INFO - Processing model: ACCESS-ESM1-5, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:32,155 - INFO - Successfully saved EFP data for ACCESS-ESM1-5 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/ACCESS-ESM1-5_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:32,182 - INFO - Processing model 3/33: AWI-ESM-1-1-LR
+2026-03-03 14:59:32,183 - INFO - Found 1 experiment(s) for model AWI-ESM-1-1-LR: ['1850_2015']
+2026-03-03 14:59:32,183 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:32,184 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:32,187 - INFO - Processing model: AWI-ESM-1-1-LR, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:32,501 - INFO - Successfully saved EFP data for AWI-ESM-1-1-LR to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/AWI-ESM-1-1-LR_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:32,555 - INFO - Processing model 4/33: BCC-CSM2-MR
+2026-03-03 14:59:32,557 - INFO - Found 1 experiment(s) for model BCC-CSM2-MR: ['1950_2014']
+2026-03-03 14:59:32,557 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:32,558 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:32,561 - INFO - Processing model: BCC-CSM2-MR, experiment: 1950_2014 (using years: 1979-2014)
+2026-03-03 14:59:32,947 - INFO - Successfully saved EFP data for BCC-CSM2-MR to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/BCC-CSM2-MR_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:32,982 - INFO - Processing model 5/33: CMCC-CM2-HR4
+2026-03-03 14:59:32,983 - INFO - Found 1 experiment(s) for model CMCC-CM2-HR4: ['1850_2015']
+2026-03-03 14:59:32,984 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:32,985 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:32,988 - INFO - Processing model: CMCC-CM2-HR4, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:33,332 - INFO - Successfully saved EFP data for CMCC-CM2-HR4 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/CMCC-CM2-HR4_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:33,363 - INFO - Processing model 6/33: CMCC-CM2-SR5
+2026-03-03 14:59:33,364 - INFO - Found 1 experiment(s) for model CMCC-CM2-SR5: ['1850_2015']
+2026-03-03 14:59:33,364 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:33,365 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:33,368 - INFO - Processing model: CMCC-CM2-SR5, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:33,716 - INFO - Successfully saved EFP data for CMCC-CM2-SR5 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/CMCC-CM2-SR5_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:33,751 - INFO - Processing model 7/33: CNRM-CM6-1-HR
+2026-03-03 14:59:33,752 - INFO - Found 1 experiment(s) for model CNRM-CM6-1-HR: ['1950_2015']
+2026-03-03 14:59:33,753 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:33,754 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:33,757 - INFO - Processing model: CNRM-CM6-1-HR, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:34,135 - INFO - Successfully saved EFP data for CNRM-CM6-1-HR to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/CNRM-CM6-1-HR_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:34,169 - INFO - Processing model 8/33: EC-Earth3
+2026-03-03 14:59:34,170 - INFO - Found 1 experiment(s) for model EC-Earth3: ['1850_2014']
+2026-03-03 14:59:34,170 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:34,171 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:34,174 - INFO - Processing model: EC-Earth3, experiment: 1850_2014 (using years: 1979-2014)
+2026-03-03 14:59:34,600 - INFO - Successfully saved EFP data for EC-Earth3 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/EC-Earth3_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:34,631 - INFO - Processing model 9/33: EC-Earth3-AerChem
+2026-03-03 14:59:34,632 - INFO - Found 1 experiment(s) for model EC-Earth3-AerChem: ['1850_2014']
+2026-03-03 14:59:34,633 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:34,634 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:34,636 - INFO - Processing model: EC-Earth3-AerChem, experiment: 1850_2014 (using years: 1979-2014)
+2026-03-03 14:59:35,007 - INFO - Successfully saved EFP data for EC-Earth3-AerChem to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/EC-Earth3-AerChem_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:35,045 - INFO - Processing model 10/33: EC-Earth3-CC
+2026-03-03 14:59:35,047 - INFO - Found 1 experiment(s) for model EC-Earth3-CC: ['1850_2014']
+2026-03-03 14:59:35,047 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:35,047 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:35,049 - INFO - Processing model: EC-Earth3-CC, experiment: 1850_2014 (using years: 1979-2014)
+2026-03-03 14:59:35,365 - INFO - Successfully saved EFP data for EC-Earth3-CC to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/EC-Earth3-CC_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:35,396 - INFO - Processing model 11/33: EC-Earth3-Veg-LR
+2026-03-03 14:59:35,396 - INFO - Found 1 experiment(s) for model EC-Earth3-Veg-LR: ['1850_2014']
+2026-03-03 14:59:35,397 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:35,398 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:35,401 - WARNING - File not found: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical/EC-Earth3-Veg-LR/1850_2014/6hrPlevPt/efp_500hPa_1979-2014.nc
+2026-03-03 14:59:35,401 - INFO - Processing model 12/33: FGOALS-f3-L
+2026-03-03 14:59:35,402 - INFO - Found 1 experiment(s) for model FGOALS-f3-L: ['1850_2014']
+2026-03-03 14:59:35,402 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:35,403 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:35,406 - INFO - Processing model: FGOALS-f3-L, experiment: 1850_2014 (using years: 1979-2014)
+2026-03-03 14:59:35,708 - INFO - Successfully saved EFP data for FGOALS-f3-L to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/FGOALS-f3-L_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:35,737 - INFO - Processing model 13/33: GFDL-CM4
+2026-03-03 14:59:35,738 - INFO - Found 1 experiment(s) for model GFDL-CM4: ['1950_2015']
+2026-03-03 14:59:35,739 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:35,743 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:35,779 - INFO - Processing model: GFDL-CM4, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:36,160 - INFO - Successfully saved EFP data for GFDL-CM4 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/GFDL-CM4_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:36,188 - INFO - Processing model 14/33: GFDL-ESM4
+2026-03-03 14:59:36,189 - INFO - Found 1 experiment(s) for model GFDL-ESM4: ['1850_2015']
+2026-03-03 14:59:36,201 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:36,206 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:36,209 - INFO - Processing model: GFDL-ESM4, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:36,543 - INFO - Successfully saved EFP data for GFDL-ESM4 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/GFDL-ESM4_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:36,572 - INFO - Processing model 15/33: GISS-E2-1-G
+2026-03-03 14:59:36,573 - INFO - Found 1 experiment(s) for model GISS-E2-1-G: ['1950_2015']
+2026-03-03 14:59:36,573 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:36,575 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:36,577 - INFO - Processing model: GISS-E2-1-G, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:36,915 - INFO - Successfully saved EFP data for GISS-E2-1-G to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/GISS-E2-1-G_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:36,945 - INFO - Processing model 16/33: HadGEM3-GC31-LL
+2026-03-03 14:59:36,946 - INFO - Found 1 experiment(s) for model HadGEM3-GC31-LL: ['1850_2015']
+2026-03-03 14:59:36,946 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:36,947 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:36,949 - INFO - Processing model: HadGEM3-GC31-LL, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:37,380 - INFO - Successfully saved EFP data for HadGEM3-GC31-LL to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/HadGEM3-GC31-LL_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:37,414 - INFO - Processing model 17/33: HadGEM3-GC31-MM
+2026-03-03 14:59:37,415 - INFO - Found 1 experiment(s) for model HadGEM3-GC31-MM: ['1850_2015']
+2026-03-03 14:59:37,416 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:37,416 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:37,419 - INFO - Processing model: HadGEM3-GC31-MM, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:37,768 - INFO - Successfully saved EFP data for HadGEM3-GC31-MM to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/HadGEM3-GC31-MM_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:37,799 - INFO - Processing model 18/33: IPSL-CM6A-LR
+2026-03-03 14:59:37,800 - INFO - Found 1 experiment(s) for model IPSL-CM6A-LR: ['1850_2015']
+2026-03-03 14:59:37,804 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:37,810 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:37,818 - WARNING - File not found: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical/IPSL-CM6A-LR/1850_2015/6hrPlevPt/efp_500hPa_1979-2014.nc
+2026-03-03 14:59:37,818 - INFO - Processing model 19/33: IPSL-CM6A-LR-INCA
+2026-03-03 14:59:37,830 - INFO - Found 1 experiment(s) for model IPSL-CM6A-LR-INCA: ['1850_2015']
+2026-03-03 14:59:37,837 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:37,838 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:37,841 - WARNING - File not found: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical/IPSL-CM6A-LR-INCA/1850_2015/6hrPlevPt/efp_500hPa_1979-2014.nc
+2026-03-03 14:59:37,866 - INFO - Processing model 20/33: KACE-1-0-G
+2026-03-03 14:59:37,871 - INFO - Found 1 experiment(s) for model KACE-1-0-G: ['1850_2014']
+2026-03-03 14:59:37,871 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:37,873 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:37,875 - WARNING - File not found: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical/KACE-1-0-G/1850_2014/6hrPlevPt/efp_500hPa_1979-2014.nc
+2026-03-03 14:59:37,875 - INFO - Processing model 21/33: KIOST-ESM
+2026-03-03 14:59:37,877 - INFO - Found 1 experiment(s) for model KIOST-ESM: ['1850_2015']
+2026-03-03 14:59:37,878 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:37,880 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:37,882 - INFO - Processing model: KIOST-ESM, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:38,223 - INFO - Successfully saved EFP data for KIOST-ESM to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/KIOST-ESM_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:38,256 - INFO - Processing model 22/33: MIROC-ES2L
+2026-03-03 14:59:38,257 - INFO - Found 1 experiment(s) for model MIROC-ES2L: ['1850_2015']
+2026-03-03 14:59:38,268 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:38,287 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:38,290 - INFO - Processing model: MIROC-ES2L, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:38,619 - INFO - Successfully saved EFP data for MIROC-ES2L to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MIROC-ES2L_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:38,654 - INFO - Processing model 23/33: MIROC6
+2026-03-03 14:59:38,655 - INFO - Found 1 experiment(s) for model MIROC6: ['1850_2015']
+2026-03-03 14:59:38,657 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:38,676 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:38,689 - INFO - Processing model: MIROC6, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:39,100 - INFO - Successfully saved EFP data for MIROC6 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MIROC6_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:39,130 - INFO - Processing model 24/33: MPI-ESM-1-2-HAM
+2026-03-03 14:59:39,130 - INFO - Found 1 experiment(s) for model MPI-ESM-1-2-HAM: ['1850_2015']
+2026-03-03 14:59:39,133 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:39,142 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:39,146 - INFO - Processing model: MPI-ESM-1-2-HAM, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:39,484 - INFO - Successfully saved EFP data for MPI-ESM-1-2-HAM to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MPI-ESM-1-2-HAM_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:39,511 - INFO - Processing model 25/33: MPI-ESM1-2-HR
+2026-03-03 14:59:39,512 - INFO - Found 1 experiment(s) for model MPI-ESM1-2-HR: ['1850_2015']
+2026-03-03 14:59:39,513 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:39,517 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:39,522 - INFO - Processing model: MPI-ESM1-2-HR, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:39,836 - INFO - Successfully saved EFP data for MPI-ESM1-2-HR to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MPI-ESM1-2-HR_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:39,865 - INFO - Processing model 26/33: MPI-ESM1-2-LR
+2026-03-03 14:59:39,866 - INFO - Found 1 experiment(s) for model MPI-ESM1-2-LR: ['1850_2015']
+2026-03-03 14:59:39,869 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:39,870 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:39,875 - INFO - Processing model: MPI-ESM1-2-LR, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:40,196 - INFO - Successfully saved EFP data for MPI-ESM1-2-LR to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MPI-ESM1-2-LR_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:40,245 - INFO - Processing model 27/33: MRI-ESM2-0
+2026-03-03 14:59:40,246 - INFO - Found 1 experiment(s) for model MRI-ESM2-0: ['1950_2014']
+2026-03-03 14:59:40,258 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:40,263 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:40,268 - INFO - Processing model: MRI-ESM2-0, experiment: 1950_2014 (using years: 1979-2014)
+2026-03-03 14:59:40,688 - INFO - Successfully saved EFP data for MRI-ESM2-0 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/MRI-ESM2-0_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:40,719 - INFO - Processing model 28/33: NESM3
+2026-03-03 14:59:40,720 - INFO - Found 1 experiment(s) for model NESM3: ['1950_2014']
+2026-03-03 14:59:40,724 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:40,726 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:40,730 - INFO - Processing model: NESM3, experiment: 1950_2014 (using years: 1979-2014)
+2026-03-03 14:59:41,078 - INFO - Successfully saved EFP data for NESM3 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/NESM3_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:41,110 - INFO - Processing model 29/33: NorESM2-LM
+2026-03-03 14:59:41,111 - INFO - Found 1 experiment(s) for model NorESM2-LM: ['1950_2015']
+2026-03-03 14:59:41,111 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:41,113 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:41,116 - INFO - Processing model: NorESM2-LM, experiment: 1950_2015 (using years: 1979-2014)
+2026-03-03 14:59:41,433 - INFO - Successfully saved EFP data for NorESM2-LM to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/NorESM2-LM_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:41,467 - INFO - Processing model 30/33: NorESM2-MM
+2026-03-03 14:59:41,468 - INFO - Found 1 experiment(s) for model NorESM2-MM: ['1950_2014']
+2026-03-03 14:59:41,468 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:41,470 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:41,472 - INFO - Processing model: NorESM2-MM, experiment: 1950_2014 (using years: 1979-2014)
+2026-03-03 14:59:41,795 - INFO - Successfully saved EFP data for NorESM2-MM to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/NorESM2-MM_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:41,840 - INFO - Processing model 31/33: SAM0-UNICON
+2026-03-03 14:59:41,841 - INFO - Found 1 experiment(s) for model SAM0-UNICON: ['1950_2014']
+2026-03-03 14:59:41,842 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:41,843 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:41,846 - INFO - Processing model: SAM0-UNICON, experiment: 1950_2014 (using years: 1979-2014)
+2026-03-03 14:59:42,232 - INFO - Successfully saved EFP data for SAM0-UNICON to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/SAM0-UNICON_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:42,264 - INFO - Processing model 32/33: TaiESM1
+2026-03-03 14:59:42,265 - INFO - Found 1 experiment(s) for model TaiESM1: ['1850_2015']
+2026-03-03 14:59:42,265 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:42,267 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:42,271 - INFO - Processing model: TaiESM1, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:42,607 - INFO - Successfully saved EFP data for TaiESM1 to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/TaiESM1_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:42,646 - INFO - Processing model 33/33: UKESM1-0-LL
+2026-03-03 14:59:42,648 - INFO - Found 1 experiment(s) for model UKESM1-0-LL: ['1850_2015']
+2026-03-03 14:59:42,648 - INFO - Using specified year range: 1979 - 2014
+2026-03-03 14:59:42,649 - INFO - Using output directory: /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp
+2026-03-03 14:59:42,652 - INFO - Processing model: UKESM1-0-LL, experiment: 1850_2015 (using years: 1979-2014)
+2026-03-03 14:59:43,006 - INFO - Successfully saved EFP data for UKESM1-0-LL to /gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1979_2014/6h_efp/UKESM1-0-LL_1979_2014_efp_500hPa.nc
+2026-03-03 14:59:43,042 - INFO - Processing completed. Successfully processed 29/33 models
+2026-03-03 14:59:43,042 - WARNING - Failed to process 4 models
