@@ -7,6 +7,9 @@ import xarray as xar
 import xcdat
 import xesmf as xe
 import pdb
+import json
+from pathlib import Path
+from datetime import datetime
 
 import SIT_eddy_plotting_functions as epf
 import SIT_eddy_feedback_functions as eff
@@ -24,6 +27,170 @@ logging.basicConfig(
 logging.getLogger("matplotlib").setLevel(logging.WARNING)
 
 
+class FileValidationCache:
+    """Cache for tracking validated NetCDF files to avoid re-checking them."""
+    
+    def __init__(self, cache_file=None):
+        """
+        Initialize the validation cache.
+        
+        Parameters
+        ----------
+        cache_file : str or Path, optional
+            Path to the cache JSON file. If None, uses default location.
+        """
+        if cache_file is None:
+            # Save cache in the same directory as this script
+            script_dir = Path(__file__).parent
+            cache_file = script_dir / 'cmip6_validation_cache.json'
+        self.cache_file = Path(cache_file)
+        self.validated_files = self._load_cache()
+        
+    def _load_cache(self):
+        """Load the cache from disk."""
+        if self.cache_file.exists():
+            try:
+                with open(self.cache_file, 'r') as f:
+                    cache_data = json.load(f)
+                logging.info(f'Loaded validation cache with {len(cache_data)} entries from {self.cache_file}')
+                return cache_data
+            except Exception as e:
+                logging.warning(f'Failed to load cache file: {e}. Starting with empty cache.')
+                return {}
+        return {}
+    
+    def _save_cache(self):
+        """Save the cache to disk."""
+        try:
+            # Create parent directory if it doesn't exist
+            self.cache_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(self.cache_file, 'w') as f:
+                json.dump(self.validated_files, f, indent=2)
+            logging.debug(f'Saved validation cache with {len(self.validated_files)} entries')
+        except Exception as e:
+            logging.warning(f'Failed to save cache file: {e}')
+    
+    def is_validated(self, filepath):
+        """
+        Check if a file has been previously validated.
+        
+        Parameters
+        ----------
+        filepath : str or Path
+            Path to the file to check.
+            
+        Returns
+        -------
+        bool
+            True if file is in cache and still exists with same modification time.
+        """
+        filepath = str(Path(filepath).resolve())
+        
+        if filepath not in self.validated_files:
+            return False
+        
+        # Check if file still exists
+        if not os.path.isfile(filepath):
+            # File was deleted, remove from cache
+            del self.validated_files[filepath]
+            self._save_cache()
+            return False
+        
+        # Check if modification time matches (file hasn't been modified since validation)
+        cached_mtime = self.validated_files[filepath].get('mtime')
+        current_mtime = os.path.getmtime(filepath)
+        
+        if cached_mtime is None or abs(current_mtime - cached_mtime) > 1.0:
+            # File was modified, needs re-validation
+            return False
+        
+        return True
+    
+    def mark_validated(self, filepath):
+        """
+        Mark a file as validated in the cache.
+        
+        Parameters
+        ----------
+        filepath : str or Path
+            Path to the validated file.
+        """
+        filepath = str(Path(filepath).resolve())
+        
+        if os.path.isfile(filepath):
+            self.validated_files[filepath] = {
+                'mtime': os.path.getmtime(filepath),
+                'validated_at': datetime.now().isoformat()
+            }
+            self._save_cache()
+    
+    def clear_entry(self, filepath):
+        """
+        Remove a file from the validation cache.
+        
+        Parameters
+        ----------
+        filepath : str or Path
+            Path to the file to remove from cache.
+        """
+        filepath = str(Path(filepath).resolve())
+        if filepath in self.validated_files:
+            del self.validated_files[filepath]
+            self._save_cache()
+
+
+# Initialize global validation cache
+validation_cache = FileValidationCache()
+
+
+def is_valid_netcdf(filepath, use_cache=True):
+    """
+    Return True if file exists and can be opened and fully read without error.
+    A full load is performed to catch corruption in data blocks, not just headers.
+    
+    Parameters
+    ----------
+    filepath : str or Path
+        Path to the NetCDF file to validate.
+    use_cache : bool, optional
+        If True, use the validation cache to skip re-checking previously validated files.
+        Default is True.
+    
+    Returns
+    -------
+    bool
+        True if file is valid, False otherwise.
+    """
+    if not os.path.isfile(filepath):
+        return False
+    
+    # Check cache first if enabled
+    if use_cache and validation_cache.is_validated(filepath):
+        logging.debug(f'File validation cached (skipping check): {filepath}')
+        return True
+    
+    # Perform actual validation
+    try:
+        with xar.open_dataset(filepath) as ds:
+            ds.load()
+        
+        # File is valid, add to cache
+        if use_cache:
+            validation_cache.mark_validated(filepath)
+            logging.debug(f'File validated and cached: {filepath}')
+        
+        return True
+    except Exception as e:
+        logging.warning(f'File appears corrupt and will be regenerated: {filepath} ({e})')
+        
+        # Remove from cache if it was there
+        if use_cache:
+            validation_cache.clear_entry(filepath)
+        
+        return False
+
+
 #==============================================================================================================
 # Same code as in search_cmip6_hist.py to find models and files (17/12/25)
 #==============================================================================================================
@@ -33,7 +200,6 @@ exp_type='cmip6'
 if exp_type=='cmip6':
     
     force_recalculate=False
-    
     
     subtract_annual_cycle=True
     level_type='6hrPlevPt'
@@ -45,32 +211,24 @@ if exp_type=='cmip6':
     version_name='latest'
     experiment = 'historical'
 
+    end_year_required = 2015       # fix end point for all models
+    min_years_required = 65       # minimum acceptable record length
 
-    ## WE WANT ALL YEARS AVAILABLE
-    total_time_span_required = 150 #specify number of years we want to analyse
-    
-    
     # Variables we want to look for
     var_name_dict = {
-        'ua':{'data_type':'6hrPlevPt'}, #Pt here means snapshots, whereas 6hrPlev would be 6 hourly averages (see cell_methods here https://github.com/PCMDI/cmip6-cmor-tables/blob/main/Tables/CMIP6_6hrPlevPt.json vs here https://github.com/PCMDI/cmip6-cmor-tables/blob/main/Tables/CMIP6_6hrPlev.json)
+        'ua':{'data_type':'6hrPlevPt'},
         'va':{'data_type':'6hrPlevPt'},
-        # 'ta':{'data_type':'6hrPlevPt'},
     }
 
     logging.info('finding all available data')
     
-    
-    ## PRINTS OUT ALL AVAILABLE MODELS WITH DATA FOR ALL VARIABLES SPECIFIED IN var_name_dict
     models_by_var = find_ensemble_list_multi_var(base_dir_badc, var_name_dict, experiment)
-    available_models_dict_to_use=models_by_var['ua']
+    available_models_dict_to_use = models_by_var['ua']
     logging.info('done finding all available data')
-    #loop over each model 
-    
-    
-    
+
+
     #==============================================================================================
     # For each model, find files for one ensemble member only (e.g., r1i1p1f1)
-    # prints out grid choice and ensemble member choice for each model and variable in var_name_dict
     #==============================================================================================
 
     one_member_files_dict = {}
@@ -84,6 +242,10 @@ if exp_type=='cmip6':
         model_path = available_models_dict_to_use[model_name]['data_dir']
         ens_ids = available_models_dict_to_use[model_name]['ens_ids']
         n_files_per_ens_member = available_models_dict_to_use[model_name]['n_files_per_ens_member']
+        
+        logging.info(f'Processing model {model_name} at {model_path}\n')
+        logging.info(f'-    Model path: {model_path}')
+        logging.info(f'-    Ensemble ID: {ens_ids}')
 
         files_for_model = []
         n_files_required_list = []
@@ -93,10 +255,14 @@ if exp_type=='cmip6':
         start_date_for_model_dict = {}
         end_date_for_model_dict = {}
 
+        # FIX 6: track start year per variable so we don't silently use the last loop value
+        start_year_per_var = {}
+
+        continuous_timeseries = True  # initialise before inner loop
+
         for var_name_to_check in var_name_dict.keys():
             ens_list = models_by_var[var_name_to_check][model_name]['ens_ids']
             grid_list = models_by_var[var_name_to_check][model_name]['grid_list']
-
 
             if len(ens_list)==1:
                 member_choice = ens_list[0]
@@ -107,9 +273,6 @@ if exp_type=='cmip6':
                 logging.warning(f'-    Using f2 for {model_name}')
             else:
                 raise NotImplementedError(f'Not sure which ens_id to choose for {model_name}\n\n{model_path}')
-            
-            # Failures: 
-            ## Not sure which ens_id to choose for UKESM1-0-LL
 
             if len(grid_list)==1:
                 grid_choice = grid_list[0]
@@ -122,74 +285,85 @@ if exp_type=='cmip6':
 
             logging.info(f'Using {grid_choice} and ens_id={member_choice} for {model_name} and var name {var_name_to_check}')
 
-
-
-            ## IF ENS_ID AND GRID CHOICE ARE VALID, GET FILES
             if member_choice in ens_list and grid_choice in grid_list:
                 files_for_model_var = [file for file in models_by_var[var_name_to_check][model_name]['files'] if member_choice in file and f'/{grid_choice}/' in file]
 
                 start_year = [file_name.split('_')[-1].split('.nc')[0].split('-')[0][0:4] for file_name in files_for_model_var]
-                end_year = [file_name.split('_')[-1].split('.nc')[0].split('-')[1][0:4] for file_name in files_for_model_var]   
-                
-                logging.info(f'-    Years available for {var_name_to_check}: {start_year[0]} to {end_year[-1]}')             
+                end_year   = [file_name.split('_')[-1].split('.nc')[0].split('-')[1][0:4] for file_name in files_for_model_var]
+
+                logging.info(f'-    Years available for {var_name_to_check}: {start_year[0]} to {end_year[-1]}')
 
                 start_date = [file_name.split('_')[-1].split('.nc')[0].split('-')[0][0:8] for file_name in files_for_model_var]
-                end_date = [file_name.split('_')[-1].split('.nc')[0].split('-')[1][0:8] for file_name in files_for_model_var]                
+                end_date   = [file_name.split('_')[-1].split('.nc')[0].split('-')[1][0:8] for file_name in files_for_model_var]
 
                 len_each_file = np.asarray(np.int32(end_year)) - np.asarray(np.int32(start_year))
-                
-                any_dt = np.int32(start_year[1:])- np.int32(end_year[0:-1])
-
-                if end_date[0][4:8]=='1231':
+                if end_date[0][4:8] == '1231':
                     len_each_file = len_each_file + 1
 
-                n_files_required = np.int32(np.ceil(total_time_span_required/len_each_file[0]))
-                n_files_required_float = total_time_span_required/len_each_file[0]
+                # FIX 3 & 4: filter files FIRST, then recompute derived arrays from the filtered list
+                filtered_indices = [i for i, ey in enumerate(end_year) if int(ey) <= end_year_required]
+                files_for_model_var = [files_for_model_var[i] for i in filtered_indices]
+                start_year_filtered = [start_year[i] for i in filtered_indices]
+                end_year_filtered   = [end_year[i]   for i in filtered_indices]
+                start_date_filtered = [start_date[i] for i in filtered_indices]
+                end_date_filtered   = [end_date[i]   for i in filtered_indices]
+                len_each_file       = len_each_file[filtered_indices]
 
-                continuous_timeseries = True
-                if np.any(any_dt>1.):
-                    logging.warning(f'there appears to be a gap in the timeseries for model {model_name}')
-                    if np.any(any_dt[0:n_files_required]>1):
-                        logging.warning(f'This is going to affect your calculation')
-                        continuous_timeseries=False
+                n_files_required = len(files_for_model_var)
 
-                if n_files_required>len(files_for_model_var):
-                    logging.info(f'Insufficient files for {model_name}')
+                # FIX 4: compute any_dt on the filtered list
+                any_dt = np.int32(start_year_filtered[1:]) - np.int32(end_year_filtered[0:-1])
+
+                if np.any(any_dt > 1.):
+                    logging.warning(f'There appears to be a gap in the timeseries for model {model_name}')
+                    logging.warning(f'This is going to affect your calculation')
+                    continuous_timeseries = False
+
+                # FIX 2: flag dodgy models based on actual year count, not file count
+                total_years = int(np.sum(len_each_file))
+                if total_years < min_years_required:
+                    logging.warning(f'Insufficient data for {model_name}: only {total_years} years (minimum {min_years_required})')
                     dodgy_model_list.append(model_name)
-                    n_files_required = len(files_for_model_var)
 
                 n_files_required_list.append(n_files_required)
-                end_year_list.append(end_year[n_files_required-1])
+                # FIX 3: use filtered end_year list
+                end_year_list.append(end_year_filtered[-1] if end_year_filtered else str(end_year_required))
 
-                n_years_available_list.append(np.sum(len_each_file))
+                n_years_available_list.append(total_years)
 
-                files_for_model_dict[var_name_to_check] = files_for_model_var[0:n_files_required]
-                start_date_for_model_dict[var_name_to_check] = start_date[0:n_files_required]
-                end_date_for_model_dict[var_name_to_check] = end_date[0:n_files_required]
+                files_for_model_dict[var_name_to_check]      = files_for_model_var
+                start_date_for_model_dict[var_name_to_check] = start_date_filtered
+                end_date_for_model_dict[var_name_to_check]   = end_date_filtered
 
-        # if not np.all(np.asarray(n_files_required_list) == n_files_required_list[0]):
-            # pdb.set_trace()
+                # FIX 6: store start year per variable
+                start_year_per_var[var_name_to_check] = start_year_filtered[0] if start_year_filtered else None
+
         if not np.all(np.asarray(end_year_list) == end_year_list[0]):
-            end_year_values = [float(end_year_val) for end_year_val in end_year_list]
-            end_month_dict[model_name]   = str(np.int64(np.min(np.asarray(end_year_values))))
+            end_year_values = [float(v) for v in end_year_list]
+            end_month_dict[model_name] = str(np.int64(np.min(np.asarray(end_year_values))))
         else:
-            end_month_dict[model_name]   = end_year[n_files_required-1]
+            end_month_dict[model_name] = end_year_list[-1] if end_year_list else str(end_year_required)
 
-        start_month_dict[model_name] = start_year[0]
+        # FIX 6: use the latest start year across all variables so the record is valid for all
+        all_start_years = [int(v) for v in start_year_per_var.values() if v is not None]
+        start_month_dict[model_name] = str(max(all_start_years)) if all_start_years else None
+        if len(set(all_start_years)) > 1:
+            logging.warning(f'Variables have different start years for {model_name}: {start_year_per_var}. Using latest: {max(all_start_years)}')
 
-        n_files_per_var = []
-        for var_name_to_check in var_name_dict.keys():
-            n_files_per_var.append(len(files_for_model_dict[var_name_to_check]))
-        if not np.all(np.asarray(n_files_per_var)==n_files_per_var[0]) or not continuous_timeseries:
+        n_files_per_var = [len(files_for_model_dict[v]) for v in var_name_dict.keys()]
+        if not np.all(np.asarray(n_files_per_var) == n_files_per_var[0]) or not continuous_timeseries:
             weird_model_list.append(model_name)
 
-        one_member_files_dict[model_name] = {'files':files_for_model_dict, 'start_date':start_date_for_model_dict, 'end_date':end_date_for_model_dict}
+        one_member_files_dict[model_name] = {
+            'files':      files_for_model_dict,
+            'start_date': start_date_for_model_dict,
+            'end_date':   end_date_for_model_dict
+        }
 
-        logging.info(n_years_available_list)
+        logging.info(f'{n_years_available_list}\n')
         
 else:
     raise NotImplementedError(f'no valid exp type configured for {exp_type}')
-
 
 
 if exp_type=='cmip6':
@@ -205,16 +379,8 @@ weird_model_list = [model for model in weird_model_list if model not in dodgy_mo
 logging.info(np.unique(weird_model_list))
 logging.info('good models')
 good_model_list = [model for model in model_list if model not in weird_model_list and model not in dodgy_model_list]
-logging.info(f'count (minimum {total_time_span_required}): {len(good_model_list)}')
+logging.info(f'count (minimum {min_years_required} years up to {end_year_required}): {len(good_model_list)}')
 logging.info(good_model_list)
-
-logging.info('\n')
-logging.info('='*70)
-logging.info('='*70)
-logging.info('Finished setting up model file lists')
-logging.info('='*70)
-logging.info('='*70)
-logging.info('\n')
 
 
 
@@ -244,9 +410,6 @@ monthly_too=True
 
 for model_name in sorted(good_model_list):
     
-    if model_name == 'IPSL-CM6A-LR-INCA':
-        logging.info('skipping IPSL-CM6A-LR-INCA due to data issues')
-        continue
 
     logging.info(f'Now looking at {model_name}')
     try:
@@ -265,12 +428,7 @@ for model_name in sorted(good_model_list):
             start_month_val = int(start_month)
             end_month_val = int(end_month)        
 
-            if end_month_val - start_month_val>total_time_span_required:
-                end_month=str(int(start_month_val+total_time_span_required-1))
-                time_slice = slice(f'{start_month}-01-01', f'{end_month}-12-31')
-                slice_time=True
-            else:
-                slice_time=False
+            slice_time=False
                 
                 
         ## SET UP OUTPUT DIRECTORIES ##
@@ -311,8 +469,10 @@ for model_name in sorted(good_model_list):
             logging.info(f'Processing files for {model_name}; year starting {start_date_val} to {end_date_val}')
 
 
-            # Do the calculation if output files don't exist AND we want to force recalculate
-            if not os.path.isfile(output_file) or force_ep_flux_recalculate or not os.path.isfile(output_day_av_file):
+            # Do the calculation if output files are missing, corrupt, or recalculation is forced.
+            # is_valid_netcdf() opens and fully loads each file to detect both header and data-block corruption.
+            # The validation cache speeds up this check by remembering previously validated files.
+            if force_ep_flux_recalculate or not is_valid_netcdf(output_file) or not is_valid_netcdf(output_day_av_file):
                 logging.info('opening model data files')
                 time_coder = xar.coders.CFDatetimeCoder(use_cftime=True)
                 dataset = xar.open_mfdataset(files_for_year, decode_times=time_coder,
@@ -484,8 +644,6 @@ for model_name in sorted(good_model_list):
                     logging.warning('rechunking pfull to allow edge-order 2 vert deriv')
                     dataset = dataset.chunk(chunks={'pfull':dataset.pfull.shape[0]})
 
-                if slice_time:
-                    dataset = dataset.sel(time=time_slice)
 
 
                 logging.info(f'\nThis dataset: {model_name} has {dataset.pfull.shape[0]} plevels, {dataset.lat.shape[0]} lat points , {dataset.time.shape[0]} time points and {dataset.lon.shape[0]} longitude points\n')

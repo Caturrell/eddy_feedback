@@ -355,11 +355,19 @@ def ep_flux_calc(dataset, output_file, force_ep_flux_recalculate, include_udt_rd
 
     return epflux_ds
 
-def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate, exp_type, season_month_dict, use_500hPa_only=False): 
+def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate, exp_type, season_month_dict, use_500hPa_only=False, year_range=None): 
 
+    # Apply year range subset if provided
+    if year_range is not None:
+        start_year_subset, end_year_subset = year_range
+        logging.info(f'Subsetting data to years {start_year_subset} - {end_year_subset}')
+        dataset = dataset.sel(time=slice(f'{start_year_subset:04d}-01', f'{end_year_subset:04d}-12'))
+    start_year = dataset.time.dt.year[0].values
+    end_year = dataset.time.dt.year[-1].values
+    
     if use_500hPa_only:
         pre_path = output_efp_file.split('.nc')[0]
-        output_efp_file = pre_path+'_500hPa.nc'
+        output_efp_file = pre_path+f'_500hPa_{start_year}-{end_year}.nc'
 
     if os.path.isfile(output_efp_file) and not force_efp_recalculate:
         logging.info('attempting to read in EFP data')
@@ -367,9 +375,8 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
         logging.info('SUCCESS')
     else:
         logging.info('failed to read in previously calculated EFP data - CALCULATING')
-
-        start_year = dataset.time.dt.year[0].values
-        end_year = dataset.time.dt.year[-1].values
+        
+        logging.info(f'Processing data from {start_year} to {end_year}')
         if exp_type!='isca':
             dataset_cut_ends = dataset.sel(time=slice(f'{start_year:04d}-03', f'{end_year:04d}-11'))
         else:
@@ -493,8 +500,10 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
 
                             efp_output_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = signed_efp.values                            
 
-                            logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} = {efp.values}')
+                            logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
+                            logging.info(f'File: {output_efp_file}')
 
+        logging.info(f'Writing EFP data to file: {output_efp_file}')
         efp_output_ds.to_netcdf(output_efp_file)    
 
         efp_output_ds.close()

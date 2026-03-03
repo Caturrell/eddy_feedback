@@ -40,5 +40,5 @@ def check_netcdf_files(root_dir, log_file='corrupt_files.txt'):
 
 if __name__ == '__main__':
     # Set your directory path here
-    root_dir = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/piControl/efp_data_sit/30y/daily_averages'  # <-- Change this to your path
+    root_dir = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical'  # <-- Change this to your path
     check_netcdf_files(root_dir)

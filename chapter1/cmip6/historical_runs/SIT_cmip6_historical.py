@@ -5,8 +5,8 @@ import os
 import pdb
 # import xcdat
 import logging
-# import eddy_feedback_functions as eff
-# import eddy_plotting_functions as epf
+import SIT_eddy_feedback_functions as eff
+import SIT_eddy_plotting_functions as epf
 from SIT_search_for_hist import find_ensemble_list, find_ensemble_list_multi_var
 from tqdm import tqdm
 import xesmf as xe
@@ -205,7 +205,7 @@ logging.info(good_model_list)
 
 # good_model_list = good_model_list
 # good_model_list = ['EC-Earth3', 'GFDL-CM4', 'MRI-ESM2-0']
-pdb.set_trace()
+# pdb.set_trace()
 for model_name in good_model_list:
 
     logging.info(f'Now looking at {model_name}')

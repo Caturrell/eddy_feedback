@@ -62,7 +62,7 @@ def resample_to_monthly(base_path, model_name):
         
         time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
         
-        ds = xr.open_mfdataset(model_path, combine='by_coords', chunks={'time':12}, decode_times=time_coder)
+        ds = xr.open_mfdataset(model_path, combine='by_coords', chunks={'time':30}, decode_times=time_coder)
         
         # run data through checker
         ds = dw.data_checker1000(ds, check_vars=False)
@@ -77,6 +77,7 @@ def resample_to_monthly(base_path, model_name):
         # Resample to monthly means
         logger.info("ubar calculated. Resampling to monthly means...")
         ds_mon = ds.resample(time='1ME').mean()
+        ds.close()  # Close the original dataset to free up resources
         
         logger.info(f"Successfully resampled {model_name} to monthly means")
         return ds_mon
@@ -85,38 +86,6 @@ def resample_to_monthly(base_path, model_name):
         logger.error(f"Error during resampling for model {model_name}: {e}")
         raise
 
-def calculate_experiment_length(experiment_name):
-    """
-    Calculate experiment length from experiment name.
-    Assumes format like 'YYYY_YYYY' where the difference gives the length.
-    Returns '30y' or '100y'.
-    """
-    try:
-        # Split by underscore and extract the two years
-        parts = experiment_name.split('_')
-        
-        # Find the two numeric parts (years)
-        years = [int(part) for part in parts if part.isdigit()]
-        
-        if len(years) < 2:
-            logger.warning(f"Could not extract two years from experiment name: {experiment_name}")
-            return None
-        
-        # Calculate the difference between the two years
-        year_diff = abs(years[1] - years[0])
-        
-        # Determine if it's 30 or 100 years
-        if year_diff in [29, 30]:
-            return '30y'
-        elif year_diff in [99, 100]:
-            return '100y'
-        else:
-            logger.warning(f"Unexpected year difference {year_diff} for experiment: {experiment_name}")
-            return 'other'
-            
-    except Exception as e:
-        logger.error(f"Error calculating experiment length for {experiment_name}: {e}")
-        return None
 
 def process_model(model, main_path, base_save_path):
     """Process daily data for a single model, handling multiple experiments"""
@@ -131,27 +100,22 @@ def process_model(model, main_path, base_save_path):
         processed_lengths = set()  # Track which experiment lengths had successful processing
         
         # Loop over all experiments
-        for experiment in experiments:
-            
-            
-            # SKIP MODELS THAT WERE BEING KILLED
-            # if model in ['GFDL-CM4', 'IPSL-CM6A-LR', 'MPI-ESM-1-2-HAM', 'MPI-ESM1-2-HR',
-            #              'MPI-ESM1-2-LR', 'NorESM2-LM']:
-            #     logger.info(f"SKIPPING {model} DUE TO UNKNOWN DATA ISSUE")
-            #     continue
-            
+        for experiment in experiments:            
             
             try:
                 # Calculate experiment length
-                experiment_length = calculate_experiment_length(experiment)
-                
-                # if experiment_length == '100y':
-                #     logger.info(f"Skipping 100-year experiment: {experiment}")
-                #     continue
+                if experiment in ['1850_2014', '1850_2015']:
+                    experiment_length = '1850_2014'
+                elif experiment in ['1950_2014', '1950_2015']:
+                    experiment_length = '1950_2014'
+                else:
+                    logger.warning(f"Unexpected experiment name format: {experiment}, using raw name as length")
+                    experiment_length = experiment
                 
                 if experiment_length is None:
                     logger.error(f"Could not determine experiment length for {experiment}, skipping")
                     continue
+                
                 
                 # Create the appropriate subdirectory
                 save_path = base_save_path / experiment_length / 'daily_averages' / model
@@ -200,9 +164,7 @@ def process_model(model, main_path, base_save_path):
                             continue
                         
                         time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
-                        
-                        
-                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 12}, decode_times=time_coder) as ds:
+                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 30}, decode_times=time_coder) as ds:
                             
                             # ds = ds.rename({'pfull': 'level'})
                             
