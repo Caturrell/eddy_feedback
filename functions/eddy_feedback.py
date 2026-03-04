@@ -218,9 +218,10 @@ def _process_specific_efp_data(ds, data_type, season):
     corr_dim = 'time'  # Default dimension for correlation
 
     if data_type in ('reanalysis', 'reanalysis_qg', 'reanalysis_fulltime'):
-        if not data_type == 'reanalysis_fulltime':
-            reanalysis_years=slice('1979', '2016')
-            ds = ds.sel(time=reanalysis_years)
+        # if not data_type == 'reanalysis_fulltime':
+            # reanalysis_years=slice('1979', '2016')
+            # ds = ds.sel(time=reanalysis_years)
+            # print('WARNING: Removed default years (1979-2016) for reanalysis datasets. Ensure you have selected the correct time range for your analysis.')
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
 
     elif data_type == 'pamip':
@@ -279,7 +280,7 @@ def _process_hemisphere(ds, calc_south_hemis):
 
 
 def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None, 
-                  bootstrapping=False, slice_500hPa=False):
+                  bootstrapping=False, slice_500hPa=False, round_answer=True):
     """
     Calculate Eddy Feedback Parameter for reanalysis and Isca data.
 
@@ -356,7 +357,10 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None,
             weights = np.cos(np.deg2rad(corr.lat))
             efp = corr.weighted(weights).mean('lat')
 
-        return round(float(efp.values), 4)
+        if round_answer:
+            return round(float(efp.values), 4)
+        else:
+            return efp.values
     except Exception as e:
         raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
 
