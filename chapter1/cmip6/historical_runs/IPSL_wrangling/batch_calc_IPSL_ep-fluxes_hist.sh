@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=batch_daily_hist  # Job name
-#SBATCH --output=calc_daily_ep-fluxes.out  # Standard output file
-#SBATCH --error=calc_daily_ep-fluxes.err  # Standard error file
+#SBATCH --job-name=batch_IPSL_hist  # Job name
+#SBATCH --output=calc_IPSL_ep-fluxes.out  # Standard output file
+#SBATCH --error=calc_IPSL_ep-fluxes.err  # Standard error file
 #SBATCH --account=arctic_connect
 #SBATCH --partition=standard
 #SBATCH --qos=standard
@@ -13,4 +13,4 @@
 mamba activate eddy  # Activate the 'meddy' virtual environment
 
 # Run your Python script
-python /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/daily-efp_hist/calc_daily_ep-fluxes_historical.py
+python /home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/IPSL_wrangling/process_IPSL_hist_end2015.py

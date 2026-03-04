@@ -137,7 +137,7 @@ def main():
     """Main processing function"""
     logger.info("Starting EFP data processing pipeline")
     
-    EFP_RANGE = (1979, 2014)  # Default year range to use for EFP data
+    EFP_RANGE = (1958, 2014)  # Default year range to use for EFP data
     
     try:
         # Setup paths

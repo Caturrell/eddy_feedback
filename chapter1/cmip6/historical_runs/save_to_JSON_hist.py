@@ -2,7 +2,7 @@ import xarray as xr
 import os
 import json
 
-YEAR_RANGE = (1979, 2014)  # Default year range to use for EFP data
+YEAR_RANGE = (1958, 2014)  # Default year range to use for EFP data
 
 path = f'/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/{YEAR_RANGE[0]}_{YEAR_RANGE[1]}/6h_efp'
 
