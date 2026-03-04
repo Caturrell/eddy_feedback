@@ -32,7 +32,7 @@ logging.getLogger("matplotlib").setLevel(logging.WARNING)
 #----------------------
 end_year_required = 2015       # fix end point for all models
 min_years_required = 65        # minimum acceptable record length
-efp_year_range = (1979, 2014)
+efp_year_range = (1958, 2014)
 
 
 

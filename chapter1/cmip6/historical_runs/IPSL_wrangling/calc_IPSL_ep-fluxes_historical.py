@@ -58,7 +58,7 @@ def resample_to_monthly(base_path, model_name):
     try:
         
         logger.info(f"Loading daily data for model: {model_name}")
-        model_path = glob.glob(os.path.join(base_path, model_name, '*_dm_uvt_epfluxes.nc'))
+        model_path = glob.glob(os.path.join(base_path, model_name, '*_uvt_epfluxes.nc'))
         
         time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
         
@@ -122,20 +122,20 @@ def process_model(model, main_path, base_save_path, year_range=None):
                 
                 
                 # Create the appropriate subdirectory
-                save_path = base_save_path / experiment_length / 'daily_averages' / model     
+                save_path = model_path / experiment / '6hrPlevPt' / 'yearly_data'    
                 save_path.mkdir(parents=True, exist_ok=True)
                 logger.info(f"Using output directory: {save_path}")
                 
                 # Locate daily data files
-                daily_data_dir = model_path / experiment / '6hrPlevPt' / 'yearly_data'
+                IPSL_data_dir = model_path / experiment / '6hrPlevPt' / 'yearly_data'
                 
-                if not daily_data_dir.exists():
-                    logger.error(f"Data directory not found: {daily_data_dir}")
+                if not IPSL_data_dir.exists():
+                    logger.error(f"Data directory not found: {IPSL_data_dir}")
                     continue
                     
-                daily_data_files = [f for f in os.listdir(daily_data_dir) if f.endswith('_daily_averages.nc')]
+                IPSL_data_files = [f for f in os.listdir(IPSL_data_dir) if f.endswith('_IPSL-CM6A-LR_historical_r1i1p1f1_uv.nc')]
                 
-                if not daily_data_files:
+                if not IPSL_data_files:
                     logger.warning(f"No daily data files found for {model}/{experiment}")
                     continue
                 
@@ -145,26 +145,26 @@ def process_model(model, main_path, base_save_path, year_range=None):
                 
                 logger.info(f"Processing model: {model}, experiment: {experiment} (length: {experiment_length})")
                 
-                for daily_file in daily_data_files:
+                for IPSL_file in IPSL_data_files:
     
-                    if not (daily_data_dir / daily_file).exists():
-                        logger.warning(f"File not found: {daily_file}")
-                        files_failed.append(daily_file)
+                    if not (IPSL_data_dir / IPSL_file).exists():
+                        logger.warning(f"File not found: {IPSL_file}")
+                        files_failed.append(IPSL_file)
                         continue
                     
                     try:
-                        logger.info(f"Processing daily data file: {daily_file}")
+                        logger.info(f"Processing daily data file: {IPSL_file}")
                         
                         time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
-                        with xr.open_dataset(daily_data_dir / daily_file, chunks={'time': 30}, 
+                        with xr.open_dataset(IPSL_data_dir / IPSL_file, chunks={'time': 30}, 
                                             decode_times=time_coder) as ds:
                             
                             # SUBSET TO TARGET TIME WINDOW
-                            ds_subset = ds.sel(time=slice('1950-01-01', '2014-12-31'))
+                            ds_subset = ds.sel(time=slice('1850-01-01', '2014-12-31'))
                             
                             # Skip if no data in window
                             if len(ds_subset.time) == 0:
-                                logger.warning(f"Skipping {daily_file}: no data in 1950-2014 window")
+                                logger.warning(f"Skipping {IPSL_file}: no data in 1850-2014 window")
                                 continue
                             
                             # Extract dates using string conversion (handles all datetime types)
@@ -178,12 +178,12 @@ def process_model(model, main_path, base_save_path, year_range=None):
                             
                             # Log the processing
                             n_times = len(ds_subset.time)
-                            logger.info(f"Input file:  {daily_file}")
+                            logger.info(f"Input file:  {IPSL_file}")
                             logger.info(f"Processing {n_times} timesteps: {time_start_str} to {time_end_str}")
-                            logger.info(f"Output file: {year_str}_dm_uvt_epfluxes.nc")
+                            logger.info(f"Output file: {year_str}_uvt_epfluxes.nc")
                             
                             # Create output filename from ACTUAL data
-                            save_file_name = f'{year_str}_dm_uvt_epfluxes.nc'
+                            save_file_name = f'{year_str}_uvt_epfluxes.nc'
                             
                             # If file already exists, skip processing
                             output_file = save_path / save_file_name
@@ -230,7 +230,7 @@ def process_model(model, main_path, base_save_path, year_range=None):
                                 
                             
                             ds.to_netcdf(output_file)
-                            logger.info(f"Successfully saved daily EP fluxes for {year_str} to {output_file}")
+                            logger.info(f"Successfully saved IPSL EP fluxes for {year_str} to {output_file}")
                             
                             # Log some basic info about the saved data
                             logger.debug(f"Variables saved: {list(ds.data_vars.keys())}")
@@ -239,12 +239,12 @@ def process_model(model, main_path, base_save_path, year_range=None):
                         files_processed += 1
                         
                     except Exception as e:
-                        logger.error(f"Error processing file {daily_file}: {e}", exc_info=True)
-                        files_failed.append(daily_file)
+                        logger.error(f"Error processing file {IPSL_file}: {e}", exc_info=True)
+                        files_failed.append(IPSL_file)
                         continue
                 
                 # Log summary for this experiment
-                logger.info(f"Experiment {experiment}: {files_processed}/{len(daily_data_files)} files processed successfully")
+                logger.info(f"Experiment {experiment}: {files_processed}/{len(IPSL_data_files)} files processed successfully")
                 if files_failed:
                     logger.warning(f"Failed files for {experiment}: {files_failed}")
                 
@@ -258,6 +258,7 @@ def process_model(model, main_path, base_save_path, year_range=None):
                 continue
         
         # After processing all experiments, perform monthly resampling for each experiment length
+        # if False:
         if processed_lengths:
             logger.info("\n" + "="*70)
             logger.info(f"MONTHLY RESAMPLING for {model}")
@@ -266,7 +267,7 @@ def process_model(model, main_path, base_save_path, year_range=None):
             for experiment_length in sorted(processed_lengths):
                 try:
                     # Setup monthly save path
-                    save_mon_path = base_save_path / experiment_length / 'mon_avg_daily'
+                    save_mon_path = model_path / experiment / '6hrPlevPt' / 'mon_avg_daily'
                     save_mon_path.mkdir(parents=True, exist_ok=True)
                     
                     # Define monthly output file name
@@ -310,14 +311,15 @@ def main():
     """Main processing function"""
     logger.info("Starting EFP data processing pipeline")
     
-    YEAR_RANGE = (1950, 2014)  # Default year range to use for processing and output naming
+    YEAR_RANGE = None #(1950, 2014)  # Default year range to use for processing and output naming
     
     try:
         # Setup paths
         main_path, base_save_path = setup_paths()
         
         # Get model list
-        models = get_model_list(main_path)
+        # models = get_model_list(main_path)
+        models = ['IPSL-CM6A-LR']  # For testing - process only IPSL
         
         # Process each model
         success_count = 0
