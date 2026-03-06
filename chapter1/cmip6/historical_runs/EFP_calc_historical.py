@@ -287,7 +287,7 @@ for model_name in tqdm(sorted(good_model_list)):
 
         ## SET UP OUTPUT DIRECTORIES ##
 
-        ## base_dir_output = '/gws/nopw/j04/arctic_connect/cturrell/CMIP6/historical'
+        ## base_dir_output = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical'
         plot_dir = f'{base_dir_output}/{model_name}/{start_month}_{end_month}/{level_type}/'
         if not os.path.isdir(plot_dir):
             os.makedirs(plot_dir)
