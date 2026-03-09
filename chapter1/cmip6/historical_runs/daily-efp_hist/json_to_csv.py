@@ -2,7 +2,7 @@ import os
 import json
 import pandas as pd
 
-YEAR_RANGE = (1979, 2014)
+YEAR_RANGE = (1958, 2014)
 
 base_dir = f'/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/{YEAR_RANGE[0]}_{YEAR_RANGE[1]}/daily'
 
