@@ -14,8 +14,10 @@ cmap = load_cmap("highcontrast")
 # LOAD DATA
 # ============================================================================
 
+START_YEAR = 1979
+
 # Load reanalysis data
-obs = pd.read_csv('/home/links/ct715/eddy_feedback/chapter1/reanalysis/data/1979-2016/jra55_efp_k123_1979-2016.csv')
+obs = pd.read_csv(f'/home/links/ct715/eddy_feedback/chapter1/reanalysis/data/{START_YEAR}-2016/jra55_efp_k123_{START_YEAR}-2016.csv')
 
 # Extract observed values into nested dictionary
 obs_values = {}
@@ -29,10 +31,10 @@ for time_freq in ['6h', 'daily']:
         }
 
 # Load CMIP6 data
-path_daily = '/home/links/ct715/eddy_feedback/chapter1/cmip6/data/100y/cmip6_daily_efp_winters_100y.csv'
+path_daily = f'/home/links/ct715/eddy_feedback/chapter1/cmip6/historical_runs/data/{START_YEAR}_2014/cmip6_hist_{START_YEAR}_2014_daily_efp_winters.csv'
 df_daily = pd.read_csv(path_daily)
 
-path_6h = '/home/links/ct715/eddy_feedback/chapter1/cmip6/data/100y/cmip6_6h_efp_winters_100y.csv'
+path_6h = f'/home/links/ct715/eddy_feedback/chapter1/cmip6/historical_runs/data/{START_YEAR}_2014/cmip6_hist_{START_YEAR}_2014_6h_efp_winters.csv'
 df_6h = pd.read_csv(path_6h)
 
 # ============================================================================
@@ -150,15 +152,15 @@ axes[0, 2].legend(
 )
 
 plt.tight_layout(rect=[0.03, 0, 1, 0.96])
-plt.suptitle('NH vs SH EFP for CMIP6 piControl runs (100 years)', 
+plt.suptitle(f'NH vs SH EFP for CMIP6 Historical runs ({START_YEAR}-2014)', 
              fontsize=16, y=0.98)
 
 # ============================================================================
 # SAVE FIGURE
 # ============================================================================
 
-save_path = '/home/links/ct715/eddy_feedback/chapter1/cmip6/plots'
-filename = 'NHvsSH_6h-daily_1979-2014_all-k_hist.png'
+save_path = '/home/links/ct715/eddy_feedback/chapter1/cmip6/historical_runs/analysis_historical/plots'
+filename = f'hist_6h+daily_NHvsSH_{START_YEAR}-2014_all-k.png'
 full_path = os.path.join(save_path, filename)
 
 user_input = input(f"Do you want to save the plot to {full_path}? (y/n): ").strip().lower()
