@@ -160,7 +160,11 @@ def process_model(model, main_path, base_save_path, year_range=None):
                                             decode_times=time_coder) as ds:
                             
                             # SUBSET TO TARGET TIME WINDOW
-                            ds_subset = ds.sel(time=slice('1950-01-01', '2014-12-31'))
+                            if model in ['HadGEM3-GC31-LL', 'HadGEM3-GC31-MM', 'UKESM1-0-LL']:
+                                logger.info(f"Applying special time window for {model}: 1950-01-01 to 2014-12-30")
+                                ds_subset = ds.sel(time=slice('1950-01-01', '2014-12-30'))
+                            else:
+                                ds_subset = ds.sel(time=slice('1950-01-01', '2014-12-31'))
                             
                             # Skip if no data in window
                             if len(ds_subset.time) == 0:
