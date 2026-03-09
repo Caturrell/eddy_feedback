@@ -173,7 +173,7 @@ def calculate_efp_annual_cycle(ds, months, calc_south_hemis=False, which_div1=No
         raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
 
 
-def compute_and_save_efp_seasonal(dataset, output_dir, efp_period, model):
+def compute_and_save_efp_seasonal(dataset, output_dir, EFP_PERIOD, model):
     """Compute EFP for all seasons and configurations, save to JSON."""
     logger.info(f"Starting computation of seasonal EFPs for model: {model}")
     logger.info(f"Output directory: {output_dir}")
@@ -210,7 +210,7 @@ def compute_and_save_efp_seasonal(dataset, output_dir, efp_period, model):
         result = {}
 
         for season, months in season_month_dict.items():
-            logger.info(f"-> Computing result for config={key}, season={season}, months={months} (historical period: {efp_period})")
+            logger.info(f"-> Computing result for config={key}, season={season}, months={months} (historical period: {EFP_PERIOD})")
             
             try:
                 # Calculate EFP for the current season
@@ -237,7 +237,7 @@ def compute_and_save_efp_seasonal(dataset, output_dir, efp_period, model):
         all_results[key] = result
 
     # Save all results into a single JSON file
-    json_path = os.path.join(output_dir, f"{model}_efp_CMIP6_historical_{efp_period}.json")
+    json_path = os.path.join(output_dir, f"{model}_efp_CMIP6_historical_{EFP_PERIOD}.json")
     
     try:
         with open(json_path, "w") as f:
@@ -275,7 +275,7 @@ if __name__ == "__main__":
     #==============================================================================================
     
     ## SELECT EFP TIME PERIOD TO CALCUALTE EFP ##
-    efp_period = '1979_2014' 
+    EFP_PERIOD = '1958_2014' 
     
     cmip_path = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/hist_processed/1950_2014_dm'
     logger.info(f"CMIP experiment path: {cmip_path}")
@@ -354,7 +354,7 @@ if __name__ == "__main__":
         logger.warning("No monthly datasets found. Exiting.")
         sys.exit(0)
     
-    output_dir = Path(f'/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/{efp_period}/daily')
+    output_dir = Path(f'/home/users/cturrell/documents/eddy_feedback/chapter1/cmip6/historical_runs/data/{EFP_PERIOD}/daily')
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Process models one at a time to manage memory
@@ -373,8 +373,8 @@ if __name__ == "__main__":
             logger.info(f"Dataset loaded successfully. Dimensions: {dict(ds.sizes)}")
             
             # subset for specific EFP time period calculations
-            start_year = efp_period.split('_')[0]
-            end_year = efp_period.split('_')[1]
+            start_year = EFP_PERIOD.split('_')[0]
+            end_year = EFP_PERIOD.split('_')[1]
             time_slice = slice(f'{start_year}-01', f'{end_year}-12')
             logger.info(f"Selecting time slice: {time_slice}")
             ds = ds.sel(time=time_slice)
@@ -387,7 +387,7 @@ if __name__ == "__main__":
             results = compute_and_save_efp_seasonal(
                 dataset=ds,
                 output_dir=str(model_output_dir),
-                efp_period=efp_period,
+                EFP_PERIOD=EFP_PERIOD,
                 model=model_name
             )
             
