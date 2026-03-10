@@ -475,6 +475,7 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
                             # efp_output_ds[corr_var_name] = xar.corr(data_to_correlate.where(valid_mask), data2_to_correlate.where(valid_mask), dim='time')
 
                             efp_output_ds[corr_var_name] = xar.corr(data_to_correlate, data2_to_correlate, dim='time')
+                            
 
                             corr_slice = efp_output_ds[corr_var_name].sel(lat=efp_lat_slice, pfull=pfull_slice)
 
@@ -503,10 +504,16 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
                             logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
                             logging.info(f'File: {output_efp_file}')
 
+        logging.info('COMPLETED EFP CALCULATIONS. Now computing into memory.')
+        efp_output_ds = efp_output_ds.compute()
+        
         logging.info(f'Writing EFP data to file: {output_efp_file}')
+        logging.info(f'EFP Dataset size: {efp_output_ds.nbytes / (1024**2):.2f} MB')
         efp_output_ds.to_netcdf(output_efp_file)    
+        logging.info('FINISHED writing EFP data to file')
 
         efp_output_ds.close()
+        logging.info(f'reopening EFP file: {output_efp_file}')
         efp_output_ds = xar.open_mfdataset(output_efp_file, decode_times=True)
 
     return efp_output_ds
@@ -529,7 +536,7 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
         anom_ds[f'{var_list[0]}_anom'] = var_anoms1
         anom_ds[f'{var_list[0]}_orig'] = orig_var1    
 
-        single_var_file = output_anom_file.split('nc')[0]+f'_{var_list[0]}.nc'
+        single_var_file = output_anom_file.split('.nc')[0]+f'_{var_list[0]}.nc'
 
         logging.info(f'writing {var_list[0]} anoms to file')
         anom_ds.to_netcdf(single_var_file)
@@ -546,7 +553,7 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
             anom_ds[f'{eof_var}_anom'] = var_anoms
             anom_ds[f'{eof_var}_orig'] = orig_var   
 
-            single_var_file = output_anom_file.split('nc')[0]+f'_{eof_var}.nc'
+            single_var_file = output_anom_file.split('.nc')[0]+f'_{eof_var}.nc'
             logging.info(f'writing {eof_var} anoms to file')
 
             anom_ds.to_netcdf(single_var_file)
@@ -556,6 +563,9 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
             logging.info('completed writing anoms to file')         
 
         anom_ds = xar.open_mfdataset(anom_file_list, parallel=False)
+        
+        logging.info('Computing combined anoms dataset into memory to enable deleting individual files')
+        anom_ds = anom_ds.compute()
 
         logging.info('writing combined anoms to file')
         anom_ds.to_netcdf(output_anom_file)  

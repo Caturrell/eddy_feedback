@@ -160,7 +160,7 @@ def heatmap_tem_plot(vars_to_correlate, plot_dir, efp_output_ds, season_month_di
             plt.savefig(f'{plot_dir_corr2}/TEM_term_{hemisphere}_corr_matrix.pdf')          
         plt.close('all')
 
-def efp_annual_cycle(plot_dir, efp_output_ds, season_month_dict, use_500hPa_only):
+def efp_annual_cycle(plot_dir, efp_output_ds, season_month_dict, use_500hPa_only=False):
 
     plot_dir_corr = f'{plot_dir}/efp_plots/'
     if use_500hPa_only:
