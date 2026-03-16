@@ -8,10 +8,8 @@ import logging
 import calendar
 
 
-import sys
-sys.path.append('/home/links/ct715/eddy_feedback/b-parameter/SIT_functions')
-import SIT_eddy_feedback_functions as eff
-import SIT_eddy_plotting_functions as epf
+import SIT_functions.SIT_eddy_feedback_functions as eff
+import SIT_functions.SIT_eddy_plotting_functions as epf
 
 
 logger = logging.getLogger()
@@ -34,7 +32,7 @@ if exp_type=='jra55':
     base_dir_6hourly = '/disca/share/sit204/jra_55/1958_2016_6hourly_data_efp/full_6hourly_snapshots'
     exp_name = 'jra55'
 
-    start_month = 1958
+    start_month = 1979
     end_month   = 2016
     level_type = '6hourly'
     subtract_annual_cycle = True

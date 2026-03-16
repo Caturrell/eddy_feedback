@@ -218,10 +218,11 @@ def _process_specific_efp_data(ds, data_type, season):
     corr_dim = 'time'  # Default dimension for correlation
 
     if data_type in ('reanalysis', 'reanalysis_qg', 'reanalysis_fulltime'):
-        # if not data_type == 'reanalysis_fulltime':
+        print(f"Processing {data_type} dataset for season {season} and years {ds.time.min().dt.year.values}-{ds.time.max().dt.year.values}.")
+        if not data_type == 'reanalysis_fulltime':
             # reanalysis_years=slice('1979', '2016')
             # ds = ds.sel(time=reanalysis_years)
-            # print('WARNING: Removed default years (1979-2016) for reanalysis datasets. Ensure you have selected the correct time range for your analysis.')
+            print('WARNING: Removed default years (1979-2016) for reanalysis datasets. Ensure you have selected the correct time range for your analysis.')
         ds = data.seasonal_mean(ds, season=season, cut_ends=True)
 
     elif data_type == 'pamip':

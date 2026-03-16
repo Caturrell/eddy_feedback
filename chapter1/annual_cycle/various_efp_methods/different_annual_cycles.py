@@ -92,12 +92,12 @@ def calculate_efp_annual_cycle(ds, months, calc_south_hemis=False, which_div1=No
         raise RuntimeError(f"Error during Eddy Feedback Parameter calculation: {e}")
     
 
-def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None):
-    logger.info(f"Starting computation of seasonal EFPs. Output directory: {output_dir}")
+def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None, dataset_freq='6hourly'):
+    logger.info(f"Starting computation of seasonal EFPs. Output directory: {output_dir}, dataset_freq: {dataset_freq}")
     os.makedirs(output_dir, exist_ok=True)
 
-    # dedicated 500 hPa output directory
-    output_dir_500 = "/home/links/ct715/eddy_feedback/chapter1/annual_cycle/various_efp_methods/data/500hPa_efp"
+    # dedicated 500 hPa output directory - frequency now in directory name
+    output_dir_500 = f"/home/links/ct715/eddy_feedback/chapter1/annual_cycle/various_efp_methods/data/500hPa_{dataset_freq}_efp"
     os.makedirs(output_dir_500, exist_ok=True)
 
     season_month_dict = {
@@ -115,8 +115,8 @@ def compute_and_save_efp_seasonal(dataset, output_dir, time_slice=None):
 
     # Mean-level JSON (saved per dataset/time slice)
     json_mean = os.path.join(output_dir, "efp_results.json")
-    # 500 hPa JSON (saved to global directory)
-    # use dataset/time_slice info for unique filename
+    # 500 hPa JSON (saved to frequency-specific directory)
+    # use time_slice info for filename
     slice_name = "full" if time_slice is None else f"{time_slice.start}_{time_slice.stop}".replace('-', '')
     json_500 = os.path.join(output_dir_500, f"efp_results_500hPa_{slice_name}.json")
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     )
     logger.info("Script started.")
     
-    path = '/home/links/ct715/data_storage/reanalysis/jra55_daily/various_efp_methods'
+    path = '/home/links/ct715/data_storage/reanalysis/jra55_daily/processed_efp'
     logger.info(f"Loading dataset from: {path}")
     
     data_path = os.path.join(path, '6h_*.nc')
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     day = xr.open_mfdataset(data_path)
     day = dw.data_checker1000(day, check_vars=False)
     
-    datasets = [ds6h]  # add day if needed
+    datasets = [ds6h, day]
 
     logger.info("Datasets loaded and preprocessed.")
 
@@ -211,13 +211,14 @@ if __name__ == "__main__":
 
     for idx, dataset in enumerate(datasets):
         folder = 'daily_efp' if dataset is day else '6hourly_efp'
-        logger.info(f"Processing dataset {idx+1}/{len(datasets)}")
+        freq = 'daily' if dataset is day else '6hourly'
+        logger.info(f"Processing dataset {idx+1}/{len(datasets)}: {freq}")
 
         for time_slice in time_slices:
             logger.info(f"Processing time slice: {time_slice.start} to {time_slice.stop}")
             ts_str = f"{time_slice.start}_{time_slice.stop}".replace('-', '')
             save_dir = f'/home/links/ct715/eddy_feedback/chapter1/annual_cycle/various_efp_methods/data/{folder}/{ts_str}'
             os.makedirs(save_dir, exist_ok=True)
-            compute_and_save_efp_seasonal(dataset, output_dir=save_dir, time_slice=time_slice)
+            compute_and_save_efp_seasonal(dataset, output_dir=save_dir, time_slice=time_slice, dataset_freq=freq)
 
     logger.info("Script completed.")
