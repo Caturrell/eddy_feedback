@@ -194,7 +194,7 @@ def annual_mean(ds):
 
 
 # Calculate seasonal means
-def seasonal_mean(ds, cut_ends=False, season=None, take_mean=False):
+def seasonal_mean(ds, cut_ends=True, season=None, take_mean=False):
     """
     Calculate seasonal means for an Xarray dataset.
     
@@ -203,7 +203,7 @@ def seasonal_mean(ds, cut_ends=False, season=None, take_mean=False):
     ds : xr.Dataset or xr.DataArray
         Full-year dataset with time dimension
     cut_ends : bool, optional
-        If True, removes incomplete seasonal data at start/end of dataset
+        If True (default), removes incomplete seasons missing any of their 3 months
     season : str
         Season to compute mean for. Options:
         'djf', 'jfm', 'fma', 'mam', 'amj', 'mjj', 
@@ -216,87 +216,66 @@ def seasonal_mean(ds, cut_ends=False, season=None, take_mean=False):
     xr.Dataset or xr.DataArray
         Seasonal means
     """
-    # Define all 12 rolling 3-month seasons
     season_definitions = {
-        'djf': [12, 1, 2],   # Dec, Jan, Feb
-        'jfm': [1, 2, 3],    # Jan, Feb, Mar
-        'fma': [2, 3, 4],    # Feb, Mar, Apr
-        'mam': [3, 4, 5],    # Mar, Apr, May
-        'amj': [4, 5, 6],    # Apr, May, Jun
-        'mjj': [5, 6, 7],    # May, Jun, Jul
-        'jja': [6, 7, 8],    # Jun, Jul, Aug
-        'jas': [7, 8, 9],    # Jul, Aug, Sep
-        'aso': [8, 9, 10],   # Aug, Sep, Oct
-        'son': [9, 10, 11],  # Sep, Oct, Nov
-        'ond': [10, 11, 12], # Oct, Nov, Dec
-        'ndj': [11, 12, 1]   # Nov, Dec, Jan
+        'djf': [12, 1, 2],
+        'jfm': [1, 2, 3],
+        'fma': [2, 3, 4],
+        'mam': [3, 4, 5],
+        'amj': [4, 5, 6],
+        'mjj': [5, 6, 7],
+        'jja': [6, 7, 8],
+        'jas': [7, 8, 9],
+        'aso': [8, 9, 10],
+        'son': [9, 10, 11],
+        'ond': [10, 11, 12],
+        'ndj': [11, 12, 1],
     }
-    
+
     if season is None or season.lower() not in season_definitions:
         raise ValueError(
             f'Invalid season: {season}. Choose from {list(season_definitions.keys())}'
         )
-    
+
     season = season.lower()
     months = season_definitions[season]
-    
+
     # Check required dimensions
     required_dims = ['time', 'lat']
     if 'level' in ds.dims:
         required_dims.append('level')
-    
     if not all(dim in ds.dims for dim in required_dims):
         ds = check_dimensions(ds)
-    
-    # Remove incomplete seasons if requested
-    if cut_ends:
-        start_year = ds.time.dt.year[0].values
-        end_year = ds.time.dt.year[-1].values
-        
-        # Adjust trimming based on season
-        if season == 'djf':
-            # Need full Dec-Jan-Feb, so start from Jan of first year
-            ds = ds.sel(time=slice(f'{start_year}-01', f'{end_year}-11'))
-        elif season == 'ndj':
-            # Need full Nov-Dec-Jan, so start from Nov and end before Dec
-            ds = ds.sel(time=slice(f'{start_year}-01', f'{end_year}-10'))
-        elif season == 'jfm':
-            # Start from Jan, end before Dec
-            ds = ds.sel(time=slice(f'{start_year}-01', f'{end_year}-11'))
-        else:
-            # For other seasons, trim to avoid incomplete data
-            first_month = months[0]
-            last_month = months[-1]
-            ds = ds.sel(time=slice(f'{start_year}-{first_month:02d}', 
-                                   f'{end_year}-{last_month:02d}'))
-    
-    # Select the months for this season
+
+    # Select only the months belonging to this season
     seasonal = ds.sel(time=ds.time.dt.month.isin(months))
-    
-    # Handle year assignment for seasons spanning calendar year boundary
-    if season in ['djf', 'jfm', 'ndj']:
-        # Create custom year coordinate
-        year_coord = seasonal.time.dt.year.values.copy()
-        month_coord = seasonal.time.dt.month.values
-        
-        # Adjust year assignment
-        if season == 'djf':
-            # December belongs to the following year's DJF season
-            year_coord[month_coord == 12] += 1
-        elif season == 'ndj':
-            # November and December belong to the following year's NDJ season
-            year_coord[(month_coord == 11) | (month_coord == 12)] += 1
-        # JFM doesn't need adjustment (Jan is the "year" of the season)
-        
-        # Group by adjusted year
-        seasonal = seasonal.assign_coords(season_year=('time', year_coord))
-        seasonal = seasonal.groupby('season_year').mean('time')
-        seasonal = seasonal.rename({'season_year': 'time'})
-    else:
-        # For seasons within a calendar year, group by year directly
-        seasonal = seasonal.groupby('time.year').mean('time')
-        seasonal = seasonal.rename({'year': 'time'})
-    
+
+    # Assign a season_year coordinate for grouping.
+    # For seasons that cross the calendar year boundary, December (and November
+    # for NDJ) are attributed to the *following* year so each season lands in
+    # one group.
+    year_coord = seasonal.time.dt.year.values.copy()
+    month_coord = seasonal.time.dt.month.values
+
+    if season == 'djf':
+        year_coord[month_coord == 12] += 1
+    elif season == 'ndj':
+        year_coord[(month_coord == 11) | (month_coord == 12)] += 1
+
+    seasonal = seasonal.assign_coords(season_year=('time', year_coord))
+
+    # Drop any season_year that doesn't contain all 3 months
+    if cut_ends:
+        print('Cutting incomplete seasons from dataset...')
+        unique_years, counts = np.unique(year_coord, return_counts=True)
+        complete_years = unique_years[counts == 3]
+        seasonal = seasonal.sel(
+            time=np.isin(seasonal.season_year.values, complete_years)
+        )
+
+    # Group by season_year and average
+    seasonal = seasonal.groupby('season_year').mean('time')
+    seasonal = seasonal.rename({'season_year': 'time'})
+
     if take_mean:
         return seasonal.mean('time')
     else:

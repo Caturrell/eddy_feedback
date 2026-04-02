@@ -1,0 +1,5 @@
+NOTE TO SELF:
+
+Check EFP results before submitting paper.
+
+I re-calculated many annual cycles and bootstrapping. (WC 16/3/2026)

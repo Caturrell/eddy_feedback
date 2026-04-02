@@ -9,11 +9,11 @@ import statsmodels.tsa.stattools as sm
 import scipy.signal as signal
 import xarray as xar
 import os
-import SIT_aostools.climate as aoscli
+from .SIT_aostools import climate as aoscli
 import seaborn as sns
 import matplotlib.pyplot as plt
 import logging
-import SIT_eddy_plotting_functions as epf
+from . import SIT_eddy_plotting_functions as epf
 import shutil
 
 import pdb
@@ -655,8 +655,13 @@ def propagate_missing_data_to_all_vars(anom_ds, eof_vars):
     return anom_ds
 
 
-def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_slice, subtract_annual_cycle, eof_vars, n_eofs, season_month_dict, anom_ds, propagate_all_nans):
+def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_slice,
+             subtract_annual_cycle, eof_vars, n_eofs, season_month_dict, anom_ds,
+             propagate_all_nans, level_subset=None, pressure_weighted=True):  
 
+    pfull_selector = level_subset if level_subset is not None else pfull_slice
+    
+    
     if np.all(dataset.lat.diff('lat')<0.):
         hemisphere_slice_dict = {'n':slice(80.,10.),
                                 's':slice(-10., -80.),                          
@@ -691,7 +696,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
         eof_ds = xar.Dataset()
         eof_ds.coords['time'] = ('time', u_anoms_time.time.values)
-        eof_ds.coords['pfull'] = ('pfull', u_anoms_time.sel(pfull=pfull_slice).pfull.values)  
+        eof_ds.coords['pfull'] = ('pfull', u_anoms_time.sel(pfull=pfull_selector).pfull.values)  
         eof_ds.coords['lat'] = ('lat', u_anoms_time.sel(lat=hemisphere_slice_dict['n']).lat.values)                
 
         for season_val in season_list:
@@ -722,7 +727,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
             for hemisphere in ['n','s']:
 
                 for time_frame in all_time_season_list:
-                    var_anoms_hem = var_anoms.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_slice)
+                    var_anoms_hem = var_anoms.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
                     
                     if time_frame!='all_time':
                         var_anoms_hem = var_anoms_hem.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]), drop=True) 
@@ -730,7 +735,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
                     else:
                         time_dim_name = 'time'
 
-                    orig_var_hem = orig_var.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_slice)
+                    orig_var_hem = orig_var.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
                     
                     if time_frame!='all_time':
                         orig_var_hem = orig_var_hem.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]), drop=True)
@@ -746,7 +751,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
                     eofs_500, pc1_500, variance_fractions_500, solver_500 = eof_calc_alt(var_anoms_hem_500.values,var_anoms_hem_500.lat.values)                    
 
                     logging.info(f'vertically integrating {eof_var}')
-                    va_var_anoms_hem = vert_integrate(var_anoms_hem)
+                    va_var_anoms_hem = vert_integrate(var_anoms_hem, pressure_weighted=pressure_weighted)
 
                     logging.info(f'calculating VA EOFs for {eof_var} in {hemisphere} hemisphere in {time_frame}')
                     eofs_va, pc1_va, variance_fractions_va, solver_va = eof_calc_alt(va_var_anoms_hem.values,var_anoms_hem.lat.values)
@@ -802,7 +807,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
                     for use_va in [True, False, 500.]:
 
-                        var_anoms_hem = var_anoms.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_slice)
+                        var_anoms_hem = var_anoms.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
 
                         va_str = ''
                         if use_va==500.:
@@ -811,14 +816,14 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
                             va_str = '_500'                           
                         elif use_va:
                             ucomp_solver = ucomp_va_solver_dict[time_frame][hemisphere]
-                            var_anoms_hem = vert_integrate(var_anoms_hem)
+                            var_anoms_hem = vert_integrate(var_anoms_hem, pressure_weighted=pressure_weighted)
                             va_str = '_va'                        
                         else:
                             ucomp_solver = ucomp_solver_dict[time_frame][hemisphere]
                         
                         # var_anoms_ucomp = anom_ds[f'ucomp_anom']
 
-                        # var_anoms_hem_ucomp = var_anoms_ucomp.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_slice)
+                        # var_anoms_hem_ucomp = var_anoms_ucomp.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
 
                         if time_frame!='all_time':
                             var_anoms_hem = var_anoms_hem.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]), drop=True) 
@@ -849,8 +854,11 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
     return eof_ds  
 
-def vert_integrate(data_array):
-    vert_int = data_array.integrate(coord='pfull') / data_array['pfull'].integrate(coord='pfull')    
+def vert_integrate(data_array, pressure_weighted=True):
+    if pressure_weighted:
+        vert_int = data_array.integrate(coord='pfull') / data_array['pfull'].integrate(coord='pfull')
+    else:
+        vert_int = data_array.mean('pfull')
 
     return vert_int
 
