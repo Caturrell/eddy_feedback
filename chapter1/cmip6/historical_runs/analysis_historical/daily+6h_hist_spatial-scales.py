@@ -12,8 +12,18 @@ YEARS = (1979, 2014)   # for title and filename; also used to load reanalysis da
 
 COMBINED_FIGURE = True   # True = one figure with 2 cols; False = 2 separate figures
 
-BOOTSTRAP_DIR = f'/home/links/ct715/eddy_feedback/chapter1/daily_efp/bootstrap/data/reanalysis/{YEARS[0]}_2016'
-EFP_COLS      = ["efp_nh", "efp_nh_gt3", "efp_nh_123", "efp_sh", "efp_sh_gt3", "efp_sh_123"]
+BOOTSTRAP_CSV    = '/home/links/ct715/eddy_feedback/chapter1/daily_efp/bootstrap/data/reanalysis/efp_500/jra55_efp_bootstrap_summary_efp_500.csv'
+BOOTSTRAP_PERIOD = f'{YEARS[0]}_2016'
+EFP_COLS         = ["efp_nh", "efp_nh_gt3", "efp_nh_123", "efp_sh", "efp_sh_gt3", "efp_sh_123"]
+
+VAR_SEASON_TO_LABEL = {
+    ('div1_QG_123', 'DJF'): 'EFP_nh_k123',
+    ('div1_QG_gt3', 'DJF'): 'EFP_nh_k>3',
+    ('div1_QG',     'DJF'): 'EFP_nh_total',
+    ('div1_QG_123', 'JAS'): 'EFP_sh_k123',
+    ('div1_QG_gt3', 'JAS'): 'EFP_sh_k>3',
+    ('div1_QG',     'JAS'): 'EFP_sh_total',
+}
 DATASET_MAP   = {None: 'all k', '_gt3': 'k>3', '_123': 'k123'}
 HEMI_ORDER    = ['sh', 'nh']   # controls left-to-right order on x-axis
 HEMI_LABELS   = ["Southern Hemisphere", "Northern Hemisphere"]
@@ -39,19 +49,17 @@ def load_cmip6(time_freq):
 
 
 def load_bootstrap(time_freq):
+    _csv = pd.read_csv(BOOTSTRAP_CSV)
     records = []
-    for fname in os.listdir(BOOTSTRAP_DIR):
-        parts = fname.split('_')
-        if parts[1] != time_freq:
+    for (var, season), label in VAR_SEASON_TO_LABEL.items():
+        case = f'{BOOTSTRAP_PERIOD}_{time_freq}_{var}'
+        row  = _csv[(_csv['case'] == case) & (_csv['season'] == season)]
+        if row.empty:
+            print(f"Warning: no bootstrap data for {case} {season}")
             continue
-        data    = np.load(os.path.join(BOOTSTRAP_DIR, fname))
-        hemis   = 'nh' if parts[-2] == 'djf-jra55' else 'sh'
-        which_k = parts[4]
-        label_map = {'123': f'EFP_{hemis}_k123', 'gt3': f'EFP_{hemis}_k>3'}
-        column = label_map.get(which_k, f'EFP_{hemis}_total')
-        mean, std = np.mean(data, axis=0), np.std(data, axis=0)
-        records.append({'efp_type': column, 'efp_mean': mean, 'efp_std': std})
-        print(f"{fname}\n  {column}: {mean:.3f}  [{mean - std:.3f}, {mean + std:.3f}]")
+        mean, std = row['efp_mean'].values[0], row['efp_std'].values[0]
+        records.append({'efp_type': label, 'efp_mean': mean, 'efp_std': std})
+        print(f"  {label} ({case}): {mean:.3f}  [{mean - std:.3f}, {mean + std:.3f}]")
     return pd.DataFrame(records)
 
 

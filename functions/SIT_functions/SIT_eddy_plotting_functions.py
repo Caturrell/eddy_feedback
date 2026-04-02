@@ -2,7 +2,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import logging
 import numpy as np
-import SIT_eddy_feedback_functions as eff
+from . import SIT_eddy_feedback_functions as eff
 from tqdm import tqdm
 import os
 import matplotlib.patches as patches
@@ -597,6 +597,36 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
                     os.makedirs(plot_dir_EOF_EOFs)
 
                 plt.savefig(f'{plot_dir_EOF_EOFs}/{eof_var}_va_{hemisphere}_{time_frame}_EOFs{prop_nan_str}.pdf')
+                plt.close()
+
+#EOF 500hPa plots
+            for eof_var in tqdm(eof_vars):
+
+                logging.info(f'making EOF 500hPa plot for {eof_var}')
+                # Create the figure and 6 subplots
+                fig, axes = plt.subplots(1, 3, figsize=(12, 6), sharex=True, sharey=True)  # 2 rows, 4 columns
+
+                # Flatten the axes array for easy iteration
+                axes = axes.flatten()
+
+                level_max = np.nanmax(np.abs(eof_ds[f'{eof_var}_500_EOFs_{hemisphere}_{time_frame}']))
+
+                if hemisphere=='n':
+                    lat_sign = 1.
+                else:
+                    lat_sign = -1.
+
+                for i, ax in enumerate(axes):
+                    line_plot = ax.plot(lat_sign*eof_ds.lat.values, eof_ds[f'{eof_var}_500_EOFs_{hemisphere}_{time_frame}'][i, ...])
+                    plt.ylim((-level_max, level_max))
+                    ax.set_title(f"EOF {i+1} explains {eof_ds[f'{eof_var}_500_var_frac_{hemisphere}_{time_frame}'].values[i]*100.:4.1f}%")
+
+                plot_dir_EOF_EOFs = f'{plot_dir_EOF}/EOFs/{hemisphere}_hemisphere/{time_frame}/500/'
+
+                if not os.path.isdir(plot_dir_EOF_EOFs):
+                    os.makedirs(plot_dir_EOF_EOFs)
+
+                plt.savefig(f'{plot_dir_EOF_EOFs}/{eof_var}_500_{hemisphere}_{time_frame}_EOFs{prop_nan_str}.pdf')
                 plt.close()
 
 # Time-mean PLOTS

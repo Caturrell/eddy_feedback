@@ -8,8 +8,8 @@ import logging
 import calendar
 
 
-import SIT_functions.SIT_eddy_feedback_functions as eff
-import SIT_functions.SIT_eddy_plotting_functions as epf
+import functions.SIT_functions.SIT_eddy_feedback_functions as eff
+import functions.SIT_functions.SIT_eddy_plotting_functions as epf
 
 
 logger = logging.getLogger()
