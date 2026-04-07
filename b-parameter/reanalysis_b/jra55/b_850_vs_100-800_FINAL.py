@@ -98,7 +98,8 @@ def plot_b_method_comparison(b_datasets, use_va):
 
             # hemisphere label on left column only
             if col == 0:
-                ax.set_ylabel(f'{HEM_LABELS[hemisphere]}\nb', fontsize=10)
+                hem_full = 'Northern Hemisphere' if hemisphere == 'n' else 'Southern Hemisphere'
+                ax.set_ylabel(f'$\\bf{{{hem_full}}}$\nb', fontsize=10)
 
             # legend on top-right panel only
             if row == 0 and col == 2:

@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import logging
 from . import SIT_eddy_plotting_functions as epf
 import shutil
+import xcdat
 
 import pdb
 
@@ -440,7 +441,7 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
                         eof_output_ds_vars = [key for key in efp_output_ds.variables.keys()]
 
                         if opposite_corr_var_name in eof_output_ds_vars:
-                            logging.info(f'skipping efp for {corr_var_name} as already present by a different name')
+                            # logging.info(f'skipping efp for {corr_var_name} as already present by a different name')
 
                             efp_output_ds[corr_var_name] = efp_output_ds[opposite_corr_var_name]
 
@@ -501,8 +502,8 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
 
                             efp_output_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = signed_efp.values                            
 
-                            logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
-                            logging.info(f'File: {output_efp_file}')
+                            # logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
+                            # logging.info(f'File: {output_efp_file}')
 
         logging.info('COMPLETED EFP CALCULATIONS. Now computing into memory.')
         efp_output_ds = efp_output_ds.compute()
@@ -1101,21 +1102,32 @@ def daily_average(dataset, output_file, force_day_av_recalculate, monthly_too=Fa
 
     return dataset_daily
 
-def read_daily_averages(yearly_data_dir, start_month, end_month, daily_monthly='daily'):
+def read_daily_averages(yearly_data_dir, start_month, end_month, daily_monthly='daily', exp_type='jra55'):
 
     logging.info(f'reading {daily_monthly} average files')
     daily_av_files = []
 
-    if type(start_month)!=list:
+    if exp_type == 'cmip6':
+        # Files named YYYYMMDD_YYYYMMDD_daily_averages.nc; select those whose
+        # start year falls within [start_month, end_month]
+        import glob
+        all_files = sorted(glob.glob(f'{yearly_data_dir}/*_{daily_monthly}_averages.nc'))
+        for file_name in all_files:
+            basename = os.path.basename(file_name)
+            file_start_year = int(basename.split('_')[0][:4])
+            file_end_year   = int(basename.split('_')[1][:4])
+            if file_start_year >= start_month and file_end_year <= end_month:
+                daily_av_files.append(file_name)
+    elif type(start_month) != list:
         for year_val in range(start_month, end_month+1):
             file_name = f'{yearly_data_dir}/{year_val}_{daily_monthly}_averages.nc'
             daily_av_files = daily_av_files + [file_name]
     else:
-        for year_idx, start_date_val in tqdm(enumerate(start_month)):    
+        for year_idx, start_date_val in tqdm(enumerate(start_month)):
 
             end_date_val = end_month[year_idx]
             file_name = f'{yearly_data_dir}/{start_date_val}_{end_date_val}_{daily_monthly}_averages.nc'
-            daily_av_files = daily_av_files + [file_name]        
+            daily_av_files = daily_av_files + [file_name]
 
     time_coder = xar.coders.CFDatetimeCoder(use_cftime=True)
     # pdb.set_trace()
