@@ -1,7 +1,7 @@
-#*.nc
+*.nc
 *.npy
 *.pdf
-#*.png
+*.png
 *.pyc
 *.zip
 *.err
