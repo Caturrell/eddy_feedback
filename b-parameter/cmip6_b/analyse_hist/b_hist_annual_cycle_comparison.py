@@ -1,14 +1,14 @@
-import xarray as xr
+import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+from matplotlib import colormaps as cm
 import numpy as np
 import os
-import glob
 
 # ── paths ───────────────────────────────────────────────────────────────────
-DATA_ROOT = (
+CSV_PATH = (
     '/home/users/cturrell/documents/eddy_feedback/'
-    'b-parameter/cmip6_b/250-500-850hPa_dm/1979_2015'
+    'b-parameter/cmip6_b/250-500-850hPa_dm/1979_2015/'
+    'b_annual_cycle_cmip6_hist.csv'
 )
 PLOT_DIR = (
     '/home/users/cturrell/documents/eddy_feedback/'
@@ -26,44 +26,36 @@ SEASON_LIST   = list(CENTRAL_MONTH_DICT.keys())
 DIV1_VARIANTS = ['div1_QG', 'div1_QG_123', 'div1_QG_gt3']
 HEMISPHERES   = ['n', 's']
 HEM_LABELS    = {'n': 'Northern Hemisphere', 's': 'Southern Hemisphere'}
-VA_STR        = '_va'
 
 
-def discover_models(data_root):
-    """Return sorted list of (model_name, dataset_path) for all available models."""
-    models = []
-    for model_dir in sorted(glob.glob(os.path.join(data_root, '*'))):
-        nc_path = os.path.join(model_dir, '6hrPlevPt', 'b_dataset.nc')
-        if os.path.isfile(nc_path):
-            models.append((os.path.basename(model_dir), nc_path))
-    return models
-
-
-def get_b_annual_cycle(b_dataset, variant, hemisphere):
-    """Return (x, y, tick_labels) annual-cycle arrays for one variant/hemisphere."""
+def get_b_annual_cycle(df, model_name, variant, hemisphere):
+    """Return (x, y, tick_labels) annual-cycle arrays for one model/variant/hemisphere."""
     b_arr             = np.full(len(SEASON_LIST), np.nan)
     central_month_arr = np.zeros(len(SEASON_LIST))
     labels            = np.array(['' ] * len(SEASON_LIST))
 
-    for season in SEASON_LIST:
-        idx        = CENTRAL_MONTH_DICT[season] - 1
-        b_var_name = f'ucomp{VA_STR}_{variant}{VA_STR}_b_{hemisphere}_{season}'
-        if b_var_name in b_dataset:
-            b_arr[idx] = float(b_dataset[b_var_name].mean('lag').values)
-        central_month_arr[idx] = CENTRAL_MONTH_DICT[season]
-        labels[idx]            = season[1]
+    sub = df[
+        (df['model']      == model_name) &
+        (df['variant']    == variant)    &
+        (df['hemisphere'] == hemisphere)
+    ]
+    for _, row in sub.iterrows():
+        idx = CENTRAL_MONTH_DICT[row['season']] - 1
+        b_arr[idx]             = row['b']
+        central_month_arr[idx] = CENTRAL_MONTH_DICT[row['season']]
+        labels[idx]            = row['season'][1]
 
     return central_month_arr, b_arr, labels
 
 
-def plot_cmip6_model_comparison(models, b_datasets):
+def plot_cmip6_model_comparison(df, model_names):
     """
     6-panel figure: rows = NH / SH, cols = div1_QG / div1_QG_123 / div1_QG_gt3.
     Each line = one CMIP6 historical model, coloured distinctly.
     Shared legend placed to the right of all panels.
     """
-    n_models = len(models)
-    cmap     = cm.get_cmap('tab20', n_models)
+    n_models = len(model_names)
+    cmap     = cm.get_cmap('tab20').resampled(n_models)
     colors   = [cmap(i) for i in range(n_models)]
 
     fig, axes = plt.subplots(
@@ -84,15 +76,13 @@ def plot_cmip6_model_comparison(models, b_datasets):
         for col, variant in enumerate(DIV1_VARIANTS):
             ax = axes[row, col]
 
-            for (model_name, _), color in zip(models, colors):
-                b_ds = b_datasets[model_name]
-                x, y, tick_labels = get_b_annual_cycle(b_ds, variant, hemisphere)
+            for model_name, color in zip(model_names, colors):
+                x, y, tick_labels = get_b_annual_cycle(df, model_name, variant, hemisphere)
                 line, = ax.plot(
                     x, y,
                     color=color, marker='x', markersize=4,
                     linewidth=1.2, label=model_name,
                 )
-                # collect handles once (from the first panel)
                 if row == 0 and col == 0:
                     legend_handles.append(line)
                     legend_labels.append(model_name)
@@ -135,16 +125,16 @@ def plot_cmip6_model_comparison(models, b_datasets):
     plt.close(fig)
 
 
-def plot_cmip6_single_hem(models, b_datasets, hemisphere):
+def plot_cmip6_single_hem(df, model_names, hemisphere):
     """
     3-panel figure for a single hemisphere.
     Each line = one CMIP6 historical model, coloured distinctly.
     Shared legend to the right of all panels.
     """
-    n_models   = len(models)
-    cmap       = cm.get_cmap('tab20', n_models)
-    colors     = [cmap(i) for i in range(n_models)]
-    hem_label  = HEM_LABELS[hemisphere]
+    n_models  = len(model_names)
+    cmap      = cm.get_cmap('tab20', n_models)
+    colors    = [cmap(i) for i in range(n_models)]
+    hem_label = HEM_LABELS[hemisphere]
 
     fig, axes = plt.subplots(
         1, 3,
@@ -163,9 +153,8 @@ def plot_cmip6_single_hem(models, b_datasets, hemisphere):
     for col, variant in enumerate(DIV1_VARIANTS):
         ax = axes[col]
 
-        for (model_name, _), color in zip(models, colors):
-            b_ds = b_datasets[model_name]
-            x, y, tick_labels = get_b_annual_cycle(b_ds, variant, hemisphere)
+        for model_name, color in zip(model_names, colors):
+            x, y, tick_labels = get_b_annual_cycle(df, model_name, variant, hemisphere)
             line, = ax.plot(
                 x, y,
                 color=color, marker='x', markersize=4,
@@ -209,11 +198,10 @@ def plot_cmip6_single_hem(models, b_datasets, hemisphere):
 
 
 # ── main ─────────────────────────────────────────────────────────────────────
-models = discover_models(DATA_ROOT)
-print(f'Found {len(models)} models: {[m for m, _ in models]}')
+df = pd.read_csv(CSV_PATH)
+model_names = sorted(df['model'].unique())
+print(f'Found {len(model_names)} models: {model_names}')
 
-b_datasets = {name: xr.open_dataset(path) for name, path in models}
-
-plot_cmip6_model_comparison(models, b_datasets)
+plot_cmip6_model_comparison(df, model_names)
 for hem in HEMISPHERES:
-    plot_cmip6_single_hem(models, b_datasets, hem)
+    plot_cmip6_single_hem(df, model_names, hem)
