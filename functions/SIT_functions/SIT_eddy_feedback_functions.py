@@ -18,6 +18,7 @@ import shutil
 import xcdat
 
 import pdb
+import warnings
 
 def compute_segmented_power_spectrum(data, scaling, power_spec_ds, dim='time', segment_length=256, overlap=128):
     """
@@ -506,7 +507,9 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
                             # logging.info(f'File: {output_efp_file}')
 
         logging.info('COMPLETED EFP CALCULATIONS. Now computing into memory.')
-        efp_output_ds = efp_output_ds.compute()
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore', category=RuntimeWarning, message='invalid value encountered in divide')
+            efp_output_ds = efp_output_ds.compute()
         
         logging.info(f'Writing EFP data to file: {output_efp_file}')
         logging.info(f'EFP Dataset size: {efp_output_ds.nbytes / (1024**2):.2f} MB')
@@ -540,24 +543,25 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
         single_var_file = output_anom_file.split('.nc')[0]+f'_{var_list[0]}.nc'
 
         logging.info(f'writing {var_list[0]} anoms to file')
-        anom_ds.to_netcdf(single_var_file)
+        logging.info(f'dataset size: {anom_ds.nbytes / 1e9:.2f} GB')
+        anom_ds.chunk({'time': 365}).to_netcdf(single_var_file)
         anom_file_list.append(single_var_file)
         anom_ds.close()
-        logging.info('completed writing anoms to file')         
+        logging.info('completed writing anoms to file')
 
-    
+
         for eof_var in var_list[1:]:
             var_anoms, orig_var = calculate_anom_one_var(dataset, subtract_annual_cycle, eof_var)
 
             anom_ds = xar.Dataset(coords = var_anoms.coords)
 
             anom_ds[f'{eof_var}_anom'] = var_anoms
-            anom_ds[f'{eof_var}_orig'] = orig_var   
+            anom_ds[f'{eof_var}_orig'] = orig_var
 
             single_var_file = output_anom_file.split('.nc')[0]+f'_{eof_var}.nc'
             logging.info(f'writing {eof_var} anoms to file')
 
-            anom_ds.to_netcdf(single_var_file)
+            anom_ds.chunk({'time': 365}).to_netcdf(single_var_file)
             anom_file_list.append(single_var_file)
             anom_ds.close()
 
@@ -582,20 +586,29 @@ def calculate_anom_one_var(dataset, subtract_annual_cycle, data_var):
 
     if subtract_annual_cycle:
         logging.info(f'subtracting annual cycle from {data_var}')
-        var_anoms = dataset.temporal.departures(data_var = data_var, freq='day', weighted=True)[data_var]
-        orig_var = dataset[data_var]
-        if var_anoms['time'].shape[0]!=orig_var['time'].shape[0]:
+
+        # Take zonal mean before computing departures — mathematically equivalent
+        # but avoids large intermediate arrays for high-resolution models.
+        # time_bnds must be included as xcdat's temporal.departures requires it.
+        vars_to_keep = [data_var] + ([v for v in ['time_bnds'] if v in dataset.data_vars])
+        if 'lon' in dataset[data_var].dims:
+            zm_ds = dataset[vars_to_keep].mean('lon')
+        else:
+            zm_ds = dataset[vars_to_keep]
+
+        logging.info(f'input {data_var} size after zonal mean: {zm_ds[data_var].nbytes / 1e9:.2f} GB, shape: {dict(zip(zm_ds[data_var].dims, zm_ds[data_var].shape))}')
+        var_anoms = zm_ds.temporal.departures(data_var=data_var, freq='day', weighted=True)[data_var]
+        orig_var = zm_ds[data_var]
+        logging.info(f'Departures calculated.')
+
+        if var_anoms['time'].shape[0] != orig_var['time'].shape[0]:
             logging.info('inconsistent times before and after temporal departures. Likely leap day problem.')
             orig_var = orig_var.sel(time=~((orig_var.time.dt.month == 2) & (orig_var.time.dt.day == 29)))
 
-            if var_anoms['time'].shape[0]==orig_var['time'].shape[0]:
+            if var_anoms['time'].shape[0] == orig_var['time'].shape[0]:
                 logging.info('problem solved')
             else:
                 raise NotImplementedError('Why are number of times different?')
-            
-        if 'lon' in var_anoms.dims:
-            var_anoms = var_anoms.mean('lon')
-            orig_var = orig_var.mean('lon')
     else:
         if 'lon' in dataset[data_var].dims:
             var_zm = dataset[data_var].mean('lon')
@@ -661,8 +674,13 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
              propagate_all_nans, level_subset=None, pressure_weighted=True):  
 
     pfull_selector = level_subset if level_subset is not None else pfull_slice
-    
-    
+
+    # Resolve level_subset to nearest actual levels in the data to avoid
+    # exact-match failures on models with slightly different pressure coordinates
+    if isinstance(pfull_selector, list):
+        pfull_selector = [float(anom_ds['ucomp_anom'].sel(pfull=lev, method='nearest').pfull.values)
+                          for lev in pfull_selector]
+
     if np.all(dataset.lat.diff('lat')<0.):
         hemisphere_slice_dict = {'n':slice(80.,10.),
                                 's':slice(-10., -80.),                          

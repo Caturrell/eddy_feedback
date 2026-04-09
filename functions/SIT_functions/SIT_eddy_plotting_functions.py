@@ -255,6 +255,7 @@ def efp_annual_cycle(plot_dir, efp_output_ds, season_month_dict, use_500hPa_only
         ax2.set_title('Standard efp annual cycle')        
 
         plt.savefig(f'{plot_dir_corr2}/efp_annual_cycle.pdf')
+        plt.close('all')
 
 
 def big_TEM_plot(dataset, plot_title_dict, include_udt_rdamp, plot_dir, use_qg=False):
@@ -684,7 +685,8 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
                 if not os.path.isdir(plot_dir_EOF_proj):
                     os.makedirs(plot_dir_EOF_proj)
 
-                plt.savefig(f'{plot_dir_EOF_proj}/{eof_var}_PCs_from_ucomp_{hemisphere}_{time_frame}_vs_orig_PC{prop_nan_str}.pdf')       
+                plt.savefig(f'{plot_dir_EOF_proj}/{eof_var}_PCs_from_ucomp_{hemisphere}_{time_frame}_vs_orig_PC{prop_nan_str}.pdf')
+                plt.close()
 
 
 def plot_power_spectrum(power_spec_ds, ps_var, va_str, plot_dir_PS, scaling, time_name):
@@ -695,7 +697,8 @@ def plot_power_spectrum(power_spec_ds, ps_var, va_str, plot_dir_PS, scaling, tim
     plt.xlim(0., 0.25)
     plt.title(f'Power spectrum of {ps_var}{va_str} using STFT method')
     plt.xlabel('frequency (1/days)')
-    plt.savefig(f'{plot_dir_PS}/{ps_var}{va_str}_PC1_power_spectrum_stft_{scaling}.pdf')                    
+    plt.savefig(f'{plot_dir_PS}/{ps_var}{va_str}_PC1_power_spectrum_stft_{scaling}.pdf')
+    plt.close()
 
 def plot_multiple_power_spectra(var_list, power_spec_ds, ps_var, va_str, plot_dir_PS, scaling, use_div1_proj, hemisphere, time_frame, time_name):
     plt.figure()
@@ -715,7 +718,8 @@ def plot_multiple_power_spectra(var_list, power_spec_ds, ps_var, va_str, plot_di
     plt.xlim(0., 0.25)
     plt.title(f'Power spectrum of {plot_name_str} using STFT method')
     plt.xlabel('frequency (1/days)')
-    plt.savefig(f'{plot_dir_PS}/{plot_name_str}PC1_power_spectrum_stft_{scaling}.pdf')    
+    plt.savefig(f'{plot_dir_PS}/{plot_name_str}PC1_power_spectrum_stft_{scaling}.pdf')
+    plt.close()
 
 
 def plot_coherence_cospectrum_phase_diff(power_spec_ds, ucomp_name, div1_name, plot_dir_PS, va_str, scaling, time_name):
@@ -731,7 +735,8 @@ def plot_coherence_cospectrum_phase_diff(power_spec_ds, ucomp_name, div1_name, p
     plt.legend()
     plt.title(f'Cospectrum of ucomp and div1')
     plt.xlabel('frequency (1/days)')
-    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_cospectrum_{scaling}.pdf')    
+    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_cospectrum_{scaling}.pdf')
+    plt.close()
 
     plt.figure()
     # plt.plot(power_spec_ds[frequency_name], power_spec_ds[f'{ucomp_name}_{div1_name}_coher_welch']**2., label='welch')
@@ -740,7 +745,8 @@ def plot_coherence_cospectrum_phase_diff(power_spec_ds, ucomp_name, div1_name, p
     plt.legend()
     plt.title(f'Coherence squared of ucomp and div1 using stft method')
     plt.xlabel('frequency (1/days)')
-    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_coher_sqd.pdf')      
+    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_coher_sqd.pdf')
+    plt.close()
 
     plt.figure()
     plt.plot(power_spec_ds[frequency_name], power_spec_ds[f'{div1_name}_{ucomp_name}_phase_diff'], label='data')
@@ -751,7 +757,8 @@ def plot_coherence_cospectrum_phase_diff(power_spec_ds, ucomp_name, div1_name, p
     plt.legend()
     plt.title(f'Phase of ucomp and div1 using stft method')
     plt.xlabel('frequency (1/days)')
-    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_phase_diff.pdf')        
+    plt.savefig(f'{plot_dir_PS}/ucomp{va_str}_{div1_name}{va_str}_PC1_phase_diff.pdf')
+    plt.close()
 
 def plot_b_annual_cycle(b_dataset, season_month_dict, plot_dir):
 
@@ -809,6 +816,7 @@ def plot_b_annual_cycle(b_dataset, season_month_dict, plot_dir):
             # Hide top and right spines for a cleaner look
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)     
-            plt.ylim((-0.1, 0.1))
+            plt.ylim((-0.25, 0.25))
             plt.legend()
             plt.savefig(f'{plot_dir_b}/ucomp{va_str}_{var_to_analyse}_b_annual_cycle.pdf')
+            plt.close()

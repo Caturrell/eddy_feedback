@@ -5,6 +5,8 @@ import numpy as np
 import os
 import pdb
 import logging
+import gc
+import matplotlib.pyplot as plt
 import functions.SIT_functions.SIT_eddy_feedback_functions as eff
 import functions.SIT_functions.SIT_eddy_plotting_functions as epf
 from tqdm import tqdm
@@ -43,7 +45,7 @@ force_anom_recalculate = False
 force_eof_recalculate = False
 
 base_data_dir = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical'
-model_list = os.listdir(base_data_dir)
+model_list = sorted(os.listdir(base_data_dir))
 possible_time_spans = ['1850_2015', '1850_2014', '1950_2015', '1950_2014']
 
 logging.info(model_list)
@@ -166,6 +168,15 @@ for model_name in tqdm(model_list):
 
         b_dataset = eff.b_fit_simpson_2013(eof_ds, plot_dir, season_month_dict, use_div1_proj=True)
         epf.plot_b_annual_cycle(b_dataset, season_month_dict, plot_dir)
+
+        # Close datasets and figures to free memory before next model
+        for ds in [dataset, dataset_monthly, efp_output_ds, anom_ds, eof_ds, b_dataset]:
+            try:
+                ds.close()
+            except Exception:
+                pass
+        plt.close('all')
+        gc.collect()
 
     except Exception as e:
         logging.info(f'failed for {model_name} with reason:')
