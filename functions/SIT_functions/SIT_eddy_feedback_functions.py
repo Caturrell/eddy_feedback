@@ -737,6 +737,8 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
             anom_ds = propagate_missing_data_to_all_vars(anom_ds, eof_vars)
 
         for eof_var in tqdm(eof_vars):
+            
+            logging.info(f'PROCESSING: {eof_var}')
 
             logging.info('loading anomalies from anom_ds')
 
@@ -773,12 +775,12 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
                     va_var_anoms_hem = vert_integrate(var_anoms_hem, pressure_weighted=pressure_weighted)
 
                     logging.info(f'calculating VA EOFs for {eof_var} in {hemisphere} hemisphere in {time_frame}')
-                    eofs_va, pc1_va, variance_fractions_va, solver_va = eof_calc_alt(va_var_anoms_hem.values,var_anoms_hem.lat.values)
+                    eofs_va, pc1_va, variance_fractions_va, solver_va = eof_calc_alt(va_var_anoms_hem.values,va_var_anoms_hem.lat.values)
 
                     if hemisphere=='s':
                         eofs = eofs[:,:,::-1]
                         eofs_500 = eofs_500[:,::-1]
-                        eofs_va = eofs_va[:,::-1]
+                        eofs_va = eofs_va[:,::-1]  
                         orig_var_hem_store = orig_var_hem.values[:,::-1]                                
                     else:
                         orig_var_hem_store = orig_var_hem.values                
@@ -806,17 +808,17 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
                     if eof_var=='ucomp':
                         ucomp_solver_dict[time_frame][hemisphere] = solver
                         ucomp_500_solver_dict[time_frame][hemisphere] = solver_500
-                        ucomp_va_solver_dict[time_frame][hemisphere] = solver_va
+                        ucomp_va_solver_dict[time_frame][hemisphere] = solver_va 
 
 
                     eof_ds[f'{eof_var}_va_EOFs_{hemisphere}_{time_frame}'] = (('eof_num', 'lat'), eofs_va) 
 
-                    eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'] = ((time_dim_name, 'eof_num'), pc1_va)     
+                    eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'] = ((time_dim_name, 'eof_num'), pc1_va)  
 
-                    eof_ds[f'{eof_var}_va_var_frac_{hemisphere}_{time_frame}'] = (('eof_num'), variance_fractions_va)     
+                    eof_ds[f'{eof_var}_va_var_frac_{hemisphere}_{time_frame}'] = (('eof_num'), variance_fractions_va)    
                     # eof_ds[f'{eof_var}_mean_{hemisphere}_{time_frame}'] = (('pfull', 'lat'), orig_var_hem_store) 
 
-                    eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'] = eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'].transpose('eof_num', time_dim_name)
+                    eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'] = eof_ds[f'{eof_var}_va_PCs_{hemisphere}_{time_frame}'].transpose('eof_num', time_dim_name) 
 
         for eof_var in eof_vars:
             for hemisphere in ['n', 's']:
@@ -824,7 +826,7 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
                     var_anoms = anom_ds[f'{eof_var}_anom']
 
-                    for use_va in [True, False, 500.]:
+                    for use_va in [True, False, 500.]: 
 
                         var_anoms_hem = var_anoms.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
 
@@ -875,9 +877,17 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
 def vert_integrate(data_array, pressure_weighted=True):
     if pressure_weighted:
-        vert_int = data_array.integrate(coord='pfull') / data_array['pfull'].integrate(coord='pfull')
+        
+        # Old method:
+        # vert_int = data_array.integrate(coord='pfull') / data_array['pfull'].integrate(coord='pfull')
+
+        # Use weighted mean with pfull as weights, which skips NaN values.
+        # xarray.integrate uses trapezoidal rule and propagates NaN to the
+        # whole column if any level is NaN, causing EOF failures after NaN
+        # propagation across variables.
+        vert_int = data_array.weighted(data_array['pfull']).mean('pfull')
     else:
-        vert_int = data_array.mean('pfull')
+        vert_int = data_array.mean('pfull', skipna=True)
 
     return vert_int
 

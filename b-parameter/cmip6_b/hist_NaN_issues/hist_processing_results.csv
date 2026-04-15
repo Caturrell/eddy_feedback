@@ -1,0 +1,34 @@
+model,status,failure_reason,nan_count
+ACCESS-CM2,success,,0
+ACCESS-ESM1-5,success,,1100733
+BCC-CSM2-MR,success,,0
+CMCC-CM2-HR4,success,,0
+CMCC-CM2-SR5,success,,0
+EC-Earth3,success,,0
+EC-Earth3-AerChem,success,,0
+EC-Earth3-CC,success,,0
+GFDL-CM4,success,,0
+GFDL-ESM4,success,,0
+HadGEM3-GC31-LL,success,,0
+KIOST-ESM,success,,0
+MIROC-ES2L,success,,0
+MPI-ESM-1-2-HAM,success,,0
+MPI-ESM1-2-HR,success,,0
+MPI-ESM1-2-LR,success,,0
+NESM3,success,,0
+NorESM2-LM,success,,879221
+NorESM2-MM,success,,0
+TaiESM1,success,,0
+UKESM1-0-LL,success,,0
+AWI-ESM-1-1-LR,failed,all input data is missing,210240
+CNRM-CM6-1-HR,failed,all input data is missing,10825368
+EC-Earth3-Veg-LR,failed,cftime decode error (proleptic_gregorian calendar),1852375
+FGOALS-f3-L,failed,all input data is missing,1101916
+GISS-E2-1-G,failed,all input data is missing,3614282
+HadGEM3-GC31-MM,failed,all input data is missing,9110237
+IPSL-CM6A-LR,failed,no files to open,540556
+IPSL-CM6A-LR-INCA,failed,no files to open,
+KACE-1-0-G,failed,no files to open,
+MIROC6,failed,SVD error (missing values not consistent across time),3500356
+MRI-ESM2-0,failed,all input data is missing,4661351
+SAM0-UNICON,failed,all input data is missing,1967130

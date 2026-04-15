@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=batch_hist  # Job name
-#SBATCH --output=hist_processing.out  # Standard output file
-#SBATCH --error=hist_processing.err  # Standard error file
+#SBATCH --output=va_hist_processing.out  # Standard output file
+#SBATCH --error=va_hist_processing.err  # Standard error file
 #SBATCH --account=arctic_connect
 #SBATCH --partition=standard
 #SBATCH --qos=long
