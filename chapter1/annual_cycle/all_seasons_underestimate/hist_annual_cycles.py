@@ -3,10 +3,10 @@ import numpy as np
 import os
 import json
 
-pamip_data_path = '/home/links/ct715/eddy_feedback/chapter1/annual_cycle/data/PAMIP'
-reanalysis_path = '/home/links/ct715/eddy_feedback/chapter1/annual_cycle/spatial_scale_comparison/data/efp_cut_ends/daily_efp/1979_2016/efp_results.json'
+cmip6_data_path = '/home/links/ct715/eddy_feedback/chapter1/cmip6/historical_runs/data/1979_2014/6h'
+reanalysis_path = '/home/links/ct715/eddy_feedback/chapter1/annual_cycle/spatial_scale_comparison/data/500hPa_6hourly_efp/1979_2016/efp_results_500hPa.json'
 
-models = sorted(os.listdir(pamip_data_path))
+models = sorted(os.listdir(cmip6_data_path))
 
 CENTRAL_MONTH_DICT = {
     'DJF': 7, 'JFM': 8, 'FMA': 9, 'MAM': 10,
@@ -14,14 +14,13 @@ CENTRAL_MONTH_DICT = {
     'ASO': 3, 'SON': 4, 'OND': 5, 'NDJ': 6,
 }
 
-pamip_seasons = ['JJA', 'JAS', 'ASO', 'SON', 'OND', 'NDJ', 'DJF', 'JFM', 'FMA', 'MAM']
-all_seasons = pamip_seasons + ['AMJ', 'MJJ']
+all_seasons = sorted(CENTRAL_MONTH_DICT, key=CENTRAL_MONTH_DICT.get)
 x = np.array([CENTRAL_MONTH_DICT[s] for s in all_seasons])
 
 # Load all model data
 data = {}
 for model in models:
-    json_path = os.path.join(pamip_data_path, model, 'efp_results.json')
+    json_path = os.path.join(cmip6_data_path, model, f'{model}_efp_1979_2014_CMIP6_hist_6h.json')
     with open(json_path) as f:
         data[model] = json.load(f)
 
@@ -38,7 +37,8 @@ panel_keys = [
     ('efp_sh_gt3', '$k > 3$'),
 ]
 
-colors = plt.cm.tab10(np.linspace(0, 0.8, len(models)))
+cmap   = plt.colormaps['tab20'].resampled(len(models))
+colors = [cmap(i) for i in range(len(models))]
 
 fig, axes = plt.subplots(2, 3, figsize=(14, 7), sharey='row')
 
@@ -50,10 +50,9 @@ for idx, (key, title) in enumerate(panel_keys):
     col = idx % 3
     ax = axes[row, col]
 
-    x_pamip = np.array([CENTRAL_MONTH_DICT[s] for s in pamip_seasons])
     for m_idx, model in enumerate(models):
-        efp_values = [data[model][key][s]['efp'] for s in pamip_seasons]
-        line, = ax.plot(x_pamip, efp_values, color=colors[m_idx], label=model, linewidth=1.5)
+        efp_values = [data[model][key][s]['efp'] for s in all_seasons]
+        line, = ax.plot(x, efp_values, color=colors[m_idx], label=model, linewidth=1.5)
         if idx == 0:
             legend_handles.append(line)
             legend_labels.append(model)
@@ -65,8 +64,7 @@ for idx, (key, title) in enumerate(panel_keys):
         legend_labels.append('JRA55')
 
     ax.set_xticks(range(1, 13))
-    ordered_seasons = sorted(CENTRAL_MONTH_DICT, key=CENTRAL_MONTH_DICT.get)
-    ax.set_xticklabels([s[1] for s in ordered_seasons], fontsize=9)
+    ax.set_xticklabels([s[1] for s in all_seasons], fontsize=9)
     ax.set_title(title, fontsize=11)
     ax.set_ylim(0, 0.6)
     ax.axhline(0, color='k', linewidth=0.6, linestyle='--')
@@ -88,12 +86,12 @@ fig.legend(
     title_fontsize=9,
 )
 
-fig.suptitle('PAMIP annual cycles compared to reanalysis', fontsize=14)
+fig.suptitle('CMIP6 historical annual cycles compared to reanalysis', fontsize=14)
 fig.tight_layout()
 
 save_path = os.path.join(
     '/home/links/ct715/eddy_feedback/chapter1/annual_cycle/all_seasons_underestimate/plots',
-    'PAMIP_annual_cycles.png'
+    'hist_cmip6_annual_cycles.png'
 )
 fig.savefig(save_path, dpi=150, bbox_inches='tight')
 print(f"Saved: {save_path}")
