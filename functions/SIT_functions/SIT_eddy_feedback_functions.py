@@ -681,14 +681,24 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
         pfull_selector = [float(anom_ds['ucomp_anom'].sel(pfull=lev, method='nearest').pfull.values)
                           for lev in pfull_selector]
 
+    # Snap hemisphere boundaries to the nearest actual lat values on each side
+    # independently.  Negating N-side snapped values does not work because models
+    # like HadGEM3-GC31-MM have floating-point drift that is not symmetric
+    # (e.g. N-side 80° → 80.00001526, S-side -80° → -80.00000000), so each
+    # hemisphere must snap to its own grid points to guarantee equal slice lengths.
+    _n_lo = float(anom_ds['ucomp_anom'].sel(lat= 10., method='nearest').lat.values)
+    _n_hi = float(anom_ds['ucomp_anom'].sel(lat= 80., method='nearest').lat.values)
+    _s_lo = float(anom_ds['ucomp_anom'].sel(lat=-10., method='nearest').lat.values)
+    _s_hi = float(anom_ds['ucomp_anom'].sel(lat=-80., method='nearest').lat.values)
+
     if np.all(dataset.lat.diff('lat')<0.):
-        hemisphere_slice_dict = {'n':slice(80.,10.),
-                                's':slice(-10., -80.),                          
+        hemisphere_slice_dict = {'n':slice(_n_hi, _n_lo),
+                                 's':slice(_s_lo, _s_hi),
                                 }
     else:
-        hemisphere_slice_dict = {'n':slice(10.,80.),
-                                's':slice(-80., -10.),                             
-                                }        
+        hemisphere_slice_dict = {'n':slice(_n_lo, _n_hi),
+                                 's':slice(_s_hi, _s_lo),
+                                }
 
     if propagate_all_nans:
         output_eof_file_use = output_eof_file.split('.nc')[0]+'_prop_nans.nc'

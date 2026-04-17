@@ -48,19 +48,17 @@ base_data_dir = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical'
 possible_time_spans = ['1850_2015', '1850_2014', '1950_2015', '1950_2014']
 
 # model_list = sorted(os.listdir(base_data_dir))
+# model_list = [
+#     'AWI-ESM-1-1-LR','CNRM-CM6-1-HR','EC-Earth3-Veg-LR','FGOALS-f3-L','GISS-E2-1-G','HadGEM3-GC31-MM',
+#     'IPSL-CM6A-LR','IPSL-CM6A-LR-INCA','KACE-1-0-G','MIROC6','MRI-ESM2-0','SAM0-UNICON',
+# ]
+
 model_list = [
-    'AWI-ESM-1-1-LR',
-    'CNRM-CM6-1-HR',
     'EC-Earth3-Veg-LR',
-    'FGOALS-f3-L',
-    'GISS-E2-1-G',
     'HadGEM3-GC31-MM',
     'IPSL-CM6A-LR',
     'IPSL-CM6A-LR-INCA',
-    'KACE-1-0-G',
-    'MIROC6',
-    'MRI-ESM2-0',
-    'SAM0-UNICON',
+    'KACE-1-0-G'
 ]
 
 logging.info(model_list)

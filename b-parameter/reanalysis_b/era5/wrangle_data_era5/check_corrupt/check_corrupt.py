@@ -4,8 +4,8 @@ import glob
 import argparse
 
 # ── config ───────────────────────────────────────────────────────────────────
-DATA_DIR = '/home/links/ct715/data_storage/reanalysis/era5/6h_era5/u/u250'
-OUTPUT_TXT = '/home/links/ct715/eddy_feedback/b-parameter/reanalysis_b/era5/wrangle_data_era5/check_corrupt/corrupt_files.txt'
+DATA_DIR = '/gws/ssde/j25a/arctic_connect/cturrell/reanalysis_data/era5/6h_era5'
+OUTPUT_TXT = '/home/users/cturrell/documents/eddy_feedback/b-parameter/reanalysis_b/era5/wrangle_data_era5/check_corrupt/corrupt_files.txt'
 
 # ── parse args ────────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser(description='Check netCDF files for corruption.')
