@@ -327,7 +327,13 @@ def ep_flux_calc(dataset, output_file, force_ep_flux_recalculate, include_udt_rd
             epflux_ds['total_tend'] = epflux_ds['total_tend'] + dataset['udt_rdamp'].mean('lon')
             epflux_ds['total_tend_QG'] = epflux_ds['total_tend_QG'] + dataset['udt_rdamp'].mean('lon')            
 
-        epflux_ds['delta_ubar_dt'] = (dataset['ucomp'][-1,...].mean('lon').squeeze() - dataset['ucomp'][0,...].mean('lon').squeeze())/ (86400.*(dataset['time'][-1].values - dataset['time'][0].values).days)
+        time_diff = dataset['time'][-1].values - dataset['time'][0].values
+        # timedelta64 (numpy/xarray default) has no .days; datetime.timedelta (cftime) does
+        if hasattr(time_diff, 'days'):
+            n_days = time_diff.days
+        else:
+            n_days = float(time_diff / np.timedelta64(1, 'D'))
+        epflux_ds['delta_ubar_dt'] = (dataset['ucomp'][-1,...].mean('lon').squeeze() - dataset['ucomp'][0,...].mean('lon').squeeze()) / (86400. * n_days)
 
         logging.info(f'Writing EP flux data etc to file: {output_file}')
         
@@ -377,147 +383,178 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
         logging.info('SUCCESS')
     else:
         logging.info('failed to read in previously calculated EFP data - CALCULATING')
-        
+
         logging.info(f'Processing data from {start_year} to {end_year}')
+
+        if 'ucomp' in dataset and 'lon' in dataset['ucomp'].dims:
+            logging.info('Pre-computing ucomp zonal mean to avoid repeated lon-averaging in loops...')
+            dataset = dataset.assign(ucomp=dataset['ucomp'].mean('lon').compute())
+            logging.info('Done pre-computing ucomp zonal mean.')
+
         if exp_type!='isca':
             dataset_cut_ends = dataset.sel(time=slice(f'{start_year:04d}-03', f'{end_year:04d}-11'))
         else:
             dataset_cut_ends = dataset
-        
-        efp_output_ds = xar.Dataset()
-        efp_output_ds.coords['lat'] = (('lat'), dataset['lat'].values)
-        efp_output_ds.coords['pfull'] = (('pfull'), dataset['pfull'].values) 
 
         season_list = [season_val for season_val in season_month_dict.keys()]
-
         all_time_season_list = season_list+['all_time']
-        
-        for time_frame in tqdm(all_time_season_list):
 
-            if time_frame =='DJF':
-                seasonal = dataset_cut_ends.resample(time='QS-DEC').mean('time')
-                seasonal = seasonal.sel(time=seasonal.time.dt.month == 12)
-            elif time_frame=='NDJ':
-                seasonal = dataset_cut_ends.resample(time='QS-NOV').mean('time')
-                seasonal = seasonal.sel(time=seasonal.time.dt.month == 11)    
-            elif time_frame=='all_time':
-                seasonal = dataset_cut_ends.groupby('time.year').mean('time').rename({'year': 'time'})
-            else:
-                seasonal = dataset.sel(time=dataset.time.dt.month.isin(season_month_dict[time_frame]))
-                seasonal = seasonal.groupby('time.year').mean('time').rename({'year': 'time'})
+        vars_all = vars_to_correlate + ['ucomp']
+        efp_base = output_efp_file.replace('.nc', '')
+        var_efp_files = {v: f'{efp_base}_{v}.nc' for v in vars_all}
 
-            for hemisphere in ['n', 's']:
+        for var2_to_correlate in vars_all:
+            var_efp_file = var_efp_files[var2_to_correlate]
 
-                if np.all(dataset.lat.diff('lat').values>0.):
-                    if hemisphere=='n':                
-                        efp_lat_slice = slice(25., 75.)
-                    else:
-                        efp_lat_slice = slice(-75., -25.)
+            if os.path.isfile(var_efp_file) and not force_efp_recalculate:
+                logging.info(f'Per-var EFP file exists for {var2_to_correlate}: {var_efp_file}')
+                continue
+
+            logging.info(f'Calculating EFP for var2={var2_to_correlate}')
+            efp_var_ds = xar.Dataset()
+            efp_var_ds.coords['lat'] = (('lat'), dataset['lat'].values)
+            efp_var_ds.coords['pfull'] = (('pfull'), dataset['pfull'].values)
+
+            for time_frame in tqdm(all_time_season_list):
+
+                if time_frame =='DJF':
+                    seasonal = dataset_cut_ends.resample(time='QS-DEC').mean('time')
+                    seasonal = seasonal.sel(time=seasonal.time.dt.month == 12)
+                elif time_frame=='NDJ':
+                    seasonal = dataset_cut_ends.resample(time='QS-NOV').mean('time')
+                    seasonal = seasonal.sel(time=seasonal.time.dt.month == 11)
+                elif time_frame=='all_time':
+                    seasonal = dataset_cut_ends.groupby('time.year').mean('time').rename({'year': 'time'})
                 else:
-                    if hemisphere=='n':
-                        efp_lat_slice = slice(75., 25.)
-                    else:
-                        efp_lat_slice = slice(-25., -75.)
-    
-                if np.all(dataset.pfull.diff('pfull').values>0.):
-                    if use_500hPa_only:
-                        pfull_slice = slice(500.-0.1, 500.+0.1)                        
-                    else:
-                        pfull_slice = slice(200.,600.)
-                else:
-                    if use_500hPa_only:
-                        pfull_slice = slice(500.+0.1, 500.-0.1)                        
-                    else:                        
-                        pfull_slice = slice(600.,200.)
+                    seasonal = dataset.sel(time=dataset.time.dt.month.isin(season_month_dict[time_frame]))
+                    seasonal = seasonal.groupby('time.year').mean('time').rename({'year': 'time'})
 
-                efp_ds = seasonal
+                for hemisphere in ['n', 's']:
 
-                for var2_to_correlate in tqdm(vars_to_correlate+['ucomp']):
-                    for var_to_correlate in vars_to_correlate + ['ucomp']:
+                    if np.all(dataset.lat.diff('lat').values>0.):
+                        if hemisphere=='n':
+                            efp_lat_slice = slice(25., 75.)
+                        else:
+                            efp_lat_slice = slice(-75., -25.)
+                    else:
+                        if hemisphere=='n':
+                            efp_lat_slice = slice(75., 25.)
+                        else:
+                            efp_lat_slice = slice(-25., -75.)
+
+                    if np.all(dataset.pfull.diff('pfull').values>0.):
+                        if use_500hPa_only:
+                            pfull_slice = slice(500.-0.1, 500.+0.1)
+                        else:
+                            pfull_slice = slice(200.,600.)
+                    else:
+                        if use_500hPa_only:
+                            pfull_slice = slice(500.+0.1, 500.-0.1)
+                        else:
+                            pfull_slice = slice(600.,200.)
+
+                    efp_ds = seasonal
+
+                    for var_to_correlate in vars_all:
 
                         corr_var_name = f'{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}_corr'
-
                         opposite_corr_var_name = f'{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}_corr'
 
-                        eof_output_ds_vars = [key for key in efp_output_ds.variables.keys()]
-
-                        if opposite_corr_var_name in eof_output_ds_vars:
-                            # logging.info(f'skipping efp for {corr_var_name} as already present by a different name')
-
-                            efp_output_ds[corr_var_name] = efp_output_ds[opposite_corr_var_name]
-
-                            efp_output_ds[f'efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp_output_ds[f'efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}']            
-                            efp_output_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp_output_ds[f'signed_efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}']             
-
+                        if opposite_corr_var_name in efp_var_ds:
+                            logging.info(f'skipping efp for {corr_var_name} as already present by a different name')
+                            efp_var_ds[corr_var_name] = efp_var_ds[opposite_corr_var_name]
+                            efp_var_ds[f'efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp_var_ds[f'efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}']
+                            efp_var_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp_var_ds[f'signed_efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}']
                         else:
+                            # Check previously saved per-var files for the opposite correlation
+                            found_in_file = False
+                            for prev_var, prev_file in var_efp_files.items():
+                                if prev_var != var2_to_correlate and os.path.isfile(prev_file):
+                                    with xar.open_dataset(prev_file) as prev_ds:
+                                        if opposite_corr_var_name in prev_ds:
+                                            logging.info(f'skipping efp for {corr_var_name} - loading opposite from {prev_file}')
+                                            efp_var_ds[corr_var_name] = prev_ds[opposite_corr_var_name].load()
+                                            efp_var_ds[f'efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = prev_ds[f'efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}'].values
+                                            efp_var_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = prev_ds[f'signed_efp_{var2_to_correlate}_{var_to_correlate}_{hemisphere}_{time_frame}'].values
+                                            found_in_file = True
+                                            break
 
-                            # logging.info(f'calculating efp for {corr_var_name}')
+                            if not found_in_file:
+                                logging.info(f'calculating efp for {corr_var_name}')
 
-                            data_to_correlate = efp_ds[var_to_correlate]
+                                data_to_correlate = efp_ds[var_to_correlate]
 
-                            if 'lon' in data_to_correlate.dims:
-                                data_to_correlate = data_to_correlate.mean('lon')
+                                if 'lon' in data_to_correlate.dims:
+                                    logging.info(f'averaging {var_to_correlate} over longitude for correlation')
+                                    data_to_correlate = data_to_correlate.mean('lon')
 
-                            data2_to_correlate = efp_ds[var2_to_correlate]
+                                data2_to_correlate = efp_ds[var2_to_correlate]
 
-                            if 'lon' in data2_to_correlate.dims:
-                                data2_to_correlate = data2_to_correlate.mean('lon')
+                                if 'lon' in data2_to_correlate.dims:
+                                    logging.info(f'averaging {var2_to_correlate} over longitude for correlation')
+                                    data2_to_correlate = data2_to_correlate.mean('lon')
 
-                            # any_nans_in_data1 = np.any(np.isnan(data_to_correlate))
-                            # any_nans_in_data2 = np.any(np.isnan(data2_to_correlate))         
+                                # any_nans_in_data1 = np.any(np.isnan(data_to_correlate))
+                                # any_nans_in_data2 = np.any(np.isnan(data2_to_correlate))
 
-                            # if any_nans_in_data1 or any_nans_in_data2:
-                            #     valid_mask = np.isfinite(data_to_correlate) & np.isfinite(data2_to_correlate)
+                                # if any_nans_in_data1 or any_nans_in_data2:
+                                #     valid_mask = np.isfinite(data_to_correlate) & np.isfinite(data2_to_correlate)
 
-                            # std_1 = data_to_correlate.std(dim='time')
-                            # std_2 = data2_to_correlate.std(dim='time')
+                                # std_1 = data_to_correlate.std(dim='time')
+                                # std_2 = data2_to_correlate.std(dim='time')
 
-                            # valid_mask = (std_1!=0) & (std_2!=0.)
+                                # valid_mask = (std_1!=0) & (std_2!=0.)
 
-                            # efp_output_ds[corr_var_name] = xar.corr(data_to_correlate.where(valid_mask), data2_to_correlate.where(valid_mask), dim='time')
+                                # efp_var_ds[corr_var_name] = xar.corr(data_to_correlate.where(valid_mask), data2_to_correlate.where(valid_mask), dim='time')
 
-                            efp_output_ds[corr_var_name] = xar.corr(data_to_correlate, data2_to_correlate, dim='time')
-                            
+                                efp_var_ds[corr_var_name] = xar.corr(data_to_correlate, data2_to_correlate, dim='time')
 
-                            corr_slice = efp_output_ds[corr_var_name].sel(lat=efp_lat_slice, pfull=pfull_slice)
+                                corr_slice = efp_var_ds[corr_var_name].sel(lat=efp_lat_slice, pfull=pfull_slice)
 
-                            take_level_mean = True
+                                take_level_mean = True
 
-                            corr_slice = corr_slice**2 #need to square for EFP average
+                                corr_slice = corr_slice**2 #need to square for EFP average
 
-                            signed_corr_slice = corr_slice*np.abs(corr_slice) #makes same calculation but retains the sign
+                                signed_corr_slice = corr_slice*np.abs(corr_slice) #makes same calculation but retains the sign
 
-                            if take_level_mean:
-                                corr_av = corr_slice.mean('pfull')
-                                signed_corr_av = signed_corr_slice.mean('pfull')
-                            else:
-                                corr_av = corr_slice
-                                signed_corr_av = signed_corr_slice
+                                if take_level_mean:
+                                    corr_av = corr_slice.mean('pfull')
+                                    signed_corr_av = signed_corr_slice.mean('pfull')
+                                else:
+                                    corr_av = corr_slice
+                                    signed_corr_av = signed_corr_slice
 
-                            weights = np.cos(np.deg2rad(corr_av.lat))
+                                weights = np.cos(np.deg2rad(corr_av.lat))
 
-                            efp = corr_av.weighted(weights).mean('lat')
-                            signed_efp = signed_corr_av.weighted(weights).mean('lat')            
+                                efp = corr_av.weighted(weights).mean('lat')
+                                signed_efp = signed_corr_av.weighted(weights).mean('lat')
 
-                            efp_output_ds[f'efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp.values
+                                efp_var_ds[f'efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = efp.values
 
-                            efp_output_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = signed_efp.values                            
+                                efp_var_ds[f'signed_efp_{var_to_correlate}_{var2_to_correlate}_{hemisphere}_{time_frame}'] = signed_efp.values
 
-                            # logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
-                            # logging.info(f'File: {output_efp_file}')
+                                logging.info(f'efp {var_to_correlate} {var2_to_correlate} {time_frame} {hemisphere} ({start_year}-{end_year}) = {efp.values}')
+                                logging.info(f'File: {var_efp_file}')
 
-        logging.info('COMPLETED EFP CALCULATIONS. Now computing into memory.')
-        with warnings.catch_warnings():
-            warnings.filterwarnings('ignore', category=RuntimeWarning, message='invalid value encountered in divide')
-            efp_output_ds = efp_output_ds.compute()
-        
-        logging.info(f'Writing EFP data to file: {output_efp_file}')
-        logging.info(f'EFP Dataset size: {efp_output_ds.nbytes / (1024**2):.2f} MB')
-        efp_output_ds.to_netcdf(output_efp_file)    
-        logging.info('FINISHED writing EFP data to file')
+            logging.info(f'Computing EFP data for {var2_to_correlate} into memory.')
+            with warnings.catch_warnings():
+                warnings.filterwarnings('ignore', category=RuntimeWarning, message='invalid value encountered in divide')
+                efp_var_ds = efp_var_ds.compute()
 
-        efp_output_ds.close()
-        logging.info(f'reopening EFP file: {output_efp_file}')
+            logging.info(f'Writing EFP data for {var2_to_correlate} to: {var_efp_file}')
+            efp_var_ds.to_netcdf(var_efp_file)
+            efp_var_ds.close()
+            del efp_var_ds
+            logging.info(f'Finished writing {var_efp_file}')
+
+        logging.info(f'Combining per-variable EFP files into {output_efp_file}')
+        per_var_ds_list = [xar.open_dataset(var_efp_files[v]) for v in vars_all]
+        combined_ds = xar.merge(per_var_ds_list)
+        combined_ds.to_netcdf(output_efp_file)
+        for ds in per_var_ds_list:
+            ds.close()
+        logging.info(f'Finished writing combined EFP file: {output_efp_file}')
+
         efp_output_ds = xar.open_mfdataset(output_efp_file, decode_times=True)
 
     return efp_output_ds

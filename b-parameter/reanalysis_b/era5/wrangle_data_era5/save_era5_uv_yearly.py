@@ -6,12 +6,8 @@ import glob
 # ── paths ───────────────────────────────────────────────────────────────────
 DATA_DIR = '/gws/ssde/j25a/arctic_connect/cturrell/reanalysis_data/era5/6h_era5'
 # data_vars = ['u500', 'v500', 'u850', 'v850']
-data_vars = ['u250', 'v250']
-
-# ── select variable via SLURM array task ID (or process all if not in array) ──
-task_id = os.environ.get('SLURM_ARRAY_TASK_ID')
-if task_id is not None:
-    data_vars = [data_vars[int(task_id)]]
+# data_vars = ['u250', 'v250']
+data_vars = ['v250']
 
 # ── main loop ─────────────────────────────────────────────────────────────────
 
