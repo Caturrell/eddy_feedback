@@ -9,11 +9,10 @@ b_path_jra55 = (
     'jra55_850_sit_plots/1979_2016/6hourly/level_250_500_850hPa/b_dataset.nc'
 )
 b_path_era5 = (
-    '/home/users/cturrell/documents/eddy_feedback/b-parameter/reanalysis_b/era5/'
-    'era5_sit_plots/1979_2016/6hourly/level_250_500_850hPa/b_dataset.nc'
+    '/home/links/ct715/eddy_feedback/b-parameter/reanalysis_b/era5/era5_sit_plots/1979_2016/6hourly/level_250_500_850hPa/b_dataset.nc'
 )
 plot_dir_b = (
-    '/home/users/cturrell/documents/eddy_feedback/b-parameter/reanalysis_b/era5/'
+    '/home/links/ct715/eddy_feedback/b-parameter/reanalysis_b/era5/'
     'plots/'
 )
 os.makedirs(plot_dir_b, exist_ok=True)
@@ -69,7 +68,7 @@ def plot_b_method_comparison(b_datasets, use_va):
         sharex=True,
     )
     fig.suptitle(
-        f'b-parameter annual cycle (250–500–850 hPa) — JRA55 vs ERA5',
+        f'b-parameter annual cycle (vertically averaged250–500–850 hPa) — JRA55 vs ERA5',
         fontsize=14, y=1.01,
     )
 
