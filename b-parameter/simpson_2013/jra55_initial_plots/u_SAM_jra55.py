@@ -106,6 +106,27 @@ for label, method in methods.items():
     print(f'  PC std = {pc1.std():.4f}  (should be ~1.0)')
     print(f'  EOF units: m s⁻¹ PC⁻¹,  range [{eof1.min():.3f}, {eof1.max():.3f}]')
 
+# ── Save 250/500/850 hPa results ─────────────────────────────────────────────
+
+data_dir = '/home/links/ct715/eddy_feedback/b-parameter/simpson_2013/jra55_initial_plots/data'
+os.makedirs(data_dir, exist_ok=True)
+
+res_3lev = eof_results['Vert. integrated (250, 500, 850 hPa)']
+save_dict = {
+    'eof1': res_3lev['eof1'],
+    'pc1': res_3lev['pc1'],
+    'var_frac': res_3lev['var_frac'],
+    'lats': lats,
+}
+np.savez(
+    os.path.join(data_dir, 'sam_eof_250_500_850_jra55.npz'),
+    eof1=res_3lev['eof1'],
+    pc1=res_3lev['pc1'],
+    var_frac=np.array(res_3lev['var_frac']),
+    lats=lats,
+)
+print(f"Saved 250/500/850 hPa SAM data to {data_dir}/sam_eof_250_500_850_jra55.npz")
+
 # ── Plot ─────────────────────────────────────────────────────────────────────
 
 fig, ax = plt.subplots(figsize=(7, 5))
