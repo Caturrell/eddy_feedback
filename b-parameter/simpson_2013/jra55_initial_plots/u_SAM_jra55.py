@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from scipy import signal
+from scipy.stats import pearsonr
 from eofs.standard import Eof
 import functions.SIT_functions.SIT_eddy_feedback_functions as eff
 
@@ -129,15 +130,42 @@ print(f"Saved 250/500/850 hPa SAM data to {data_dir}/sam_eof_250_500_850_jra55.n
 
 # ── Plot ─────────────────────────────────────────────────────────────────────
 
-fig, ax = plt.subplots(figsize=(7, 5))
+times = u_south.time.values
+
+fig, axes = plt.subplots(2, 1, figsize=(10, 8))
+
+# Pearson correlations between the two methods
+vals = list(eof_results.values())
+r_eof, p_eof = pearsonr(vals[0]['eof1'], vals[1]['eof1'])
+r_pc,  p_pc  = pearsonr(vals[0]['pc1'],  vals[1]['pc1'])
+
+# Top row: EOF1 spatial structure
+ax_eof = axes[0]
 for label, res in eof_results.items():
-    ax.plot(lats, res['eof1'], label=f'{label} ({res["var_frac"] * 100:.1f}%)')
-ax.axhline(0, color='k', linewidth=0.5)
-ax.set_xlabel('Latitude')
-ax.set_ylabel('EOF1  (m s⁻¹ PC⁻¹)')
-ax.set_ylim(-4, 4)
-ax.legend()
-ax.set_title('SAM EOF1 (1979–2014)')
+    ax_eof.plot(lats, res['eof1'], label=f'{label} ({res["var_frac"] * 100:.1f}%)')
+ax_eof.axhline(0, color='k', linewidth=0.5)
+ax_eof.set_xlabel('Latitude')
+ax_eof.set_ylabel('EOF1  (m s⁻¹ PC⁻¹)')
+ax_eof.set_ylim(-4, 4)
+ax_eof.legend()
+ax_eof.set_title('SAM EOF1 (1979–2014)')
+ax_eof.text(0.02, 0.95, f'r = {r_eof:.3f}, p = {p_eof:.2e}',
+            transform=ax_eof.transAxes, va='top', fontsize=9,
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.7))
+
+# Bottom row: PC1 time series
+ax_pc = axes[1]
+for label, res in eof_results.items():
+    ax_pc.plot(times, res['pc1'], label=label, alpha=0.8)
+ax_pc.axhline(0, color='k', linewidth=0.5)
+ax_pc.set_xlabel('Time')
+ax_pc.set_ylabel('PC1 (normalised)')
+ax_pc.legend()
+ax_pc.set_title('SAM PC1 (1979–2014)')
+ax_pc.text(0.02, 0.95, f'r = {r_pc:.3f}, p = {p_pc:.2e}',
+           transform=ax_pc.transAxes, va='top', fontsize=9,
+           bbox=dict(boxstyle='round', facecolor='white', alpha=0.7))
+
 plt.tight_layout()
 
 save_dir = '/home/links/ct715/eddy_feedback/b-parameter/simpson_2013/jra55_initial_plots/plots'

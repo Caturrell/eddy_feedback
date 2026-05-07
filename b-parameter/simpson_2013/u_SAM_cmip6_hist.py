@@ -20,8 +20,7 @@ logging.getLogger('xarray').setLevel(logging.WARNING)
 
 # ── paths ─────────────────────────────────────────────────────────────────────
 JRA55_NPZ = (
-    '/home/users/cturrell/documents/eddy_feedback/b-parameter/simpson_2013/'
-    'jra55_initial_plots/data/sam_eof_250_500_850_jra55.npz'
+    '/home/users/cturrell/documents/eddy_feedback/b-parameter/simpson_2013/data/sam_eofs/sam_eof_250_500_850_jra55.npz'
 )
 CMIP6_BASE     = '/gws/ssde/j25a/arctic_connect/cturrell/CMIP6/historical'
 POSSIBLE_SPANS = ['1850_2015', '1850_2014', '1950_2015', '1950_2014']
