@@ -43,13 +43,14 @@ if exp_type=='cmip6':
     var_name_dict = {
         'ua':{'data_type':'6hrPlevPt'},
         'va':{'data_type':'6hrPlevPt'},
-        'zg':{'data_type':'6hrPlevPt'},
+        # 'zg':{'data_type':'6hrPlevPt'},
+        'zg':{'data_type':'day'},
     }
 
     logging.info('finding all available data')
     
     models_by_var = find_ensemble_list_multi_var(base_dir_badc, var_name_dict, experiment)
-    available_models_dict_to_use = models_by_var['ua']
+    available_models_dict_to_use = models_by_var['zg']
     logging.info('done finding all available data')
 
 
@@ -97,6 +98,9 @@ if exp_type=='cmip6':
             elif 'r1i1p1f2' in ens_list:
                 member_choice = 'r1i1p1f2'
                 logging.warning(f'-    Using f2 for {model_name}')
+            elif 'r1i1p1f3' in ens_list:
+                member_choice = 'r1i1p1f3'
+                logging.warning(f'-    Using f3 for {model_name}')
             else:
                 raise NotImplementedError(f'Not sure which ens_id to choose for {model_name}\n\n{model_path}')
 
@@ -212,9 +216,9 @@ logging.info('\n--- Data availability for good models ---')
 for model_name in sorted(good_model_list):
     start = start_month_dict[model_name]
     end   = end_month_dict[model_name]
-    # sum years across the ua file list as a proxy for total coverage
-    ua_files = one_member_files_dict[model_name]['files']['ua']
-    start_years = one_member_files_dict[model_name]['start_date']['ua']
-    end_years   = one_member_files_dict[model_name]['end_date']['ua']
+    # sum years across the zg file list as a proxy for total coverage
+    zg_files = one_member_files_dict[model_name]['files']['zg']
+    start_years = one_member_files_dict[model_name]['start_date']['zg']
+    end_years   = one_member_files_dict[model_name]['end_date']['zg']
     total_years = int(end_years[-1][:4]) - int(start_years[0][:4]) + 1
-    logging.info(f'  {model_name:<30}  {start} – {end}  ({total_years} years,  {len(ua_files)} files)')
+    logging.info(f'  {model_name:<30}  {start} – {end}  ({total_years} years,  {len(zg_files)} files)')
