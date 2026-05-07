@@ -65,6 +65,18 @@ def get_b_annual_cycle(df, model_name, variant, hemisphere):
     return central_month_arr, b_arr, labels
 
 
+def get_multi_model_mean(df, model_names, variant, hemisphere):
+    """Return (x, y_mean) multi-model mean annual cycle."""
+    all_y = []
+    x_ref = None
+    for model_name in model_names:
+        x, y, _ = get_b_annual_cycle(df, model_name, variant, hemisphere)
+        all_y.append(y)
+        if x_ref is None:
+            x_ref = x
+    return x_ref, np.nanmean(all_y, axis=0)
+
+
 def plot_cmip6_model_comparison(df, model_names, ds_jra):
     """
     6-panel figure: rows = NH / SH, cols = div1_QG / div1_QG_123 / div1_QG_gt3.
@@ -114,6 +126,17 @@ def plot_cmip6_model_comparison(df, model_names, ds_jra):
             if row == 0 and col == 0:
                 legend_handles.append(line_r)
                 legend_labels.append('JRA-55')
+
+            # ── multi-model mean ─────────────────────────────────────────────
+            x_m, y_m = get_multi_model_mean(df, model_names, variant, hemisphere)
+            line_m, = ax.plot(
+                x_m, y_m,
+                color='black', linewidth=2.0, linestyle='--', zorder=4,
+                label='Multi-model mean',
+            )
+            if row == 0 and col == 0:
+                legend_handles.append(line_m)
+                legend_labels.append('Multi-model mean')
 
             # ── cosmetics ───────────────────────────────────────────────────
             ax.axhline(0, color='k', linewidth=0.6)
@@ -197,6 +220,17 @@ def plot_cmip6_single_hem(df, model_names, hemisphere, ds_jra):
         if col == 0:
             legend_handles.append(line_r)
             legend_labels.append('JRA-55')
+
+        # ── multi-model mean ─────────────────────────────────────────────────
+        x_m, y_m = get_multi_model_mean(df, model_names, variant, hemisphere)
+        line_m, = ax.plot(
+            x_m, y_m,
+            color='black', linewidth=2.0, linestyle='--', zorder=4,
+            label='Multi-model mean',
+        )
+        if col == 0:
+            legend_handles.append(line_m)
+            legend_labels.append('Multi-model mean')
 
         ax.axhline(0, color='k', linewidth=0.6)
         ax.set_ylim(-0.3, 0.3)

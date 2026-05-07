@@ -6,7 +6,10 @@ import json
 cmip6_data_path = '/home/links/ct715/eddy_feedback/chapter1/cmip6/historical_runs/data/1979_2014/6h'
 reanalysis_path = '/home/links/ct715/eddy_feedback/chapter1/annual_cycle/spatial_scale_comparison/data/500hPa_6hourly_efp/1979_2016/efp_results_500hPa.json'
 
-models = sorted(os.listdir(cmip6_data_path))
+models = sorted(
+    entry for entry in os.listdir(cmip6_data_path)
+    if os.path.isdir(os.path.join(cmip6_data_path, entry))
+)
 
 CENTRAL_MONTH_DICT = {
     'DJF': 7, 'JFM': 8, 'FMA': 9, 'MAM': 10,
@@ -62,6 +65,12 @@ for idx, (key, title) in enumerate(panel_keys):
     if idx == 0:
         legend_handles.append(line_r)
         legend_labels.append('JRA55')
+
+    mmm = np.nanmean([[data[m][key][s]['efp'] for s in all_seasons] for m in models], axis=0)
+    line_m, = ax.plot(x, mmm, color='black', linewidth=2.0, linestyle='--', zorder=4, label='Multi-model mean')
+    if idx == 0:
+        legend_handles.append(line_m)
+        legend_labels.append('Multi-model mean')
 
     ax.set_xticks(range(1, 13))
     ax.set_xticklabels([s[1] for s in all_seasons], fontsize=9)
