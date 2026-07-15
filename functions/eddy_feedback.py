@@ -247,7 +247,7 @@ def _process_specific_efp_data(ds, data_type, season):
     return ds, corr_dim
 
     
-def _process_hemisphere(ds, calc_south_hemis):
+def _process_hemisphere(ds, calc_south_hemis, season=None):
     """
     Helper function to handle hemisphere-specific slicing and seasonal processing.
 
@@ -257,6 +257,9 @@ def _process_hemisphere(ds, calc_south_hemis):
         Dataset to process.
     calc_south_hemis : bool
         If True, process for the Southern Hemisphere.
+    season : str, optional
+        Season to use (e.g. 'djf', 'jas', 'mam', ...). If None, defaults to
+        the standard EFP season for the hemisphere ('jas' for SH, 'djf' for NH).
     cut_pole : int or float
         Latitude cutoff from the pole.
 
@@ -265,8 +268,9 @@ def _process_hemisphere(ds, calc_south_hemis):
     xarray.Dataset
         Processed dataset for the selected hemisphere and season.
     """
-    
-    season = 'jas' if calc_south_hemis else 'djf'
+
+    if season is None:
+        season = 'jas' if calc_south_hemis else 'djf'
     lat_slice = slice(-90, 0) if calc_south_hemis else slice(0, 90)
     efp_lat_slice = slice(-75, -25) if calc_south_hemis else slice(25,75)
 
@@ -280,8 +284,8 @@ def _process_hemisphere(ds, calc_south_hemis):
 #-----------------------------------
 
 
-def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None, 
-                  bootstrapping=False, slice_500hPa=False, round_answer=True):
+def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None,
+                  bootstrapping=False, slice_500hPa=False, round_answer=True, season=None):
     """
     Calculate Eddy Feedback Parameter for reanalysis and Isca data.
 
@@ -302,6 +306,10 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None,
         Years to consider for reanalysis datasets (default: slice('1979', '2016')).
     which_div1 : str, optional
         Variable name for the divergence of northward EP flux (default: 'div1_pr').
+    season : str, optional
+        Season to compute the EFP over (e.g. 'djf', 'jfm', 'jas', ...). If None
+        (default), uses the standard EFP season for the hemisphere ('djf' for NH,
+        'jas' for SH).
 
     Returns:
     -------
@@ -321,7 +329,7 @@ def calculate_efp(ds, data_type, calc_south_hemis=False, which_div1=None,
         ds = calculate_epfluxes_ubar(ds, which_div1=which_div1)
 
     # Apply hemisphere-specific processing
-    ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis)
+    ds, season, efp_lat_slice = _process_hemisphere(ds, calc_south_hemis, season=season)
 
     # Data-specific preprocessing
     if bootstrapping:

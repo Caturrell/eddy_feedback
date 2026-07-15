@@ -346,7 +346,8 @@ def big_TEM_plot(dataset, plot_title_dict, include_udt_rdamp, plot_dir, use_qg=F
     plt.savefig(f'{plot_dir_TEM}/TEM_terms{qg_str}.pdf')   
     plt.close('all')
 
-def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, plot_title_dict, propogate_all_nans):
+def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, plot_title_dict, propogate_all_nans,
+              do_autocorrelation_plots, do_crosscorrelation_plots):
 
     plot_dir_EOF = f'{plot_dir}/EOF_plots/'
 
@@ -368,8 +369,9 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
     all_time_season_list = season_list+['all_time']
 
     va_str_dict = {True:'_va', False:'', 500.:'_500'}
+    
+    
 # AUTOCORRELATION PLOTS
-    do_autocorrelation_plots=False
 
     logging.info(f'doing autocorrelation plots')
 
@@ -451,9 +453,10 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
                             plt.savefig(f'{plot_dir_EOF_auto}/{pc_var_name}_lagged_autocorrelation{prop_nan_str}.pdf')
                             plt.close()                    
 
-                logging.info(f'doing crosscorrelation plots')                        
+                logging.info(f'doing crosscorrelation plots')    
+                                    
 # CROSSCORRELATION PLOTS
-                do_crosscorrelation_plots=False
+
                 if do_crosscorrelation_plots:
                     for eof_var1 in eof_vars:
                         for eof_var2 in eof_vars:    

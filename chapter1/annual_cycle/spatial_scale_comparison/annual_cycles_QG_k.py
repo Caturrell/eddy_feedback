@@ -227,7 +227,7 @@ if __name__ == "__main__":
         False: BASE,
     }
 
-    time_slices = [slice('1958', '2016'), slice('1979', '2016')]
+    time_slices = [slice('1958', '2016'), slice('1979', '2016'), slice('1979', '2014')]
 
     for cut_ends, data_dir in cut_ends_data_dirs.items():
         logger.info(f"Processing cut_ends={cut_ends}, data_dir={data_dir}")
