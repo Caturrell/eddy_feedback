@@ -90,12 +90,39 @@ def plot_autocorrelation_panel(ax, var_name, title):
     ax.set_title(title)
 
 
+# ── Save data ────────────────────────────────────────────────────────────────
+
+ucomp_power_spec = 2. * power_spec_ds[f'{ucomp_ps_name}_power_spec_stft'].values
+div1_power_spec = 2. * power_spec_ds[f'{div1_ps_name}_power_spec_stft'].values
+
+ucomp_pc1 = eof_ds[ucomp_autocorr_name].sel(eof_num=0).values
+div1_pc1 = eof_ds[div1_autocorr_name].sel(eof_num=0).values
+ucomp_acf = sm.ccf(ucomp_pc1, ucomp_pc1, nlags=lag_len)
+div1_acf = sm.ccf(div1_pc1, div1_pc1, nlags=lag_len)
+pos_lags = np.arange(lag_len)
+neg_lags = np.arange(0, -lag_len, -1)
+
+data_dir = os.path.join(script_dir, 'data')
+os.makedirs(data_dir, exist_ok=True)
+
+np.savez(
+    os.path.join(data_dir, 'pw_spectra_autocorr_jra55.npz'),
+    freq=freq.values,
+    ucomp_power_spec=ucomp_power_spec,
+    div1_power_spec=div1_power_spec,
+    pos_lags=pos_lags,
+    neg_lags=neg_lags,
+    ucomp_acf=ucomp_acf,
+    div1_acf=div1_acf,
+)
+print(f"Saved power-spectra/autocorrelation data to {data_dir}/pw_spectra_autocorr_jra55.npz")
+
 fig, axes = plt.subplots(2, 2, figsize=(15, 9), sharex='col')
 
-plot_power_spectrum_panel(axes[0, 0], ucomp_ps_name, 'Power spectrum of ucomp PC1')
-plot_autocorrelation_panel(axes[0, 1], ucomp_autocorr_name, 'ucomp PC1 lagged autocorrelation')
-plot_power_spectrum_panel(axes[1, 0], div1_ps_name, 'Power spectrum of div1_QG PC1')
-plot_autocorrelation_panel(axes[1, 1], div1_autocorr_name, 'div1_QG PC1 lagged autocorrelation')
+plot_power_spectrum_panel(axes[0, 0], ucomp_ps_name, r'Power spectrum of $[\overline{u}]_s$')
+plot_autocorrelation_panel(axes[0, 1], ucomp_autocorr_name, r'Lagged autocorrelation of $[\overline{u}]_s$')
+plot_power_spectrum_panel(axes[1, 0], div1_ps_name, r'Power spectrum of $[\overline{m}]_s$')
+plot_autocorrelation_panel(axes[1, 1], div1_autocorr_name, r'Lagged autocorrelation of $[\overline{m}]_s$')
 
 panel_labels = ['(a)', '(b)', '(c)', '(d)']
 for ax, label in zip(axes.flat, panel_labels):

@@ -43,46 +43,62 @@ tau_fit_1 = float(power_spec_ds[f'{div1_name}_{ucomp_name}_phase_diff_tau_fit_1'
 tau_fit_2 = float(power_spec_ds[f'{div1_name}_{ucomp_name}_phase_diff_tau_fit_2'])
 tau_fit_3 = float(power_spec_ds[f'{div1_name}_{ucomp_name}_phase_diff_tau_fit_3'])
 
+# ── Save data ────────────────────────────────────────────────────────────────
+
+data_dir = os.path.join(script_dir, 'data')
+os.makedirs(data_dir, exist_ok=True)
+
+np.savez(
+    os.path.join(data_dir, 'cospec_coher_pdiff_jra55.npz'),
+    freq=freq.values,
+    cospec=cospec.values,
+    coher=coher.values,
+    phase_diff=phase_diff.values,
+    tau_fit_1=np.array(tau_fit_1),
+    tau_fit_2=np.array(tau_fit_2),
+    tau_fit_3=np.array(tau_fit_3),
+)
+print(f"Saved cospectrum/coherence/phase-difference data to {data_dir}/cospec_coher_pdiff_jra55.npz")
+
 fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
 
 panel_labels = ['(a)', '(b)', '(c)']
 
 ax = axes[0]
-ax.plot(freq, np.real(cospec), label='real STFT', linestyle='--')
-ax.plot(freq, np.imag(cospec), label='Imag STFT', linestyle='--')
-ax.plot(freq, 2. * np.pi * freq, label='2piomega')
+ax.plot(freq, np.real(cospec), label='real')
+ax.plot(freq, np.imag(cospec), label='Imag')
+ax.plot(freq, 2. * np.pi * freq, label=r'$2\pi f$', linestyle='--')
 ax.set_xlim(0., 0.25)
 ax.set_ylim(0., 1.75)
 ax.set_yticks(np.arange(0., 1.75 + 0.25, 0.25))
 ax.legend()
 ax.grid(True)
-ax.set_title('Cospectrum of ucomp and div1')
+ax.set_title(r'Cospectrum of $[\overline{u}]_s$ and $[\overline{m}]_s$')
 ax.set_xlabel('frequency (1/days)')
 
 ax = axes[1]
-ax.plot(freq, coher ** 2., label='stft', linestyle='--')
+ax.plot(freq, coher ** 2.)
 ax.set_xlim(0., 0.25)
 ax.set_ylim(0., 1.)
 ax.set_yticks(np.arange(0., 1. + 0.2, 0.2))
-ax.legend()
 ax.grid(True)
-ax.set_title('Coherence squared of ucomp and div1 using stft method')
+ax.set_title(r'Coherence squared of $[\overline{u}]_s$ and $[\overline{m}]_s$')
 ax.set_xlabel('frequency (1/days)')
 
 ax = axes[2]
-ax.plot(freq, phase_diff, label='data')
+ax.plot(freq, phase_diff, label='observed')
 # ax.plot(freq, np.rad2deg(np.arctan(2. * np.pi * freq * tau_fit_1)),
 #         linestyle='--', label=f'fit with {tau_fit_1:4.2f} days')
 # ax.plot(freq, np.rad2deg(np.arctan(2. * np.pi * freq * tau_fit_2)),
 #         linestyle='--', label=f'fit with {tau_fit_2:4.2f} days')
 ax.plot(freq, np.rad2deg(np.arctan(2. * np.pi * freq * tau_fit_3)),
-        linestyle='--', color='#d62728', label=f'fit with {tau_fit_3:4.2f} days')
+        linestyle='--', color='#d62728', label=f'arctan({tau_fit_3:4.2f}*$\\omega$)')
 ax.set_xlim(0., 0.25)
 ax.set_ylim(0., 90.)
 ax.set_yticks(np.arange(0., 90. + 22.5, 22.5))
 ax.legend()
 ax.grid(True)
-ax.set_title('Phase of ucomp and div1 using stft method')
+ax.set_title(r'Phase difference of $[\overline{u}]_s$ and $[\overline{m}]_s$')
 ax.set_xlabel('frequency (1/days)')
 
 for ax, label in zip(axes, panel_labels):
