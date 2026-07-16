@@ -687,6 +687,14 @@ def propagate_missing_data_to_all_vars(anom_ds, eof_vars):
     #     n_nans_list.append(np.where(np.isnan(anom_ds[anom_var]))[0].shape[0])
 
     for anom_var in anom_var_list:
+        n_total = anom_ds[anom_var].size
+        n_nan_before = int(np.isnan(anom_ds[anom_var]).sum().values)
+        if n_nan_before == n_total:
+            logging.warning(f'{anom_var} is entirely NaN before propagation - this will wipe out every other eof_var for this hemisphere/season')
+        elif n_nan_before > 0:
+            logging.info(f'{anom_var} has {n_nan_before}/{n_total} NaNs before propagation')
+
+    for anom_var in anom_var_list:
         for anom_var_nan_var in anom_var_list:
             anom_ds[anom_var] = anom_ds[anom_var].where(np.isfinite(anom_ds[anom_var_nan_var]))
         n_nans_list.append(np.where(np.isnan(anom_ds[anom_var]))[0].shape[0])
