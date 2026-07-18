@@ -245,7 +245,6 @@ lag_len = 40
 level_configs = [
     (slice(100., 850.), None,              True,  '_full_100_850'),
     (slice(100., 850.), [250., 500., 850.], True,  '_250_500_850hPa'),
-    (slice(100., 850.), [250., 500., 850.], False, '_250_500_850hPa_mean'),
 ]
 
 for pfull_slice_loop, level_subset_loop, pressure_weighted_loop, level_suffix in level_configs:
