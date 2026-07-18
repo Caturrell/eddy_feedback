@@ -324,7 +324,7 @@ def big_TEM_plot(dataset, plot_title_dict, include_udt_rdamp, plot_dir, use_qg=F
 
             # logging.info(f'{data_to_plot.max().values} {data_to_plot.min().values} {np.where(np.isnan(data_to_plot.values))[0].shape}')
             if make_line_plots:
-                contour = ax.plot(dataset['lat'], data_to_plot.sel(pfull=500.))
+                contour = ax.plot(dataset['lat'], data_to_plot.sel(pfull=500., method='nearest'))
             else:
                 contour = ax.contourf(dataset['lat'], dataset['pfull'], data_to_plot, cmap='RdBu_r', levels=levels)
                 ax.set_ylim(1000., 0.)
