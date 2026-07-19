@@ -41,10 +41,13 @@ else:
 if exp_type in ['jra55', 'jra55_850']:
     base_dir = '/home/links/ct715/'
     base_dir_6hourly = '/disca/share/sit204/jra_55/1958_2016_6hourly_data_efp/full_6hourly_snapshots'
-    exp_name = exp_type
+    # Overridden (rather than = exp_type) so this Simpson-method comparison run writes to its own
+    # output tree, separate from the existing 'jra55_850' baseline outputs - exp_type itself stays
+    # unchanged since it also drives the data-loading branches above/below.
+    exp_name = 'jra_simpson_lag'
 
-    start_month = 1978
-    end_month   = 1997
+    start_month = 1979
+    end_month   = 2014
     level_type = '6hourly'
     subtract_annual_cycle = True
 
@@ -82,10 +85,18 @@ do_power_spectrum = True
 do_autocorrelation_plots = True
 do_crosscorrelation_plots = True
 
+# Simpson-style sliding-segment lag methodology vs the original method - see
+# /home/links/ct715/.claude/plans/wobbly-prancing-giraffe.md. Independent toggles.
+use_simpson_lag_method = True
+use_detrended_anomalies = True
+lag_method = 'simpson_sliding' if use_simpson_lag_method else 'original'
+
 force_ep_flux_recalculate = False
 force_efp_recalculate = False
-force_anom_recalculate = False
-force_eof_recalculate = False
+# Both must be True to actually (re)compute the detrended anomalies / continuous PC
+# variables the new lag_method needs, rather than silently reading stale cached .nc files.
+force_anom_recalculate = True
+force_eof_recalculate = True
 
 plot_dir = f'./{exp_name}_sit_plots/{start_month}_{end_month}/{level_type}/'
 
@@ -235,7 +246,7 @@ if do_big_TEM_plot:
 # eof_vars = ['ucomp', 'fvbarstar', 'vbarstar_1oacosphi_dudphi', 'omegabarstar_dudp', 'div1', 'div2', 'total_tend', 'div1_QG', 'div2_QG', 'div1_123', 'div1_gt3', 'div1_QG_123', 'div1_QG_gt3']
 eof_vars = ['ucomp', 'div1_QG', 'div1_QG_123', 'div1_QG_gt3']
 
-anom_ds = eff.calculate_anomalies(dataset, eof_vars, subtract_annual_cycle, output_anom_file, force_anom_recalculate)
+anom_ds = eff.calculate_anomalies(dataset, eof_vars, subtract_annual_cycle, output_anom_file, force_anom_recalculate, detrend=use_detrended_anomalies)
 
 n_eofs = 3
 propogate_all_nans = True
@@ -245,7 +256,6 @@ lag_len = 40
 level_configs = [
     (slice(100., 850.), None,              True,  '_full_100_850'),
     (slice(100., 850.), [250., 500., 850.], True,  '_250_500_850hPa'),
-    (slice(100., 850.), [250., 500., 850.], False, '_250_500_850hPa_mean'),
 ]
 
 for pfull_slice_loop, level_subset_loop, pressure_weighted_loop, level_suffix in level_configs:
@@ -263,13 +273,13 @@ for pfull_slice_loop, level_subset_loop, pressure_weighted_loop, level_suffix in
 
     if do_eof_plots:
         epf.eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, eof_plot_dir, plot_title_dict, propogate_all_nans,
-                      do_autocorrelation_plots, do_crosscorrelation_plots)
+                      do_autocorrelation_plots, do_crosscorrelation_plots, lag_method=lag_method)
 
     #calculate power spectra
     if do_power_spectrum:
         eff.power_spectrum_analysis(eof_ds, eof_plot_dir, season_month_dict, use_div1_proj=True)
 
-    b_dataset = eff.b_fit_simpson_2013(eof_ds, eof_plot_dir, season_month_dict, use_div1_proj=True)
+    b_dataset = eff.b_fit_simpson_2013(eof_ds, eof_plot_dir, season_month_dict, use_div1_proj=True, lag_method=lag_method)
     epf.plot_b_annual_cycle(b_dataset, season_month_dict, eof_plot_dir)
 #TASKS
 

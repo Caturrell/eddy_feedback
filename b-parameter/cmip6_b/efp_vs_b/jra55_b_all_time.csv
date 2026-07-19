@@ -1,0 +1,7 @@
+model,variant,hemisphere,season,b
+JRA55,div1_QG,n,all_time,0.04940033175723875
+JRA55,div1_QG,s,all_time,0.01029543134560334
+JRA55,div1_QG_123,n,all_time,0.004284881087006643
+JRA55,div1_QG_123,s,all_time,-0.04397730193786353
+JRA55,div1_QG_gt3,n,all_time,0.04511545067023212
+JRA55,div1_QG_gt3,s,all_time,0.05427273328346688

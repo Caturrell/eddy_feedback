@@ -559,7 +559,7 @@ def efp_calc(output_efp_file, force_efp_recalculate, dataset, vars_to_correlate,
 
     return efp_output_ds
 
-def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_file, force_anom_recalculate):
+def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_file, force_anom_recalculate, detrend=False):
 
     if os.path.isfile(output_anom_file) and not force_anom_recalculate:
         logging.info('attempting to read in anom data')
@@ -570,7 +570,7 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
 
         anom_file_list = []
 
-        var_anoms1, orig_var1 = calculate_anom_one_var(dataset, subtract_annual_cycle, var_list[0])
+        var_anoms1, orig_var1 = calculate_anom_one_var(dataset, subtract_annual_cycle, var_list[0], detrend=detrend)
 
         anom_ds = xar.Dataset(coords = var_anoms1.coords)
 
@@ -588,7 +588,7 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
 
 
         for eof_var in var_list[1:]:
-            var_anoms, orig_var = calculate_anom_one_var(dataset, subtract_annual_cycle, eof_var)
+            var_anoms, orig_var = calculate_anom_one_var(dataset, subtract_annual_cycle, eof_var, detrend=detrend)
 
             anom_ds = xar.Dataset(coords = var_anoms.coords)
 
@@ -619,7 +619,7 @@ def calculate_anomalies(dataset, var_list, subtract_annual_cycle, output_anom_fi
     return anom_ds
     
 
-def calculate_anom_one_var(dataset, subtract_annual_cycle, data_var):
+def calculate_anom_one_var(dataset, subtract_annual_cycle, data_var, detrend=False):
 
     if subtract_annual_cycle:
         logging.info(f'subtracting annual cycle from {data_var}')
@@ -653,7 +653,17 @@ def calculate_anom_one_var(dataset, subtract_annual_cycle, data_var):
             var_zm = dataset[data_var]                
         var_zm_time = var_zm.mean('time')
         var_anoms = var_zm - var_zm_time
-        orig_var = var_zm    
+        orig_var = var_zm
+
+    if detrend:
+        logging.info(f'linearly detrending {data_var} anomalies')
+        # skipna=True so grid points with genuine missing data (e.g. div1/div2
+        # where dtheta/dp vanishes) are fit around their own valid timesteps,
+        # rather than scipy.signal.detrend which NaNs out the whole timeseries
+        # at any point that has even one missing timestep.
+        trend_coeffs = var_anoms.polyfit(dim='time', deg=1, skipna=True)
+        trend = xar.polyval(var_anoms['time'], trend_coeffs.polyfit_coefficients)
+        var_anoms = var_anoms - trend
 
     return var_anoms, orig_var
 
@@ -901,9 +911,13 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
                         # var_anoms_hem_ucomp = var_anoms_ucomp.sel(lat=hemisphere_slice_dict[hemisphere]).sel(pfull=pfull_selector)
 
+                        # kept unrestricted (full calendar year) for the "_continuous" projection below,
+                        # before var_anoms_hem gets restricted to season-only days for the standard PC.
+                        var_anoms_hem_continuous = var_anoms_hem
+
                         if time_frame!='all_time':
-                            var_anoms_hem = var_anoms_hem.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]), drop=True) 
-                            # var_anoms_hem_ucomp = var_anoms_hem_ucomp.where(eof_ds['time'].dt.month.isin(hemisphere_month_dict[hemisphere]), drop=True) 
+                            var_anoms_hem = var_anoms_hem.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]), drop=True)
+                            # var_anoms_hem_ucomp = var_anoms_hem_ucomp.where(eof_ds['time'].dt.month.isin(hemisphere_month_dict[hemisphere]), drop=True)
                             time_dim_name = f'time_{time_frame}'
                         else:
                             time_dim_name = 'time'
@@ -922,7 +936,19 @@ def eof_calc(exp_type, output_eof_file, force_eof_recalculate, dataset, pfull_sl
 
                         logging.info(f'made it for {eof_var}{va_str} {hemisphere} {time_frame}')
                         # except:
-                        #     logging.info(f'projection failed for {eof_var}{va_str} {hemisphere} {time_frame}')                        
+                        #     logging.info(f'projection failed for {eof_var}{va_str} {hemisphere} {time_frame}')
+
+                        if time_frame != 'all_time':
+                            # Continuous (full calendar year, un-restricted) projection onto the same
+                            # season-fit solver, for the sliding-segment ("simpson_sliding") lag methods
+                            # in b_fit_simpson_2013 / eof_plots. No extra demean here (unlike the
+                            # season-restricted case above) - see plan doc for why that's inert for the
+                            # regression slopes/correlations that consume this.
+                            pseudo_pcs_continuous = ucomp_solver.projectField(var_anoms_hem_continuous.values, neofs=n_eofs, eofscaling=1)
+
+                            eof_ds[f'{eof_var}{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_{time_frame}_continuous'] = (('time', 'eof_num'), pseudo_pcs_continuous)
+
+                            eof_ds[f'{eof_var}{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_{time_frame}_continuous'] = eof_ds[f'{eof_var}{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_{time_frame}_continuous'].transpose('eof_num', 'time')
 
         eof_ds.to_netcdf(output_eof_file_use)   
         eof_ds.close()
@@ -1027,7 +1053,7 @@ def power_spectrum_analysis(eof_ds, plot_dir, season_month_dict, use_div1_proj, 
     power_spec_ds.to_netcdf(f'{plot_dir}/power_spec.nc', auto_complex=True)
 
 
-def b_fit_simpson_2013(eof_ds, plot_dir, season_month_dict, use_div1_proj):
+def b_fit_simpson_2013(eof_ds, plot_dir, season_month_dict, use_div1_proj, lag_method='original'):
 
     b_dataset = xar.Dataset()
 
@@ -1057,28 +1083,48 @@ def b_fit_simpson_2013(eof_ds, plot_dir, season_month_dict, use_div1_proj):
                         div1_name = f'{var_to_analyse}{va_str}_PCs_{hemisphere}_{time_frame}'    
 
                     ucomp_name = f'ucomp{va_str}_PCs_{hemisphere}_{time_frame}'
+                    # The "_continuous" variant added in eof_calc only exists under the
+                    # "_PCs_from_ucomp_" projection naming (Loop 2), even for ucomp projected onto its
+                    # own solver - there's no continuous counterpart for the bare self-fit ucomp_name
+                    # (Loop 1). See plan doc / eof_calc scope note.
+                    ucomp_continuous_name = f'ucomp{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_{time_frame}'
 
                     ntime = eof_ds.coords['time'].shape[0]
 
                     if time_frame!='all_time':
-                        where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame])) 
+                        where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]))
 
                         eddy_data = np.zeros((ntime))+np.nan
                         zonal_wind_data = np.zeros((ntime))+np.nan
 
                         eddy_data[where_hem[0]]       =  eof_ds[div1_name][0,:].values
                         zonal_wind_data[where_hem[0]] =  eof_ds[ucomp_name][0,:].values
+
+                        if lag_method == 'simpson_sliding':
+                            # index (x) stays season-restricted above; the displaced/lagged side is
+                            # instead drawn from the continuous (full calendar year) projection, so a
+                            # lag shift can pull real values from adjacent months rather than getting
+                            # dropped at the season boundary.
+                            eddy_data_displaced = eof_ds[f'{div1_name}_continuous'][0,...].squeeze().values
+                            zonal_wind_data_displaced = eof_ds[f'{ucomp_continuous_name}_continuous'][0,...].squeeze().values
+                        else:
+                            eddy_data_displaced = eddy_data
+                            zonal_wind_data_displaced = zonal_wind_data
                     else:
                         eddy_data = eof_ds[div1_name][0,...].squeeze().values
-                        zonal_wind_data = eof_ds[ucomp_name][0,...].squeeze().values         
+                        zonal_wind_data = eof_ds[ucomp_name][0,...].squeeze().values
+                        # all_time has no season boundary to fix - displaced side is the same array
+                        # regardless of lag_method.
+                        eddy_data_displaced = eddy_data
+                        zonal_wind_data_displaced = zonal_wind_data
 
                     b_arr = np.zeros(15) + np.nan
 
                     for lag_length in range(7,15):
 
                         x_data = zonal_wind_data[0:-lag_length]
-                        y_eddy_data = eddy_data[lag_length:]
-                        y_zonal_wind_data = zonal_wind_data[lag_length:]
+                        y_eddy_data = eddy_data_displaced[lag_length:]
+                        y_zonal_wind_data = zonal_wind_data_displaced[lag_length:]
 
                         eddy_valid_mask = np.logical_and(np.isfinite(x_data), np.isfinite(y_eddy_data))
                         zonal_wind_valid_mask = np.logical_and(np.isfinite(x_data), np.isfinite(y_zonal_wind_data))                        
