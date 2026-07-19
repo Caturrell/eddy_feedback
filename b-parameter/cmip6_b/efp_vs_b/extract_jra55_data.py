@@ -33,6 +33,7 @@ OUT_DIR = os.path.dirname(os.path.abspath(__file__))
 B_OUT_FILE = os.path.join(OUT_DIR, 'jra55_b_annual_cycle.csv')
 EFP_OUT_FILE = os.path.join(OUT_DIR, 'jra55_efp_annual_cycle.csv')
 B_ALL_TIME_OUT_FILE = os.path.join(OUT_DIR, 'jra55_b_all_time.csv')
+B_NATIVE_OUT_FILE = os.path.join(OUT_DIR, 'jra55_b_native.csv')
 
 DIV1_VARIANTS = ['div1_QG', 'div1_QG_123', 'div1_QG_gt3']
 HEMISPHERES = ['n', 's']
@@ -91,6 +92,29 @@ def extract_b_all_time():
     return pd.DataFrame(rows)
 
 
+def extract_b_native():
+    """Same as extract_b()/extract_b_all_time() but reads the native (per-level,
+    non vertically-averaged) EOF b variables, i.e. without the '_va' suffix."""
+    rows = []
+    with xr.open_dataset(B_NC_PATH) as ds:
+        for variant in DIV1_VARIANTS:
+            for hemisphere in HEMISPHERES:
+                for season in SEASON_LIST + ['all_time']:
+                    b_var_name = f'ucomp_{variant}_b_{hemisphere}_{season}'
+                    if b_var_name in ds:
+                        b_val = float(ds[b_var_name].mean('lag').values)
+                    else:
+                        b_val = np.nan
+                    rows.append({
+                        'model': MODEL_NAME,
+                        'variant': variant,
+                        'hemisphere': hemisphere,
+                        'season': season,
+                        'b': b_val,
+                    })
+    return pd.DataFrame(rows)
+
+
 def extract_efp():
     with open(EFP_JSON_PATH) as f:
         data = json.load(f)
@@ -120,3 +144,7 @@ if __name__ == '__main__':
     df_b_all_time = extract_b_all_time()
     df_b_all_time.to_csv(B_ALL_TIME_OUT_FILE, index=False)
     print(f'Saved {len(df_b_all_time)} rows -> {B_ALL_TIME_OUT_FILE}')
+
+    df_b_native = extract_b_native()
+    df_b_native.to_csv(B_NATIVE_OUT_FILE, index=False)
+    print(f'Saved {len(df_b_native)} rows -> {B_NATIVE_OUT_FILE}')
