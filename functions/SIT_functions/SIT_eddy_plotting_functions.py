@@ -347,7 +347,7 @@ def big_TEM_plot(dataset, plot_title_dict, include_udt_rdamp, plot_dir, use_qg=F
     plt.close('all')
 
 def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, plot_title_dict, propogate_all_nans,
-              do_autocorrelation_plots, do_crosscorrelation_plots):
+              do_autocorrelation_plots, do_crosscorrelation_plots, lag_method='original'):
 
     plot_dir_EOF = f'{plot_dir}/EOF_plots/'
 
@@ -394,37 +394,42 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
                                 x_corr = eof_ds[pc_var_name][eof_num_idx,:].values
                                 y_corr = eof_ds[pc_var_name][eof_num_idx,:].values
 
-                                # correlation = signal.correlate(x_corr, y_corr, mode="full")
-                                # lags = signal.correlation_lags(x_corr.size, y_corr.size, mode="full")
-
-                                # cross_corr2, lags2 = cross_correlation(x_corr, y_corr, max_lag=lag_len)
-
-                                # eof_ds.coords['time'] = dataset['time']
                                 ntime = eof_ds.coords['time'].shape[0]
 
                                 if time_frame!='all_time':
-                                    where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame])) 
+                                    where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]))
 
                                     eof_pc_all_time = np.zeros((n_eofs,ntime))+np.nan
                                     eof_pc_all_time[:, where_hem[0]] =  eof_ds[pc_var_name].values
                                 else:
                                     eof_pc_all_time =  eof_ds[pc_var_name].values
 
-                                cross_corr_neg_nan, lags = eff.cross_correlation(eof_pc_all_time[eof_num_idx,:], eof_pc_all_time[eof_num_idx,:], lag_len)
-                                cross_corr_neg_nan_verif, lags_verif = eff.cross_correlation(x_corr, y_corr, lag_len)
+                                continuous_var_name = f'{pc_var_name}_continuous'
+                                has_continuous = continuous_var_name in eof_ds_vars
 
-                                cross_corr3_neg = eff.sm_cross_correlation(x_corr, y_corr, lag_len) #y leads x
-                                cross_corr3_pos = eff.sm_cross_correlation(y_corr, x_corr, lag_len) #x leads y  
-                                pos_lags = np.arange(lag_len)     
-                                neg_lags = np.arange(0,-lag_len, -1)     
+                                if lag_method == 'simpson_sliding' and has_continuous:
+                                    # Index stays season-restricted (eof_pc_all_time, built above); the
+                                    # displaced side is the continuous projection, so cross_correlation's
+                                    # isfinite masking only drops pairs where the *index* day is out of
+                                    # season - fixing both the season-boundary drop and (since this is a
+                                    # continuous, non-tightly-packed series) the year-jumbling present in
+                                    # the 'original' sm_cross_correlation path below.
+                                    eof_pc_continuous = eof_ds[continuous_var_name].values
+                                    cross_corr_sliding, lags_sliding = eff.cross_correlation(
+                                        eof_pc_all_time[eof_num_idx,:], eof_pc_continuous[eof_num_idx,:], lag_len)
 
+                                    plt.plot(lags_sliding, cross_corr_sliding, label=f'{eof_var} EOF {eof_num_idx+1}', color=color_list[eof_num_idx])
+                                else:
+                                    # 'original' method, or no continuous counterpart exists for this
+                                    # variable (e.g. the bare self-fit PCs - see plan doc scope note):
+                                    # byte-identical to the pre-lag_method behavior.
+                                    cross_corr3_neg = eff.sm_cross_correlation(x_corr, y_corr, lag_len) #y leads x
+                                    cross_corr3_pos = eff.sm_cross_correlation(y_corr, x_corr, lag_len) #x leads y
+                                    pos_lags = np.arange(lag_len)
+                                    neg_lags = np.arange(0,-lag_len, -1)
 
-                                # plt.plot(lags, correlation, label='scipy')
-                                # plt.plot(lags2, cross_corr2, label=f'{eof_var} EOF {eof_num_idx}', marker='*')
-                                plt.plot(pos_lags, cross_corr3_pos, label=f'{eof_var} EOF {eof_num_idx+1}', color=color_list[eof_num_idx])
-                                plt.plot(neg_lags, cross_corr3_neg, color=color_list[eof_num_idx])        
-                                # plt.plot(lags, cross_corr_neg_nan, label=f'{eof_var} EOF {eof_num_idx+1}', color=color_list[eof_num_idx], linestyle='--')
-                                # plt.plot(lags_verif, cross_corr_neg_nan_verif, label=f'{eof_var} EOF {eof_num_idx+1}', color=color_list[eof_num_idx], linestyle='-.')  
+                                    plt.plot(pos_lags, cross_corr3_pos, label=f'{eof_var} EOF {eof_num_idx+1}', color=color_list[eof_num_idx])
+                                    plt.plot(neg_lags, cross_corr3_neg, color=color_list[eof_num_idx])
 
                             plt.xlabel('lag (days)')
                             plt.ylabel('lagged correlation')
@@ -478,7 +483,7 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
 
 
                                     if time_frame!='all_time':
-                                        where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame])) 
+                                        where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]))
 
                                         eof_pc_all_time1 = np.zeros((n_eofs,ntime))+np.nan
                                         eof_pc_all_time2 = np.zeros((n_eofs,ntime))+np.nan
@@ -487,23 +492,35 @@ def eof_plots(eof_vars, eof_ds, n_eofs, season_month_dict, lag_len, plot_dir, pl
                                         eof_pc_all_time2[:, where_hem[0]] =  eof_ds[pc_var2_name].values
                                     else:
                                         eof_pc_all_time1 = eof_ds[pc_orig_var1_name].values
-                                        eof_pc_all_time2 = eof_ds[pc_var2_name].values                        
+                                        eof_pc_all_time2 = eof_ds[pc_var2_name].values
 
-                                    cross_corr_neg_nan, lags = eff.cross_correlation(eof_pc_all_time1[eof_num_idx,:], eof_pc_all_time2[eof_num_idx,:], lag_len)
-                                    cross_corr_neg_nan_verif, lags_verif = eff.cross_correlation(x_corr, y_corr, lag_len)
-                                    # cross_corr2, lags2 = cross_correlation(x_corr, y_corr, max_lag=300)
+                                    continuous_var2_name = f'{pc_var2_name}_continuous'
+                                    has_continuous = continuous_var2_name in eof_ds_vars
 
-                                    cross_corr3_neg = eff.sm_cross_correlation(x_corr, y_corr, lag_len) #y leads x
-                                    cross_corr3_pos = eff.sm_cross_correlation(y_corr, x_corr, lag_len) #x leads y  
-                                    pos_lags = np.arange(lag_len)     
-                                    neg_lags = np.arange(0,-lag_len, -1)    
+                                    if lag_method == 'simpson_sliding' and has_continuous:
+                                        # eof_var1 (index) stays season-restricted; eof_var2 (displaced)
+                                        # uses the continuous projection - same reasoning as the
+                                        # autocorrelation block above and the plan doc.
+                                        eof_pc2_continuous = eof_ds[continuous_var2_name].values
+                                        cross_corr_sliding, lags_sliding = eff.cross_correlation(
+                                            eof_pc_all_time1[eof_num_idx,:], eof_pc2_continuous[eof_num_idx,:], lag_len)
 
-                                    # plt.plot(lags, correlation, label='scipy')
-                                    # plt.plot(lags2, cross_corr2, label=f'{eof_var} EOF {eof_num_idx}', marker='*')
-                                    plt.plot(pos_lags, cross_corr3_pos, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx])
-                                    plt.plot(neg_lags, cross_corr3_neg, color=color_list[eof_num_idx])    
-                                    plt.plot(lags, cross_corr_neg_nan, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx], linestyle='--') 
-                                    plt.plot(lags_verif, cross_corr_neg_nan_verif, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx], linestyle='-.') 
+                                        plt.plot(lags_sliding, cross_corr_sliding, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx])
+                                    else:
+                                        # 'original' method, or no continuous counterpart for pc_var2_name:
+                                        # byte-identical to the pre-lag_method behavior.
+                                        cross_corr_neg_nan, lags = eff.cross_correlation(eof_pc_all_time1[eof_num_idx,:], eof_pc_all_time2[eof_num_idx,:], lag_len)
+                                        cross_corr_neg_nan_verif, lags_verif = eff.cross_correlation(x_corr, y_corr, lag_len)
+
+                                        cross_corr3_neg = eff.sm_cross_correlation(x_corr, y_corr, lag_len) #y leads x
+                                        cross_corr3_pos = eff.sm_cross_correlation(y_corr, x_corr, lag_len) #x leads y
+                                        pos_lags = np.arange(lag_len)
+                                        neg_lags = np.arange(0,-lag_len, -1)
+
+                                        plt.plot(pos_lags, cross_corr3_pos, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx])
+                                        plt.plot(neg_lags, cross_corr3_neg, color=color_list[eof_num_idx])
+                                        plt.plot(lags, cross_corr_neg_nan, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx], linestyle='--')
+                                        plt.plot(lags_verif, cross_corr_neg_nan_verif, label=f'{eof_var1} {eof_var2}', color=color_list[eof_num_idx], linestyle='-.')
 
                                 plt.xlabel('lag (days)')
                                 plt.ylabel('lagged correlation')
