@@ -21,10 +21,12 @@ to data/CMIP6_b_all_time.csv.
 Output layout under plots/fig5_tau_bar_b_vs_tau/:
   - all_time/ (and all_time/remove_outlier/): the all-time bar chart and
     b-vs-tau scatter panels (main / stacked).
-  - JJA/ and DJF/ (each with its own remove_outlier/ subfolder): a combined
-    bar chart stacking the all-time row above the seasonal row, plus
-    b-vs-tau scatter panels (main / outlier-removed / stacked) using
-    seasonal tau and seasonal b, with JRA55 marked throughout.
+  - JJA/, DJF/, and NDJ/ (each with its own remove_outlier/ subfolder): a
+    combined bar chart stacking the all-time row above the seasonal row,
+    plus b-vs-tau scatter panels (main / outlier-removed / stacked) using
+    seasonal tau and seasonal b, with JRA55 marked throughout. NDJ is
+    per-season only -- it is not folded into the all-time/JJA/DJF combined
+    comparison figures below.
   - directly in fig5_tau_bar_b_vs_tau/ (and its own remove_outlier/ and
     remove_fgoals/, the latter cumulative -- EC-Earth3-CC AND FGOALS-f3-L
     both excluded): comparison figures spanning all-time, JJA, and DJF
@@ -297,7 +299,6 @@ def _draw_tau_bar(ax, models, values_map, title, jra55_value=None):
         handles.append(h_jra55)
 
     ax.set_ylabel(r'$\tau$ (days)', fontsize=11)
-    ax.set_ylim(4., 18.5)
     ax.grid(True, axis='y')
     if handles:
         ax.legend(handles=handles, loc='upper right', fontsize=9, frameon=True)
@@ -343,7 +344,7 @@ for _tag, _outlier_models in OUTLIER_SETS:
 # Scatter of b vs tau, one panel per spatial scale.
 # ---------------------------------------------------------------------------
 def _draw_b_vs_tau_row(axes_row, models, tau_map, b_map, jra55_point=None, title_suffix='',
-                        row_label=None):
+                        row_label=None, ylim=None):
     for ax, key in zip(axes_row, b_variants):
         x = np.array([b_map[key][model] for model in models])
         y = np.array([tau_map[model] for model in models])
@@ -372,7 +373,8 @@ def _draw_b_vs_tau_row(axes_row, models, tau_map, b_map, jra55_point=None, title
 
         ax.axvline(0., color='0.3', lw=1.4, linestyle='--', zorder=1)
         ax.set_xlim(-0.2, 0.2)
-        ax.set_ylim(4., 18.5)
+        if ylim is not None:
+            ax.set_ylim(*ylim)
         ax.set_xlabel('b', fontsize=10)
         ax.set_ylabel(r'$\tau$ (days)', fontsize=10)
         ax.set_title(f'{variant_titles[key]}{title_suffix}', fontsize=11)
@@ -548,7 +550,7 @@ season_tau_maps = {}
 season_b_maps = {}
 season_jra55_tau = {}
 season_jra55_points = {}
-for _season in ['JJA', 'DJF']:
+for _season in ['JJA', 'DJF', 'NDJ']:
     (season_tau_maps[_season], season_b_maps[_season],
      season_jra55_tau[_season], season_jra55_points[_season]) = _process_season(_season)
 
@@ -650,13 +652,13 @@ def _plot_b_vs_tau_all_seasons_stacked(models, out_file, title_suffix='', extra_
     ]
     _draw_b_vs_tau_row(axes[0], models, tau_data, b_data,
                         jra55_point=jra55_point_all_time, title_suffix=title_suffix,
-                        row_label='All-time')
+                        row_label='All-time', ylim=(4., 18.5))
     _draw_b_vs_tau_row(axes[1], models, season_tau_maps['JJA'], season_b_maps['JJA'],
                         jra55_point=season_jra55_points['JJA'], title_suffix=title_suffix,
-                        row_label='JJA')
+                        row_label='JJA', ylim=(4., 18.5))
     _draw_b_vs_tau_row(axes[2], models, season_tau_maps['DJF'], season_b_maps['DJF'],
                         jra55_point=season_jra55_points['DJF'], title_suffix=title_suffix,
-                        row_label='DJF')
+                        row_label='DJF', ylim=(4., 18.5))
 
     panel_labels = 'abcdefghi'
     for label, ax in zip(panel_labels, axes.flat):
