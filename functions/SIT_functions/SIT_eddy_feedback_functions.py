@@ -1160,6 +1160,113 @@ def b_fit_simpson_2013(eof_ds, plot_dir, season_month_dict, use_div1_proj, lag_m
 
     return b_dataset
 
+def exponential_decay(lag, tau):
+    return np.exp(-lag/tau)
+
+def compute_simpson_sliding_tau(eof_ds, plot_dir, season_month_dict, lag_len):
+    """
+    Season-boundary-respecting tau: least-squares fit of exp(-lag/tau) to the wind
+    PC's own lagged autocorrelation, built on the same (season-restricted index,
+    continuous displaced) construction as b_fit_simpson_2013's/eof_plots's
+    lag_method='simpson_sliding' path (see /home/links/ct715/.claude/plans/wobbly-prancing-giraffe.md).
+
+    This targets the same SIT relaxation timescale (du/dt = F - u/tau) as tau_fit_3
+    (power_spectrum_analysis), which gets it from the cospectrum computed over a
+    segment length that straddles year/season boundaries for anything but 'all_time'.
+    This instead only ever compares a season-restricted day against a continuous
+    (real, boundary-respecting) displaced day, for every lag.
+
+    A wind-vs-eddy-forcing (div1_QG) cross-correlation peak-lag was also tried as a
+    second, independent tau estimate, but dropped: the raw correlation decays
+    monotonically from lag 0 with no genuine secondary peak in this data (dominated
+    by instantaneous synoptic-scale coupling), so "peak lag" just returned the edge
+    of whatever search window was used - not a real signal.
+
+    tau_autocorr_efold is computed for both the wind PC (ucomp) and the eddy forcing (div1_QG).
+    The wind PC e-fold and tau_fit_3 (cospectral phase fit) both estimate tau under the same
+    assumed LH01 linear relaxation ODE (du/dt = F - u/tau); agreement between them indicates
+    estimator robustness across the Fourier vs. time domain, not independent validation of the
+    LH01 assumption itself, since both presuppose it.
+    The forcing e-fold instead tests the LH01 precondition directly: LH01 assumes the forcing F
+    is approximately white (short memory) relative to the wind's relaxation timescale. If
+    div1_QG's e-fold is short relative to ucomp's, that's consistent with the model's assumption;
+    if the forcing itself has slow structure of comparable timescale, the assumption is
+    questionable and the scalar-tau framing may not be well justified for that season/hemisphere.
+    """
+    tau_dataset = xar.Dataset()
+    tau_dataset.coords['lag'] = np.arange(-lag_len, lag_len + 1)
+
+    va_str_dict = {True: '_va', False: ''}
+    season_list = list(season_month_dict.keys())
+    all_time_season_list = season_list + ['all_time']
+
+    ntime = eof_ds.coords['time'].shape[0]
+
+    def season_restricted(pc_var_name, time_frame):
+        if time_frame == 'all_time':
+            return eof_ds[pc_var_name][0, ...].squeeze().values
+        where_hem = np.where(eof_ds['time'].dt.month.isin(season_month_dict[time_frame]))[0]
+        arr = np.zeros(ntime) + np.nan
+        arr[where_hem] = eof_ds[pc_var_name][0, :].values
+        return arr
+
+    def continuous(pc_var_name, time_frame):
+        if time_frame == 'all_time':
+            return eof_ds[pc_var_name][0, ...].squeeze().values
+        return eof_ds[f'{pc_var_name}_continuous'][0, ...].squeeze().values
+
+    for hemisphere in ['n', 's']:
+        for use_va in [True, False]:
+            va_str = va_str_dict[use_va]
+            ucomp_proj_stem = f'ucomp{va_str}_PCs_from_ucomp{va_str}_{hemisphere}'
+            # Matches b_fit_simpson_2013's use_div1_proj=True branch (line 1081):
+            # div1_name = f'{var_to_analyse}{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_{time_frame}',
+            # var_to_analyse='div1_QG' only (not _123/_gt3), matching the existing tau CSV.
+            div1_proj_stem = f'div1_QG{va_str}_PCs_from_ucomp{va_str}_{hemisphere}'
+
+            for time_frame in all_time_season_list:
+                ucomp_name = f'{ucomp_proj_stem}_{time_frame}'
+                div1_name = f'{div1_proj_stem}_{time_frame}'
+
+                ucomp_index = season_restricted(ucomp_name, time_frame)
+                ucomp_displaced = continuous(ucomp_name, time_frame)
+
+                div1_index = season_restricted(div1_name, time_frame)
+                div1_displaced = continuous(div1_name, time_frame)
+
+                autocorr, lags = cross_correlation(ucomp_index, ucomp_displaced, lag_len)
+                div1_autocorr, _ = cross_correlation(div1_index, div1_displaced, lag_len)
+
+                autocorr = np.asarray(autocorr)
+                div1_autocorr = np.asarray(div1_autocorr)
+                lags = np.asarray(lags)
+
+                fwd = lags >= 0
+                lags_fwd = lags[fwd]
+
+                autocorr_fwd = autocorr[fwd]
+                finite_auto = np.isfinite(autocorr_fwd)
+                tau_autocorr, _ = scipyo.curve_fit(
+                    exponential_decay, lags_fwd[finite_auto], autocorr_fwd[finite_auto],
+                    p0=[5.0], bounds=(0, np.inf))
+
+                div1_autocorr_fwd = div1_autocorr[fwd]
+                finite_div1_auto = np.isfinite(div1_autocorr_fwd)
+                tau_div1_autocorr, _ = scipyo.curve_fit(
+                    exponential_decay, lags_fwd[finite_div1_auto], div1_autocorr_fwd[finite_div1_auto],
+                    p0=[5.0], bounds=(0, np.inf))
+
+                suffix = f'{hemisphere}_{time_frame}'
+                tau_dataset[f'ucomp{va_str}_autocorr_{suffix}'] = (('lag',), autocorr)
+                tau_dataset[f'ucomp{va_str}_tau_autocorr_efold_{suffix}'] = float(tau_autocorr[0])
+                tau_dataset[f'div1_QG{va_str}_autocorr_{suffix}'] = (('lag',), div1_autocorr)
+                tau_dataset[f'div1_QG{va_str}_tau_autocorr_efold_{suffix}'] = float(tau_div1_autocorr[0])
+
+    tau_dataset.to_netcdf(f'{plot_dir}/tau_simpson_sliding.nc')
+    tau_dataset.close()
+
+    return xar.open_dataset(f'{plot_dir}/tau_simpson_sliding.nc')
+
 def daily_average(dataset, output_file, force_day_av_recalculate, monthly_too=False, monthly_output_file=None):
     '''This function takes a daily average of the entire dataset, including
     variables we read in at the start. This is somewhat inefficient, as we'll

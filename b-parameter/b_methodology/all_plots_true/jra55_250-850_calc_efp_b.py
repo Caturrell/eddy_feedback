@@ -43,6 +43,8 @@ if exp_type in ['jra55', 'jra55_850']:
     base_dir_6hourly = '/disca/share/sit204/jra_55/1958_2016_6hourly_data_efp/full_6hourly_snapshots'
     # Overridden (rather than = exp_type) so this Simpson-method comparison run writes to its own
     # output tree, separate from the existing 'jra55_850' baseline outputs - exp_type itself stays
+    
+    
     # unchanged since it also drives the data-loading branches above/below.
     exp_name = 'jra_simpson_lag'
 
@@ -84,6 +86,11 @@ do_eof_plots = True
 do_power_spectrum = True
 do_autocorrelation_plots = True
 do_crosscorrelation_plots = True
+# Season-boundary-respecting tau: autocorrelation e-fold for both the wind PC (ucomp)
+# and the eddy forcing (div1_QG), built on the same continuous-displaced construction
+# as lag_method='simpson_sliding'. Only meaningful (and only run) when
+# lag_method=='simpson_sliding' - see call site below.
+do_tau_simpson_sliding = True
 
 # Simpson-style sliding-segment lag methodology vs the original method - see
 # /home/links/ct715/.claude/plans/wobbly-prancing-giraffe.md. Independent toggles.
@@ -95,8 +102,8 @@ force_ep_flux_recalculate = False
 force_efp_recalculate = False
 # Both must be True to actually (re)compute the detrended anomalies / continuous PC
 # variables the new lag_method needs, rather than silently reading stale cached .nc files.
-force_anom_recalculate = True
-force_eof_recalculate = True
+force_anom_recalculate = False
+force_eof_recalculate = False
 
 plot_dir = f'./{exp_name}_sit_plots/{start_month}_{end_month}/{level_type}/'
 
@@ -281,6 +288,9 @@ for pfull_slice_loop, level_subset_loop, pressure_weighted_loop, level_suffix in
 
     b_dataset = eff.b_fit_simpson_2013(eof_ds, eof_plot_dir, season_month_dict, use_div1_proj=True, lag_method=lag_method)
     epf.plot_b_annual_cycle(b_dataset, season_month_dict, eof_plot_dir)
+
+    if do_tau_simpson_sliding and lag_method == 'simpson_sliding':
+        tau_dataset = eff.compute_simpson_sliding_tau(eof_ds, eof_plot_dir, season_month_dict, lag_len)
 #TASKS
 
 # 6. Have subsetted EFP calculation by season, but my values don't match the published values, with mine being much lower. I think this must be the same problem that Charlie had when calculating his own EP fluxes. 

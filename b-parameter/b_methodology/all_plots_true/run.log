@@ -18088,3 +18088,1409 @@
 2026-07-19 09:55:52 - INFO - Using only 7 points for fit of tau
 2026-07-19 09:55:52 - INFO - Using only 7 points for fit of tau
 2026-07-19 09:55:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 19:50:56 - INFO - logging output to /home/links/ct715/eddy_feedback/b-parameter/b_methodology/all_plots_true/run.log
+2026-07-19 19:50:56 - INFO - reading daily average files
+2026-07-19 19:50:58 - INFO - finished reading daily average files
+2026-07-19 19:50:58 - INFO - duplicate times are NOT present - continuing
+2026-07-19 19:50:58 - INFO - attempting to read in EFP data
+2026-07-19 19:50:58 - INFO - SUCCESS
+2026-07-19 19:50:58 - INFO - plotting ep1
+2026-07-19 19:51:02 - INFO - plotting ep2
+2026-07-19 19:51:02 - INFO - plotting div1
+2026-07-19 19:51:03 - INFO - plotting div2
+2026-07-19 19:51:03 - INFO - plotting fvbarstar
+2026-07-19 19:51:03 - INFO - plotting vbarstar
+2026-07-19 19:51:04 - INFO - plotting omegabarstar
+2026-07-19 19:51:04 - INFO - plotting dudphi
+2026-07-19 19:51:05 - INFO - plotting 1oacosphi_dudphi
+2026-07-19 19:51:05 - INFO - plotting dudp
+2026-07-19 19:51:05 - INFO - plotting total_tend
+2026-07-19 19:51:06 - INFO - plotting delta_ubar_dt
+2026-07-19 19:51:06 - INFO - plotting dthdp_bar
+2026-07-19 19:51:06 - INFO - plotting inv_dthdp_bar
+2026-07-19 19:51:07 - INFO - plotting div1_QG_ucomp_n_DJF_corr
+2026-07-19 19:51:07 - INFO - plotting div1_QG_123_ucomp_n_DJF_corr
+2026-07-19 19:51:07 - INFO - plotting div1_QG_gt3_ucomp_n_DJF_corr
+2026-07-19 19:51:08 - INFO - plotting div1_QG_ucomp_s_DJF_corr
+2026-07-19 19:51:08 - INFO - plotting div1_QG_123_ucomp_s_DJF_corr
+2026-07-19 19:51:09 - INFO - plotting div1_QG_gt3_ucomp_s_DJF_corr
+2026-07-19 19:51:09 - INFO - plotting div1_QG_ucomp_n_JFM_corr
+2026-07-19 19:51:10 - INFO - plotting div1_QG_123_ucomp_n_JFM_corr
+2026-07-19 19:51:10 - INFO - plotting div1_QG_gt3_ucomp_n_JFM_corr
+2026-07-19 19:51:10 - INFO - plotting div1_QG_ucomp_s_JFM_corr
+2026-07-19 19:51:11 - INFO - plotting div1_QG_123_ucomp_s_JFM_corr
+2026-07-19 19:51:11 - INFO - plotting div1_QG_gt3_ucomp_s_JFM_corr
+2026-07-19 19:51:11 - INFO - plotting div1_QG_ucomp_n_FMA_corr
+2026-07-19 19:51:12 - INFO - plotting div1_QG_123_ucomp_n_FMA_corr
+2026-07-19 19:51:12 - INFO - plotting div1_QG_gt3_ucomp_n_FMA_corr
+2026-07-19 19:51:12 - INFO - plotting div1_QG_ucomp_s_FMA_corr
+2026-07-19 19:51:13 - INFO - plotting div1_QG_123_ucomp_s_FMA_corr
+2026-07-19 19:51:13 - INFO - plotting div1_QG_gt3_ucomp_s_FMA_corr
+2026-07-19 19:51:13 - INFO - plotting div1_QG_ucomp_n_MAM_corr
+2026-07-19 19:51:14 - INFO - plotting div1_QG_123_ucomp_n_MAM_corr
+2026-07-19 19:51:14 - INFO - plotting div1_QG_gt3_ucomp_n_MAM_corr
+2026-07-19 19:51:14 - INFO - plotting div1_QG_ucomp_s_MAM_corr
+2026-07-19 19:51:15 - INFO - plotting div1_QG_123_ucomp_s_MAM_corr
+2026-07-19 19:51:15 - INFO - plotting div1_QG_gt3_ucomp_s_MAM_corr
+2026-07-19 19:51:15 - INFO - plotting div1_QG_ucomp_n_AMJ_corr
+2026-07-19 19:51:16 - INFO - plotting div1_QG_123_ucomp_n_AMJ_corr
+2026-07-19 19:51:16 - INFO - plotting div1_QG_gt3_ucomp_n_AMJ_corr
+2026-07-19 19:51:16 - INFO - plotting div1_QG_ucomp_s_AMJ_corr
+2026-07-19 19:51:17 - INFO - plotting div1_QG_123_ucomp_s_AMJ_corr
+2026-07-19 19:51:17 - INFO - plotting div1_QG_gt3_ucomp_s_AMJ_corr
+2026-07-19 19:51:18 - INFO - plotting div1_QG_ucomp_n_MJJ_corr
+2026-07-19 19:51:18 - INFO - plotting div1_QG_123_ucomp_n_MJJ_corr
+2026-07-19 19:51:18 - INFO - plotting div1_QG_gt3_ucomp_n_MJJ_corr
+2026-07-19 19:51:19 - INFO - plotting div1_QG_ucomp_s_MJJ_corr
+2026-07-19 19:51:19 - INFO - plotting div1_QG_123_ucomp_s_MJJ_corr
+2026-07-19 19:51:19 - INFO - plotting div1_QG_gt3_ucomp_s_MJJ_corr
+2026-07-19 19:51:20 - INFO - plotting div1_QG_ucomp_n_JJA_corr
+2026-07-19 19:51:20 - INFO - plotting div1_QG_123_ucomp_n_JJA_corr
+2026-07-19 19:51:20 - INFO - plotting div1_QG_gt3_ucomp_n_JJA_corr
+2026-07-19 19:51:21 - INFO - plotting div1_QG_ucomp_s_JJA_corr
+2026-07-19 19:51:21 - INFO - plotting div1_QG_123_ucomp_s_JJA_corr
+2026-07-19 19:51:21 - INFO - plotting div1_QG_gt3_ucomp_s_JJA_corr
+2026-07-19 19:51:22 - INFO - plotting div1_QG_ucomp_n_JAS_corr
+2026-07-19 19:51:22 - INFO - plotting div1_QG_123_ucomp_n_JAS_corr
+2026-07-19 19:51:22 - INFO - plotting div1_QG_gt3_ucomp_n_JAS_corr
+2026-07-19 19:51:23 - INFO - plotting div1_QG_ucomp_s_JAS_corr
+2026-07-19 19:51:23 - INFO - plotting div1_QG_123_ucomp_s_JAS_corr
+2026-07-19 19:51:23 - INFO - plotting div1_QG_gt3_ucomp_s_JAS_corr
+2026-07-19 19:51:24 - INFO - plotting div1_QG_ucomp_n_ASO_corr
+2026-07-19 19:51:24 - INFO - plotting div1_QG_123_ucomp_n_ASO_corr
+2026-07-19 19:51:25 - INFO - plotting div1_QG_gt3_ucomp_n_ASO_corr
+2026-07-19 19:51:25 - INFO - plotting div1_QG_ucomp_s_ASO_corr
+2026-07-19 19:51:25 - INFO - plotting div1_QG_123_ucomp_s_ASO_corr
+2026-07-19 19:51:26 - INFO - plotting div1_QG_gt3_ucomp_s_ASO_corr
+2026-07-19 19:51:26 - INFO - plotting div1_QG_ucomp_n_SON_corr
+2026-07-19 19:51:26 - INFO - plotting div1_QG_123_ucomp_n_SON_corr
+2026-07-19 19:51:27 - INFO - plotting div1_QG_gt3_ucomp_n_SON_corr
+2026-07-19 19:51:27 - INFO - plotting div1_QG_ucomp_s_SON_corr
+2026-07-19 19:51:27 - INFO - plotting div1_QG_123_ucomp_s_SON_corr
+2026-07-19 19:51:27 - INFO - plotting div1_QG_gt3_ucomp_s_SON_corr
+2026-07-19 19:51:28 - INFO - plotting div1_QG_ucomp_n_OND_corr
+2026-07-19 19:51:28 - INFO - plotting div1_QG_123_ucomp_n_OND_corr
+2026-07-19 19:51:28 - INFO - plotting div1_QG_gt3_ucomp_n_OND_corr
+2026-07-19 19:51:29 - INFO - plotting div1_QG_ucomp_s_OND_corr
+2026-07-19 19:51:29 - INFO - plotting div1_QG_123_ucomp_s_OND_corr
+2026-07-19 19:51:29 - INFO - plotting div1_QG_gt3_ucomp_s_OND_corr
+2026-07-19 19:51:30 - INFO - plotting div1_QG_ucomp_n_NDJ_corr
+2026-07-19 19:51:30 - INFO - plotting div1_QG_123_ucomp_n_NDJ_corr
+2026-07-19 19:51:30 - INFO - plotting div1_QG_gt3_ucomp_n_NDJ_corr
+2026-07-19 19:51:31 - INFO - plotting div1_QG_ucomp_s_NDJ_corr
+2026-07-19 19:51:32 - INFO - plotting div1_QG_123_ucomp_s_NDJ_corr
+2026-07-19 19:51:32 - INFO - plotting div1_QG_gt3_ucomp_s_NDJ_corr
+2026-07-19 19:51:32 - INFO - plotting div1_QG_ucomp_n_all_time_corr
+2026-07-19 19:51:33 - INFO - plotting div1_QG_123_ucomp_n_all_time_corr
+2026-07-19 19:51:33 - INFO - plotting div1_QG_gt3_ucomp_n_all_time_corr
+2026-07-19 19:51:33 - INFO - plotting div1_QG_ucomp_s_all_time_corr
+2026-07-19 19:51:34 - INFO - plotting div1_QG_123_ucomp_s_all_time_corr
+2026-07-19 19:51:34 - INFO - plotting div1_QG_gt3_ucomp_s_all_time_corr
+2026-07-19 19:51:44 - INFO - attempting to read in anom data
+2026-07-19 19:51:44 - INFO - SUCCESS
+2026-07-19 19:51:44 - INFO - attempting to read in EOF data
+2026-07-19 19:51:45 - INFO - SUCCESS
+2026-07-19 19:51:45 - INFO - doing autocorrelation plots
+2026-07-19 19:51:46 - INFO - doing crosscorrelation plots
+2026-07-19 19:51:53 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:01 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:07 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:52:07 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:52:07 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:52:08 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:52:08 - INFO - making EOF va plot for ucomp
+2026-07-19 19:52:08 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:52:09 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:52:09 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:52:09 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:52:09 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:52:10 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:52:10 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:52:10 - INFO - making time-mean plot for ucomp
+2026-07-19 19:52:10 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:52:10 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:52:12 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:52:13 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:20 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:27 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:34 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:52:35 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:52:35 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:52:36 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:52:36 - INFO - making EOF va plot for ucomp
+2026-07-19 19:52:36 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:52:36 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:52:37 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:52:37 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:52:37 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:52:37 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:52:37 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:52:37 - INFO - making time-mean plot for ucomp
+2026-07-19 19:52:38 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:52:38 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:52:38 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:52:40 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:46 - INFO - doing crosscorrelation plots
+2026-07-19 19:52:53 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:01 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:53:01 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:53:02 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:53:02 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:53:03 - INFO - making EOF va plot for ucomp
+2026-07-19 19:53:03 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:53:03 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:53:03 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:53:03 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:53:04 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:53:04 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:53:04 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:53:04 - INFO - making time-mean plot for ucomp
+2026-07-19 19:53:04 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:53:04 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:53:05 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:53:06 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:13 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:20 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:28 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:53:29 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:53:29 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:53:30 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:53:30 - INFO - making EOF va plot for ucomp
+2026-07-19 19:53:30 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:53:30 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:53:31 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:53:31 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:53:31 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:53:31 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:53:31 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:53:31 - INFO - making time-mean plot for ucomp
+2026-07-19 19:53:32 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:53:32 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:53:32 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:53:33 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:40 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:47 - INFO - doing crosscorrelation plots
+2026-07-19 19:53:53 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:53:53 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:53:53 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:53:54 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:53:54 - INFO - making EOF va plot for ucomp
+2026-07-19 19:53:54 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:53:55 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:53:55 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:53:55 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:53:55 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:53:55 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:53:55 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:53:56 - INFO - making time-mean plot for ucomp
+2026-07-19 19:53:56 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:53:56 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:53:56 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:53:58 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:08 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:15 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:20 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:54:20 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:54:21 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:54:21 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:54:21 - INFO - making EOF va plot for ucomp
+2026-07-19 19:54:22 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:54:22 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:54:22 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:54:22 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:54:22 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:54:22 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:54:23 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:54:23 - INFO - making time-mean plot for ucomp
+2026-07-19 19:54:23 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:54:23 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:54:23 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:54:25 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:32 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:38 - INFO - doing crosscorrelation plots
+2026-07-19 19:54:48 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:54:48 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:54:49 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:54:49 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:54:49 - INFO - making EOF va plot for ucomp
+2026-07-19 19:54:50 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:54:50 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:54:50 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:54:50 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:54:50 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:54:50 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:54:51 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:54:51 - INFO - making time-mean plot for ucomp
+2026-07-19 19:54:51 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:54:51 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:54:51 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:54:53 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:00 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:07 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:12 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:55:13 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:55:13 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:55:13 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:55:14 - INFO - making EOF va plot for ucomp
+2026-07-19 19:55:14 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:55:14 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:55:15 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:55:15 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:55:15 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:55:15 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:55:15 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:55:16 - INFO - making time-mean plot for ucomp
+2026-07-19 19:55:16 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:55:16 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:55:16 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:55:17 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:24 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:31 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:42 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:55:42 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:55:42 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:55:43 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:55:43 - INFO - making EOF va plot for ucomp
+2026-07-19 19:55:43 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:55:43 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:55:44 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:55:44 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:55:44 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:55:44 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:55:45 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:55:45 - INFO - making time-mean plot for ucomp
+2026-07-19 19:55:45 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:55:45 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:55:45 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:55:47 - INFO - doing crosscorrelation plots
+2026-07-19 19:55:53 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:01 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:06 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:56:06 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:56:07 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:56:07 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:56:08 - INFO - making EOF va plot for ucomp
+2026-07-19 19:56:08 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:56:08 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:56:08 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:56:08 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:56:08 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:56:09 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:56:09 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:56:09 - INFO - making time-mean plot for ucomp
+2026-07-19 19:56:09 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:56:09 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:56:09 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:56:11 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:18 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:25 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:30 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:56:31 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:56:31 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:56:31 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:56:32 - INFO - making EOF va plot for ucomp
+2026-07-19 19:56:32 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:56:32 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:56:32 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:56:32 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:56:33 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:56:33 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:56:33 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:56:33 - INFO - making time-mean plot for ucomp
+2026-07-19 19:56:33 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:56:33 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:56:33 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:56:35 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:48 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:54 - INFO - doing crosscorrelation plots
+2026-07-19 19:56:59 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:56:59 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:56:59 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:57:00 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:57:00 - INFO - making EOF va plot for ucomp
+2026-07-19 19:57:00 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:57:00 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:57:01 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:57:01 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:57:01 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:57:01 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:57:01 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:57:01 - INFO - making time-mean plot for ucomp
+2026-07-19 19:57:02 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:57:02 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:57:02 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:57:03 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:10 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:16 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:21 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:57:22 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:57:22 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:57:23 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:57:23 - INFO - making EOF va plot for ucomp
+2026-07-19 19:57:23 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:57:23 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:57:23 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:57:24 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:57:24 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:57:24 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:57:24 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:57:24 - INFO - making time-mean plot for ucomp
+2026-07-19 19:57:24 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:57:25 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:57:25 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:57:26 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:33 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:40 - INFO - doing crosscorrelation plots
+2026-07-19 19:57:45 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:57:45 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:57:46 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:57:46 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:57:46 - INFO - making EOF va plot for ucomp
+2026-07-19 19:57:47 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:57:47 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:57:47 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:57:47 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:57:47 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:57:47 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:57:48 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:57:48 - INFO - making time-mean plot for ucomp
+2026-07-19 19:57:48 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:57:48 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:57:48 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:57:58 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:04 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:10 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:15 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:58:15 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:58:16 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:58:16 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:58:16 - INFO - making EOF va plot for ucomp
+2026-07-19 19:58:17 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:58:17 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:58:17 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:58:17 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:58:17 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:58:17 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:58:18 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:58:18 - INFO - making time-mean plot for ucomp
+2026-07-19 19:58:18 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:58:18 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:58:18 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:58:20 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:26 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:32 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:37 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:58:37 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:58:37 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:58:38 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:58:38 - INFO - making EOF va plot for ucomp
+2026-07-19 19:58:38 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:58:38 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:58:38 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:58:39 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:58:39 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:58:39 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:58:39 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:58:39 - INFO - making time-mean plot for ucomp
+2026-07-19 19:58:40 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:58:40 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:58:40 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:58:41 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:47 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:54 - INFO - doing crosscorrelation plots
+2026-07-19 19:58:59 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:59:00 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:59:00 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:59:00 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:59:01 - INFO - making EOF va plot for ucomp
+2026-07-19 19:59:01 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:59:01 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:59:01 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:59:01 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:59:02 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:59:02 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:59:02 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:59:02 - INFO - making time-mean plot for ucomp
+2026-07-19 19:59:02 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:59:02 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:59:02 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:59:04 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:10 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:16 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:31 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:59:31 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:59:32 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:59:32 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:59:32 - INFO - making EOF va plot for ucomp
+2026-07-19 19:59:32 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:59:33 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:59:33 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:59:33 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:59:33 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:59:33 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:59:33 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:59:34 - INFO - making time-mean plot for ucomp
+2026-07-19 19:59:34 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:59:34 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:59:34 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 19:59:36 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:42 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:49 - INFO - doing crosscorrelation plots
+2026-07-19 19:59:55 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 19:59:55 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 19:59:56 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 19:59:56 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 19:59:56 - INFO - making EOF va plot for ucomp
+2026-07-19 19:59:57 - INFO - making EOF va plot for div1_QG
+2026-07-19 19:59:57 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 19:59:57 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 19:59:57 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 19:59:57 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 19:59:57 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 19:59:58 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 19:59:58 - INFO - making time-mean plot for ucomp
+2026-07-19 19:59:58 - INFO - making time-mean plot for div1_QG
+2026-07-19 19:59:58 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 19:59:58 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:00:00 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:07 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:13 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:19 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:00:19 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:00:20 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:00:20 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:00:20 - INFO - making EOF va plot for ucomp
+2026-07-19 20:00:21 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:00:21 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:00:21 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:00:21 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:00:21 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:00:22 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:00:22 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:00:22 - INFO - making time-mean plot for ucomp
+2026-07-19 20:00:22 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:00:22 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:00:22 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:00:24 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:31 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:37 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:43 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:00:43 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:00:44 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:00:44 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:00:44 - INFO - making EOF va plot for ucomp
+2026-07-19 20:00:45 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:00:45 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:00:45 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:00:45 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:00:45 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:00:45 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:00:46 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:00:46 - INFO - making time-mean plot for ucomp
+2026-07-19 20:00:46 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:00:46 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:00:46 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:00:48 - INFO - doing crosscorrelation plots
+2026-07-19 20:00:54 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:01 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:06 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:01:06 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:01:07 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:01:07 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:01:08 - INFO - making EOF va plot for ucomp
+2026-07-19 20:01:08 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:01:08 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:01:20 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:01:20 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:01:21 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:01:21 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:01:21 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:01:21 - INFO - making time-mean plot for ucomp
+2026-07-19 20:01:21 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:01:21 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:01:21 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:01:23 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:29 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:35 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:40 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:01:40 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:01:41 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:01:41 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:01:41 - INFO - making EOF va plot for ucomp
+2026-07-19 20:01:42 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:01:42 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:01:42 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:01:42 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:01:42 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:01:42 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:01:43 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:01:43 - INFO - making time-mean plot for ucomp
+2026-07-19 20:01:43 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:01:43 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:01:43 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:01:45 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:01:57 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:02 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:02:03 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:02:03 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:02:04 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:02:04 - INFO - making EOF va plot for ucomp
+2026-07-19 20:02:05 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:02:05 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:02:05 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:02:05 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:02:05 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:02:05 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:02:06 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:02:06 - INFO - making time-mean plot for ucomp
+2026-07-19 20:02:06 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:02:06 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:02:06 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:02:08 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:15 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:22 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:27 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:02:27 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:02:28 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:02:28 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:02:29 - INFO - making EOF va plot for ucomp
+2026-07-19 20:02:29 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:02:29 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:02:29 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:02:29 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:02:30 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:02:30 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:02:30 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:02:30 - INFO - making time-mean plot for ucomp
+2026-07-19 20:02:30 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:02:30 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:02:31 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:02:32 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:39 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:46 - INFO - doing crosscorrelation plots
+2026-07-19 20:02:52 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:02:53 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:02:53 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:02:54 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:02:54 - INFO - making EOF va plot for ucomp
+2026-07-19 20:02:54 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:02:55 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:02:55 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:02:55 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:02:55 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:02:55 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:02:55 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:02:56 - INFO - making time-mean plot for ucomp
+2026-07-19 20:02:56 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:02:56 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:02:56 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:03:05 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:06 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:06 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:07 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:09 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:09 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:11 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:14 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:17 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:20 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:23 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:24 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:24 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:40 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:42 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:42 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:44 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:44 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:46 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:46 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:49 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:51 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:54 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:55 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:58 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:58 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:03:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:01 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:03 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:04 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:04 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:05 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:06 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:06 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:07 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:09 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:11 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:14 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:17 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:20 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:23 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:23 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:24 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:25 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:26 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:26 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:27 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:28 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:29 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:29 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:30 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:31 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:31 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:32 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:33 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:33 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:34 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:35 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:36 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:36 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:37 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:40 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:40 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:42 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:44 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:46 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:49 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:51 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:54 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:54 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:55 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:58 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:04:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:01 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:03 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:05:59 - INFO - attempting to read in EOF data
+2026-07-19 20:06:00 - INFO - SUCCESS
+2026-07-19 20:06:00 - INFO - doing autocorrelation plots
+2026-07-19 20:06:01 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:08 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:15 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:20 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:06:21 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:06:21 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:06:22 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:06:22 - INFO - making EOF va plot for ucomp
+2026-07-19 20:06:22 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:06:22 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:06:23 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:06:23 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:06:23 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:06:23 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:06:23 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:06:23 - INFO - making time-mean plot for ucomp
+2026-07-19 20:06:24 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:06:40 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:06:41 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:06:42 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:48 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:54 - INFO - doing crosscorrelation plots
+2026-07-19 20:06:59 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:06:59 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:07:00 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:07:00 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:07:00 - INFO - making EOF va plot for ucomp
+2026-07-19 20:07:00 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:07:00 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:07:01 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:07:01 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:07:01 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:07:01 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:07:01 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:07:01 - INFO - making time-mean plot for ucomp
+2026-07-19 20:07:01 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:07:01 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:07:02 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:07:03 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:10 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:16 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:22 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:07:22 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:07:22 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:07:23 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:07:23 - INFO - making EOF va plot for ucomp
+2026-07-19 20:07:23 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:07:23 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:07:24 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:07:24 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:07:24 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:07:24 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:07:24 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:07:24 - INFO - making time-mean plot for ucomp
+2026-07-19 20:07:25 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:07:25 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:07:25 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:07:27 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:34 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:41 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:46 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:07:46 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:07:47 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:07:47 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:07:47 - INFO - making EOF va plot for ucomp
+2026-07-19 20:07:47 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:07:48 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:07:48 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:07:48 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:07:48 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:07:48 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:07:49 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:07:49 - INFO - making time-mean plot for ucomp
+2026-07-19 20:07:49 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:07:49 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:07:49 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:07:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:07:57 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:05 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:12 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:08:12 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:08:12 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:08:13 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:08:13 - INFO - making EOF va plot for ucomp
+2026-07-19 20:08:13 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:08:14 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:08:14 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:08:14 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:08:14 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:08:14 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:08:14 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:08:15 - INFO - making time-mean plot for ucomp
+2026-07-19 20:08:15 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:08:15 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:08:15 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:08:17 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:24 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:30 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:36 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:08:36 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:08:37 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:08:37 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:08:37 - INFO - making EOF va plot for ucomp
+2026-07-19 20:08:37 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:08:38 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:08:38 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:08:38 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:08:38 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:08:38 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:08:39 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:08:39 - INFO - making time-mean plot for ucomp
+2026-07-19 20:08:39 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:08:39 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:08:39 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:08:41 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:50 - INFO - doing crosscorrelation plots
+2026-07-19 20:08:57 - INFO - doing crosscorrelation plots
+2026-07-19 20:09:03 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:09:03 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:09:03 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:09:04 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:09:04 - INFO - making EOF va plot for ucomp
+2026-07-19 20:09:04 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:09:05 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:09:05 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:09:05 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:09:05 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:09:05 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:09:06 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:09:06 - INFO - making time-mean plot for ucomp
+2026-07-19 20:09:06 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:09:06 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:09:06 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:09:08 - INFO - doing crosscorrelation plots
+2026-07-19 20:09:14 - INFO - doing crosscorrelation plots
+2026-07-19 20:09:21 - INFO - doing crosscorrelation plots
+2026-07-19 20:09:28 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:09:28 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:09:28 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:09:29 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:09:29 - INFO - making EOF va plot for ucomp
+2026-07-19 20:09:29 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:09:30 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:09:30 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:09:30 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:09:30 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:09:31 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:09:31 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:09:31 - INFO - making time-mean plot for ucomp
+2026-07-19 20:09:31 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:09:31 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:09:31 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:09:33 - INFO - doing crosscorrelation plots
+2026-07-19 20:09:40 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:09 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:14 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:10:15 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:10:15 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:10:16 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:10:16 - INFO - making EOF va plot for ucomp
+2026-07-19 20:10:16 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:10:16 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:10:16 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:10:17 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:10:17 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:10:17 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:10:17 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:10:17 - INFO - making time-mean plot for ucomp
+2026-07-19 20:10:17 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:10:18 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:10:18 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:10:19 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:26 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:33 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:39 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:10:39 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:10:40 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:10:40 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:10:40 - INFO - making EOF va plot for ucomp
+2026-07-19 20:10:41 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:10:41 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:10:41 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:10:41 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:10:41 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:10:42 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:10:42 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:10:42 - INFO - making time-mean plot for ucomp
+2026-07-19 20:10:42 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:10:42 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:10:42 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:10:44 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:10:58 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:04 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:11:04 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:11:05 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:11:05 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:11:05 - INFO - making EOF va plot for ucomp
+2026-07-19 20:11:05 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:11:06 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:11:06 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:11:06 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:11:06 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:11:06 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:11:07 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:11:07 - INFO - making time-mean plot for ucomp
+2026-07-19 20:11:07 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:11:07 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:11:07 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:11:09 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:16 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:23 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:29 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:11:30 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:11:30 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:11:31 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:11:31 - INFO - making EOF va plot for ucomp
+2026-07-19 20:11:31 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:11:32 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:11:32 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:11:32 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:11:32 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:11:32 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:11:33 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:11:33 - INFO - making time-mean plot for ucomp
+2026-07-19 20:11:33 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:11:33 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:11:33 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:11:35 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:42 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:50 - INFO - doing crosscorrelation plots
+2026-07-19 20:11:56 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:11:56 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:11:57 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:11:57 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:11:57 - INFO - making EOF va plot for ucomp
+2026-07-19 20:11:58 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:11:58 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:11:58 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:11:58 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:11:58 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:11:59 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:11:59 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:11:59 - INFO - making time-mean plot for ucomp
+2026-07-19 20:11:59 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:11:59 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:11:59 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:12:01 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:09 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:17 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:23 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:12:23 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:12:23 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:12:24 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:12:24 - INFO - making EOF va plot for ucomp
+2026-07-19 20:12:24 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:12:24 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:12:25 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:12:25 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:12:25 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:12:25 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:12:25 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:12:26 - INFO - making time-mean plot for ucomp
+2026-07-19 20:12:26 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:12:26 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:12:26 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:12:28 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:35 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:42 - INFO - doing crosscorrelation plots
+2026-07-19 20:12:48 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:12:48 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:12:49 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:12:49 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:12:50 - INFO - making EOF va plot for ucomp
+2026-07-19 20:12:50 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:12:50 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:12:50 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:12:51 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:12:51 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:12:51 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:12:51 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:12:51 - INFO - making time-mean plot for ucomp
+2026-07-19 20:12:52 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:12:52 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:12:52 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:12:53 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:01 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:08 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:14 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:13:14 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:13:14 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:13:15 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:13:15 - INFO - making EOF va plot for ucomp
+2026-07-19 20:13:16 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:13:16 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:13:16 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:13:16 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:13:16 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:13:16 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:13:17 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:13:17 - INFO - making time-mean plot for ucomp
+2026-07-19 20:13:17 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:13:17 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:13:17 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:13:19 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:25 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:33 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:39 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:13:39 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:13:39 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:13:40 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:13:40 - INFO - making EOF va plot for ucomp
+2026-07-19 20:13:40 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:13:41 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:13:41 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:13:41 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:13:41 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:13:41 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:13:42 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:13:42 - INFO - making time-mean plot for ucomp
+2026-07-19 20:13:42 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:13:42 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:13:42 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:13:44 - INFO - doing crosscorrelation plots
+2026-07-19 20:13:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:14:23 - INFO - doing crosscorrelation plots
+2026-07-19 20:14:28 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:14:29 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:14:29 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:14:29 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:14:30 - INFO - making EOF va plot for ucomp
+2026-07-19 20:14:30 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:14:30 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:14:30 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:14:31 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:14:31 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:14:31 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:14:31 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:14:31 - INFO - making time-mean plot for ucomp
+2026-07-19 20:14:31 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:14:31 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:14:32 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:14:33 - INFO - doing crosscorrelation plots
+2026-07-19 20:14:40 - INFO - doing crosscorrelation plots
+2026-07-19 20:14:47 - INFO - doing crosscorrelation plots
+2026-07-19 20:14:52 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:14:53 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:14:53 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:14:54 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:14:54 - INFO - making EOF va plot for ucomp
+2026-07-19 20:14:54 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:14:54 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:14:54 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:14:55 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:14:55 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:14:55 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:14:56 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:14:56 - INFO - making time-mean plot for ucomp
+2026-07-19 20:14:56 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:14:56 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:14:56 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:14:58 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:05 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:12 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:19 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:15:19 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:15:19 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:15:20 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:15:20 - INFO - making EOF va plot for ucomp
+2026-07-19 20:15:20 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:15:20 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:15:21 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:15:21 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:15:21 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:15:21 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:15:22 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:15:22 - INFO - making time-mean plot for ucomp
+2026-07-19 20:15:22 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:15:22 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:15:22 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:15:24 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:32 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:40 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:47 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:15:47 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:15:47 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:15:48 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:15:48 - INFO - making EOF va plot for ucomp
+2026-07-19 20:15:48 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:15:49 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:15:49 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:15:49 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:15:49 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:15:49 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:15:50 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:15:50 - INFO - making time-mean plot for ucomp
+2026-07-19 20:15:50 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:15:50 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:15:51 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:15:52 - INFO - doing crosscorrelation plots
+2026-07-19 20:15:59 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:07 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:13 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:16:13 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:16:14 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:16:14 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:16:14 - INFO - making EOF va plot for ucomp
+2026-07-19 20:16:14 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:16:15 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:16:15 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:16:15 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:16:15 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:16:16 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:16:16 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:16:16 - INFO - making time-mean plot for ucomp
+2026-07-19 20:16:16 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:16:17 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:16:17 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:16:19 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:27 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:34 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:39 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:16:39 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:16:40 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:16:40 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:16:41 - INFO - making EOF va plot for ucomp
+2026-07-19 20:16:41 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:16:41 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:16:41 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:16:41 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:16:42 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:16:42 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:16:42 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:16:42 - INFO - making time-mean plot for ucomp
+2026-07-19 20:16:42 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:16:42 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:16:42 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:16:44 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:16:58 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:03 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:17:04 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:17:05 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:17:05 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:17:05 - INFO - making EOF va plot for ucomp
+2026-07-19 20:17:06 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:17:06 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:17:06 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:17:06 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:17:07 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:17:07 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:17:07 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:17:07 - INFO - making time-mean plot for ucomp
+2026-07-19 20:17:07 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:17:07 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:17:08 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:17:09 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:16 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:23 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:29 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:17:29 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:17:30 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:17:30 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:17:31 - INFO - making EOF va plot for ucomp
+2026-07-19 20:17:31 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:17:31 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:17:31 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:17:32 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:17:32 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:17:32 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:17:32 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:17:32 - INFO - making time-mean plot for ucomp
+2026-07-19 20:17:32 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:17:33 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:17:33 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:17:34 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:43 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:51 - INFO - doing crosscorrelation plots
+2026-07-19 20:17:57 - INFO - making EOF lat-pres plot for ucomp
+2026-07-19 20:17:58 - INFO - making EOF lat-pres plot for div1_QG
+2026-07-19 20:17:58 - INFO - making EOF lat-pres plot for div1_QG_123
+2026-07-19 20:17:58 - INFO - making EOF lat-pres plot for div1_QG_gt3
+2026-07-19 20:17:59 - INFO - making EOF va plot for ucomp
+2026-07-19 20:17:59 - INFO - making EOF va plot for div1_QG
+2026-07-19 20:17:59 - INFO - making EOF va plot for div1_QG_123
+2026-07-19 20:18:00 - INFO - making EOF va plot for div1_QG_gt3
+2026-07-19 20:18:00 - INFO - making EOF 500hPa plot for ucomp
+2026-07-19 20:18:00 - INFO - making EOF 500hPa plot for div1_QG
+2026-07-19 20:18:00 - INFO - making EOF 500hPa plot for div1_QG_123
+2026-07-19 20:18:00 - INFO - making EOF 500hPa plot for div1_QG_gt3
+2026-07-19 20:18:01 - INFO - making time-mean plot for ucomp
+2026-07-19 20:18:01 - INFO - making time-mean plot for div1_QG
+2026-07-19 20:18:01 - INFO - making time-mean plot for div1_QG_123
+2026-07-19 20:18:01 - INFO - making time-mean plot for div1_QG_gt3
+2026-07-19 20:18:11 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:11 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:14 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:14 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:17 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:17 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:20 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:21 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:23 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:24 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:25 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:25 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:26 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:27 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:27 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:28 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:28 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:29 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:30 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:30 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:31 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:32 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:32 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:33 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:33 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:34 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:35 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:36 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:36 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:37 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:37 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:40 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:42 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:44 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:46 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:49 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:51 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:51 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:54 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:55 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:58 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:18:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:01 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:40 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:41 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:42 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:43 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:44 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:45 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:46 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:47 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:48 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:49 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:50 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:51 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:52 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:53 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:54 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:55 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:56 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:57 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:58 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:19:59 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:00 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:01 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:02 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:03 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:04 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:05 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:05 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:06 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:07 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:08 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:09 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:10 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:11 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:12 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:13 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:14 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:15 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:16 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:17 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:18 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:19 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:20 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:22 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:23 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:24 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:25 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:26 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:26 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:27 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:28 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:29 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:30 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:31 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:31 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:32 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:33 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:34 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:34 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:35 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:36 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:37 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:38 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:39 - INFO - Using only 7 points for fit of tau
+2026-07-19 20:20:40 - INFO - Using only 7 points for fit of tau
