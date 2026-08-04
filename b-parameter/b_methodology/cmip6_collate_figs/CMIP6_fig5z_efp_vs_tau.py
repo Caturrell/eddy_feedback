@@ -29,16 +29,16 @@ Cumulative outlier-exclusion sets (see CMIP6_fig5_tau_bar.py for why):
   - remove_outlier: EC-Earth3-CC excluded (27 models)
   - remove_fgoals: EC-Earth3-CC AND FGOALS-f3-L excluded (26 models)
 
-Output layout under plots/fig6_efp_vs_tau/:
+Output layout under plots/fig5z_efp_vs_tau/:
   - JJA/ and DJF/ (each with remove_outlier/ and remove_fgoals/ subfolders):
     a single-row tau bar chart (with JRA55 reference line) and EFP-vs-tau
     scatter panels (main / stacked) for that season.
-  - directly in fig6_efp_vs_tau/ (and its own remove_outlier/, remove_fgoals/):
-    CMIP6_fig6_tau_bar_jja_djf.png (single-panel grouped bar chart, two bars
+  - directly in fig5z_efp_vs_tau/ (and its own remove_outlier/, remove_fgoals/):
+    CMIP6_fig5z_tau_bar_jja_djf.png (single-panel grouped bar chart, two bars
     per model/mean, one colour per season, JRA55 drawn as two matching
-    reference lines) and CMIP6_fig6_efp_vs_tau_jja_djf.png (two scatter rows,
+    reference lines) and CMIP6_fig5z_efp_vs_tau_jja_djf.png (two scatter rows,
     JJA above DJF, each sharing its row's tau axis, panels labelled (a)-(f)).
-  - CMIP6_fig6_efp_vs_tau_correlations.csv: Pearson r/p for every
+  - CMIP6_fig5z_efp_vs_tau_correlations.csv: Pearson r/p for every
     (season x variant x model-exclusion set) combination.
 
 Tau source data: b-parameter/b_methodology/all_plots_true/250-500-850hPa_dm/
@@ -224,7 +224,7 @@ for season in SEASONS:
 
 plot_dir = os.path.join(script_dir, 'plots')
 os.makedirs(plot_dir, exist_ok=True)
-subplot_dir = os.path.join(plot_dir, 'fig6_efp_vs_tau')
+subplot_dir = os.path.join(plot_dir, 'fig5z_efp_vs_tau')
 os.makedirs(subplot_dir, exist_ok=True)
 outlier_dirs = {}
 for _tag, _ in OUTLIER_SETS:
@@ -403,26 +403,26 @@ for season in SEASONS:
     season_scatter_models = scatter_models[season]
 
     _plot_tau_bar(used_models, tau_map, jra55_tau, season,
-                  os.path.join(season_dir, 'CMIP6_fig6_tau_bar.png'))
-    _plot_efp_vs_tau(season_scatter_models, os.path.join(season_dir, 'CMIP6_fig6_efp_vs_tau.png'),
+                  os.path.join(season_dir, 'CMIP6_fig5z_tau_bar.png'))
+    _plot_efp_vs_tau(season_scatter_models, os.path.join(season_dir, 'CMIP6_fig5z_efp_vs_tau.png'),
                       tau_map, efp_map, jra55_point=jra55_point)
 
     for tag, outlier_models in OUTLIER_SETS:
         _plot_tau_bar(
             [model for model in used_models if model not in outlier_models],
             tau_map, jra55_tau, season,
-            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig6_tau_bar.png'),
+            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig5z_tau_bar.png'),
             title_suffix=_excluded_suffix(outlier_models)
         )
         _plot_efp_vs_tau(
             [model for model in season_scatter_models if model not in outlier_models],
-            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig6_efp_vs_tau.png'),
+            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig5z_efp_vs_tau.png'),
             tau_map, efp_map, jra55_point=jra55_point,
             title_suffix=_excluded_suffix(outlier_models)
         )
         _plot_efp_vs_tau_stacked(
             season_scatter_models, outlier_models,
-            os.path.join(season_dir, f'CMIP6_fig6_efp_vs_tau_stacked{_stacked_suffix(tag)}.png'),
+            os.path.join(season_dir, f'CMIP6_fig5z_efp_vs_tau_stacked{_stacked_suffix(tag)}.png'),
             tau_map, efp_map, jra55_point=jra55_point
         )
 
@@ -475,12 +475,12 @@ def _plot_tau_bar_jja_djf_grouped(models, out_file, title_suffix=''):
 
 
 _plot_tau_bar_jja_djf_grouped(
-    used_models, os.path.join(subplot_dir, 'CMIP6_fig6_tau_bar_jja_djf.png')
+    used_models, os.path.join(subplot_dir, 'CMIP6_fig5z_tau_bar_jja_djf.png')
 )
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_tau_bar_jja_djf_grouped(
         [model for model in used_models if model not in _outlier_models],
-        os.path.join(outlier_dirs[_tag], 'CMIP6_fig6_tau_bar_jja_djf.png'),
+        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5z_tau_bar_jja_djf.png'),
         title_suffix=_excluded_suffix(_outlier_models)
     )
 
@@ -521,12 +521,12 @@ def _plot_efp_vs_tau_jja_djf_stacked(models, out_file, title_suffix=''):
 
 
 _plot_efp_vs_tau_jja_djf_stacked(
-    all_seasons_scatter_models, os.path.join(subplot_dir, 'CMIP6_fig6_efp_vs_tau_jja_djf.png')
+    all_seasons_scatter_models, os.path.join(subplot_dir, 'CMIP6_fig5z_efp_vs_tau_jja_djf.png')
 )
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_efp_vs_tau_jja_djf_stacked(
         [model for model in all_seasons_scatter_models if model not in _outlier_models],
-        os.path.join(outlier_dirs[_tag], 'CMIP6_fig6_efp_vs_tau_jja_djf.png'),
+        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5z_efp_vs_tau_jja_djf.png'),
         title_suffix=_excluded_suffix(_outlier_models)
     )
 
@@ -548,7 +548,7 @@ for season in SEASONS:
             r, p = stats.pearsonr(x, y)
             corr_rows.append((season, variant_key, excluded_label, len(set_models), r, p))
 
-corr_csv_file = os.path.join(subplot_dir, 'CMIP6_fig6_efp_vs_tau_correlations.csv')
+corr_csv_file = os.path.join(subplot_dir, 'CMIP6_fig5z_efp_vs_tau_correlations.csv')
 with open(corr_csv_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['season', 'variant', 'excluded_models', 'n', 'r', 'p'])
