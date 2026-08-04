@@ -1,64 +1,53 @@
 """
-Vertical bar chart of the phase-difference tau fit (tau_fit_3) for each
-CMIP6 model, plus a black reference line for JRA55's tau value. A black bar
-for the multi-model mean is added after the last (alphabetically) model.
+Companion to CMIP6_fig5_tau_bar.py: identical design (per-time-frame tau bar
+charts, b-vs-tau scatter panels for three spatial/wavenumber scales, JRA55
+reference, cumulative outlier-exclusion sets, all-time/JJA/DJF comparison
+figures, Pearson r/p summary CSV) but uses the "native" wind variant
+throughout instead of "va" (vertically-averaged 250/500/850hPa ucomp).
 
-Also scatters the all-time b-parameter (Simpson et al. 2013 lag-regression
-method, southern hemisphere, vertically averaged over 250/500/850hPa)
-against tau for each model, for three spatial (wavenumber) scales: full
-spectrum, wavenumbers 1-3, and wavenumbers >3. JRA55 is marked with a black
-cross on each scatter panel, but is excluded from the regression line and
-Pearson r/p annotation (those are CMIP6-models-only).
+JRA55 native tau is available (jra55_tau_fit_3.csv has wind_variant=native
+rows for all_time/JJA/DJF). JRA55 native b comes from
+b-parameter/cmip6_b/efp_vs_b/jra55_b_native.csv (same row schema as the va
+files -- model,variant,hemisphere,season,b -- but a single file covering
+both all_time and the 12 rolling seasons, unlike the va split across
+jra55_b_all_time.csv / jra55_b_annual_cycle.csv). If that file is ever
+missing, JRA55 is omitted from every b-vs-tau scatter panel (crosses,
+regression exclusion, and legend entry all skip it) but still appears as a
+reference line on the tau bar charts, since native tau is available.
 
 Models are sorted alphabetically (matching the model legend in
-CMIP6_fig1_cospec_coher_pdiff.py) and use the same turbo colormap colours
-throughout.
+CMIP6_fig1_cospec_coher_pdiff.py and CMIP6_fig5_tau_bar.py) and use the same
+turbo colormap colours.
 
-Per-model tau values, the multi-model mean, and JRA55's tau are saved to
-data/CMIP6_tau_fit_3.csv. Per-model b values (all three variants) are saved
-to data/CMIP6_b_all_time.csv.
+Cumulative outlier-exclusion sets (see CMIP6_fig5_tau_bar.py for why):
+  - remove_outlier: EC-Earth3-CC excluded (27 models)
+  - remove_fgoals: EC-Earth3-CC AND FGOALS-f3-L excluded (26 models)
 
-Output layout under plots/fig5_tau_bar_b_vs_tau/:
-  - all_time/ (and all_time/remove_outlier/): the all-time bar chart and
-    b-vs-tau scatter panels (main / stacked).
-  - JJA/, DJF/, and NDJ/ (each with its own remove_outlier/ subfolder): a
-    combined bar chart stacking the all-time row above the seasonal row,
-    plus b-vs-tau scatter panels (main / outlier-removed / stacked) using
-    seasonal tau and seasonal b, with JRA55 marked throughout. NDJ is
-    per-season only -- it is not folded into the all-time/JJA/DJF combined
-    comparison figures below.
-  - directly in fig5_tau_bar_b_vs_tau/ (and its own remove_outlier/ and
-    remove_fgoals/, the latter cumulative -- EC-Earth3-CC AND FGOALS-f3-L
-    both excluded): comparison figures spanning all-time, JJA, and DJF
-    together -- CMIP6_fig5_tau_bar_all_seasons.png (single-panel grouped bar
-    chart, three bars per model/mean/JRA55 group, one colour per time frame)
-    and, for the remove_outlier/remove_fgoals versions only,
-    CMIP6_fig5_b_vs_tau_all_seasons.png (three scatter rows, one per time
-    frame, each sharing its row's tau axis). The baseline (all-models,
-    no exclusion) CMIP6_fig5_b_vs_tau_all_seasons.png instead saves one
-    level up, directly in plots/ -- it also annotates each panel with a
-    second, EC-Earth3-CC-excluded r/p in that model's colour.
-  - CMIP6_fig5_b_vs_tau_correlations.csv: Pearson r/p for every
-    (time frame x b-variant x model-exclusion set) combination -- all
-    models, EC-Earth3-CC excluded, and EC-Earth3-CC + FGOALS-f3-L excluded.
-
-JRA55 tau uses the "va" (vertically-averaged 250/500/850hPa ucomp) wind
-variant and southern hemisphere throughout, matching the vertical-averaging
-convention used for the CMIP6 tau above -- this is the same tau value for
-every b-variant panel (div1_QG_123/gt3 use div1_QG's tau; only div1_QG tau
-was extracted for JRA55, since tau doesn't depend on the b wavenumber
-filter).
+Output layout under plots/fig5native_tau_bar_b_vs_tau/:
+  - all_time/ (and all_time/remove_outlier/, all_time/remove_fgoals/): the
+    all-time bar chart and b-vs-tau scatter panels (main / stacked).
+  - JJA/, DJF/, and NDJ/ (each with remove_outlier/ and remove_fgoals/
+    subfolders): a combined bar chart stacking the all-time row above the
+    seasonal row, plus b-vs-tau scatter panels (main / outlier-removed /
+    stacked). NDJ is per-season only -- it is not folded into the
+    all-time/JJA/DJF combined comparison figures below.
+  - directly in fig5native_tau_bar_b_vs_tau/ (and its own remove_outlier/,
+    remove_fgoals/): CMIP6_fig5native_tau_bar_all_seasons.png (single-panel
+    grouped bar chart, three bars per model/mean, one colour per time frame,
+    JRA55 drawn as three matching reference lines).
+  - directly in plots/ (baseline only): CMIP6_fig5native_b_vs_tau_all_seasons.png
+    (three scatter rows, one per time frame, each sharing its row's tau
+    axis, panels labelled (a)-(i)); the remove_outlier/remove_fgoals
+    versions instead save inside fig5native_tau_bar_b_vs_tau/.
+  - CMIP6_fig5native_b_vs_tau_correlations.csv: Pearson r/p for every
+    (time frame x b-variant x model-exclusion set) combination.
 
 Tau source data: b-parameter/b_methodology/all_plots_true/250-500-850hPa_dm/
                  1979_2015/<model>/6hrPlevPt/power_spec.nc
 JRA55 tau reference data: b-parameter/b_methodology/tau_values/data/jra55_tau_fit_3.csv
-                          (level-matched to 250/500/850hPa; supersedes the
-                          older cospec_coher_pdiff_jra55.npz all-time value,
-                          which was computed from a full 100-850hPa range)
 b source data: b-parameter/cmip6_b/250-500-850hPa_dm/1979_2015/
                <model>/6hrPlevPt/b_dataset.nc
-JRA55 b reference data: b-parameter/cmip6_b/efp_vs_b/jra55_b_all_time.csv
-                        b-parameter/cmip6_b/efp_vs_b/jra55_b_annual_cycle.csv (JJA/DJF)
+JRA55 b reference data (native): b-parameter/cmip6_b/efp_vs_b/jra55_b_native.csv
 """
 
 import os
@@ -110,6 +99,7 @@ def _stacked_suffix(tag):
 def _excluded_suffix(outlier_models):
     return f' ({", ".join(outlier_models)} excluded)'
 
+
 model_names = sorted(
     d for d in os.listdir(cmip6_base_dir)
     if os.path.isdir(os.path.join(cmip6_base_dir, d))
@@ -117,8 +107,8 @@ model_names = sorted(
 
 
 def _load_tau_data(time_frame):
-    ucomp_name = f'ucomp_va_PCs_{hemisphere}_{time_frame}'
-    div1_name = f'div1_QG_va_PCs_from_ucomp_va_{hemisphere}_{time_frame}'
+    ucomp_name = f'ucomp_PCs_{hemisphere}_{time_frame}'
+    div1_name = f'div1_QG_PCs_from_ucomp_{hemisphere}_{time_frame}'
     tau_var = f'{div1_name}_{ucomp_name}_phase_diff_tau_fit_3'
 
     data = {}
@@ -150,7 +140,7 @@ def _load_b_data(models, time_frame):
         with xar.open_dataset(b_file) as b_ds:
             try:
                 for key, var_to_analyse in b_variants.items():
-                    b_var = f'ucomp_va_{var_to_analyse}_va_b_{hemisphere}_{time_frame}'
+                    b_var = f'ucomp_{var_to_analyse}_b_{hemisphere}_{time_frame}'
                     data[key][model] = float(b_ds[b_var].mean('lag', skipna=True))
             except KeyError:
                 skipped.append(model)
@@ -174,7 +164,7 @@ def _load_jra55_b(csv_path, season):
     return values
 
 
-def _load_jra55_tau(csv_path, season, wind_variant='va'):
+def _load_jra55_tau(csv_path, season, wind_variant='native'):
     with open(csv_path, newline='') as f:
         for row in csv.DictReader(f):
             if (row['hemisphere'] == hemisphere and row['season'] == season
@@ -184,6 +174,19 @@ def _load_jra55_tau(csv_path, season, wind_variant='va'):
         f'No JRA55 tau found for season={season}, hemisphere={hemisphere}, '
         f'wind_variant={wind_variant} in {csv_path}'
     )
+
+
+# JRA55 native b: single file covering both all_time and the 12 rolling
+# seasons. Detected at import time so every downstream plot can gracefully
+# omit the JRA55 marker if it's ever missing, with no code changes needed.
+JRA55_B_FILE = os.path.normpath(
+    os.path.join(script_dir, '..', '..', 'cmip6_b', 'efp_vs_b', 'jra55_b_native.csv')
+)
+JRA55_NATIVE_B_AVAILABLE = os.path.isfile(JRA55_B_FILE)
+if not JRA55_NATIVE_B_AVAILABLE:
+    print(f'Warning: JRA55 native b not found at {JRA55_B_FILE}\n'
+          'JRA55 will be omitted from all b-vs-tau scatter panels (tau bar-chart '
+          'reference lines are unaffected, since native tau is available).')
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +213,7 @@ mmm_tau = float(np.mean(tau_values))
 
 data_dir = os.path.join(script_dir, 'data')
 os.makedirs(data_dir, exist_ok=True)
-csv_file = os.path.join(data_dir, 'CMIP6_tau_fit_3.csv')
+csv_file = os.path.join(data_dir, 'CMIP6_tau_fit_3_native.csv')
 with open(csv_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['model', 'tau_fit_3_days'])
@@ -222,7 +225,7 @@ print(f'Saved {csv_file}')
 
 plot_dir = os.path.join(script_dir, 'plots')
 os.makedirs(plot_dir, exist_ok=True)
-subplot_dir = os.path.join(plot_dir, 'fig5_tau_bar_b_vs_tau')
+subplot_dir = os.path.join(plot_dir, 'fig5native_tau_bar_b_vs_tau')
 os.makedirs(subplot_dir, exist_ok=True)
 outlier_dirs = {}
 for _tag, _ in OUTLIER_SETS:
@@ -240,12 +243,12 @@ for _tag, _ in OUTLIER_SETS:
 
 b_data = _load_b_data(used_models, 'all_time')
 
-jra55_b_file = os.path.normpath(
-    os.path.join(script_dir, '..', '..', 'cmip6_b', 'efp_vs_b', 'jra55_b_all_time.csv')
-)
-jra55_b = _load_jra55_b(jra55_b_file, 'all_time')
-print(f'Loaded JRA55 all-time b from {jra55_b_file}: {jra55_b}')
-jra55_point_all_time = {key: (jra55_b[key], jra55_tau) for key in jra55_b}
+if JRA55_NATIVE_B_AVAILABLE:
+    jra55_b = _load_jra55_b(JRA55_B_FILE, 'all_time')
+    print(f'Loaded JRA55 all-time b from {JRA55_B_FILE}: {jra55_b}')
+    jra55_point_all_time = {key: (jra55_b[key], jra55_tau) for key in jra55_b}
+else:
+    jra55_point_all_time = None
 
 scatter_models = [
     model for model in used_models
@@ -254,7 +257,7 @@ scatter_models = [
 print(f'Scattering b vs tau for {len(scatter_models)} model(s): '
       f'{", ".join(scatter_models)}')
 
-b_csv_file = os.path.join(data_dir, 'CMIP6_b_all_time.csv')
+b_csv_file = os.path.join(data_dir, 'CMIP6_b_all_time_native.csv')
 with open(b_csv_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['model', 'b_full', 'b_k1-3', 'b_gt3'])
@@ -309,7 +312,7 @@ def _plot_tau_bar(models, out_file, title_suffix=''):
     fig, ax = plt.subplots(figsize=(0.35 * len(models) + 2., 6.))
     _draw_tau_bar(
         ax, models, tau_data,
-        rf'Phase-difference $\tau$ fit: CMIP6 models vs JRA55{title_suffix}',
+        rf'Phase-difference $\tau$ fit (native): CMIP6 models vs JRA55{title_suffix}',
         jra55_value=jra55_tau
     )
     fig.tight_layout()
@@ -332,11 +335,11 @@ def _plot_tau_bar_seasons_stacked(models, season_tau_map, season_label, out_file
     print(f'Saved {out_file}')
 
 
-_plot_tau_bar(used_models, os.path.join(all_time_dir, 'CMIP6_fig5_tau_bar.png'))
+_plot_tau_bar(used_models, os.path.join(all_time_dir, 'CMIP6_fig5native_tau_bar.png'))
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_tau_bar(
         [model for model in used_models if model not in _outlier_models],
-        os.path.join(all_time_outlier_dirs[_tag], 'CMIP6_fig5_tau_bar.png'),
+        os.path.join(all_time_outlier_dirs[_tag], 'CMIP6_fig5native_tau_bar.png'),
         title_suffix=_excluded_suffix(_outlier_models)
     )
 
@@ -443,38 +446,37 @@ def _plot_b_vs_tau_stacked(models, outlier_models, out_file, tau_map, b_map, jra
     print(f'Saved {out_file}')
 
 
-_plot_b_vs_tau(scatter_models, os.path.join(all_time_dir, 'CMIP6_fig5_b_vs_tau.png'),
+_plot_b_vs_tau(scatter_models, os.path.join(all_time_dir, 'CMIP6_fig5native_b_vs_tau.png'),
                tau_data, b_data, jra55_point=jra55_point_all_time)
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_b_vs_tau(
         [model for model in scatter_models if model not in _outlier_models],
-        os.path.join(all_time_outlier_dirs[_tag], 'CMIP6_fig5_b_vs_tau.png'),
+        os.path.join(all_time_outlier_dirs[_tag], 'CMIP6_fig5native_b_vs_tau.png'),
         tau_data, b_data, jra55_point=jra55_point_all_time,
         title_suffix=_excluded_suffix(_outlier_models)
     )
     _plot_b_vs_tau_stacked(
         scatter_models, _outlier_models,
-        os.path.join(all_time_dir, f'CMIP6_fig5_b_vs_tau_stacked{_stacked_suffix(_tag)}.png'),
+        os.path.join(all_time_dir, f'CMIP6_fig5native_b_vs_tau_stacked{_stacked_suffix(_tag)}.png'),
         tau_data, b_data, jra55_point=jra55_point_all_time
     )
 
 # ---------------------------------------------------------------------------
 # Per-season (JJA, DJF) data + figures, all reusing the helpers above.
 # ---------------------------------------------------------------------------
-jra55_b_annual_file = os.path.normpath(
-    os.path.join(script_dir, '..', '..', 'cmip6_b', 'efp_vs_b', 'jra55_b_annual_cycle.csv')
-)
-
-
 def _process_season(season):
     season_tau_data = _load_tau_data(season)
     season_b_data = _load_b_data(used_models, season)
 
-    jra55_b_season = _load_jra55_b(jra55_b_annual_file, season)
     jra55_tau_season = _load_jra55_tau(jra55_tau_file, season)
-    print(f'Loaded JRA55 {season} b from {jra55_b_annual_file}: {jra55_b_season}')
     print(f'Loaded JRA55 {season} tau from {jra55_tau_file}: {jra55_tau_season:.4f}d')
-    jra55_point_season = {key: (jra55_b_season[key], jra55_tau_season) for key in jra55_b_season}
+
+    if JRA55_NATIVE_B_AVAILABLE:
+        jra55_b_season = _load_jra55_b(JRA55_B_FILE, season)
+        print(f'Loaded JRA55 {season} b from {JRA55_B_FILE}: {jra55_b_season}')
+        jra55_point_season = {key: (jra55_b_season[key], jra55_tau_season) for key in jra55_b_season}
+    else:
+        jra55_point_season = None
 
     season_scatter_models = [
         model for model in used_models
@@ -484,7 +486,7 @@ def _process_season(season):
           f'{", ".join(season_scatter_models)}')
 
     season_tag = season.lower()
-    tau_csv_file = os.path.join(data_dir, f'CMIP6_tau_fit_3_{season_tag}.csv')
+    tau_csv_file = os.path.join(data_dir, f'CMIP6_tau_fit_3_{season_tag}_native.csv')
     with open(tau_csv_file, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['model', 'tau_fit_3_days'])
@@ -494,7 +496,7 @@ def _process_season(season):
                           f'{float(np.mean([season_tau_data[m] for m in used_models])):.4f}'])
     print(f'Saved {tau_csv_file}')
 
-    b_csv_file_season = os.path.join(data_dir, f'CMIP6_b_{season_tag}.csv')
+    b_csv_file_season = os.path.join(data_dir, f'CMIP6_b_{season_tag}_native.csv')
     with open(b_csv_file_season, 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['model', 'b_full', 'b_k1-3', 'b_gt3'])
@@ -517,29 +519,29 @@ def _process_season(season):
 
     _plot_tau_bar_seasons_stacked(
         used_models, season_tau_data, season,
-        os.path.join(season_dir, f'CMIP6_fig5_tau_bar_all_time_{season_tag}.png'),
+        os.path.join(season_dir, f'CMIP6_fig5native_tau_bar_all_time_{season_tag}.png'),
         season_jra55_value=jra55_tau_season
     )
-    _plot_b_vs_tau(season_scatter_models, os.path.join(season_dir, 'CMIP6_fig5_b_vs_tau.png'),
+    _plot_b_vs_tau(season_scatter_models, os.path.join(season_dir, 'CMIP6_fig5native_b_vs_tau.png'),
                    season_tau_data, season_b_data, jra55_point=jra55_point_season)
 
     for tag, outlier_models in OUTLIER_SETS:
         _plot_tau_bar_seasons_stacked(
             [model for model in used_models if model not in outlier_models],
             season_tau_data, season,
-            os.path.join(season_outlier_dirs[tag], f'CMIP6_fig5_tau_bar_all_time_{season_tag}.png'),
+            os.path.join(season_outlier_dirs[tag], f'CMIP6_fig5native_tau_bar_all_time_{season_tag}.png'),
             season_jra55_value=jra55_tau_season,
             title_suffix=_excluded_suffix(outlier_models)
         )
         _plot_b_vs_tau(
             [model for model in season_scatter_models if model not in outlier_models],
-            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig5_b_vs_tau.png'),
+            os.path.join(season_outlier_dirs[tag], 'CMIP6_fig5native_b_vs_tau.png'),
             season_tau_data, season_b_data, jra55_point=jra55_point_season,
             title_suffix=_excluded_suffix(outlier_models)
         )
         _plot_b_vs_tau_stacked(
             season_scatter_models, outlier_models,
-            os.path.join(season_dir, f'CMIP6_fig5_b_vs_tau_stacked{_stacked_suffix(tag)}.png'),
+            os.path.join(season_dir, f'CMIP6_fig5native_b_vs_tau_stacked{_stacked_suffix(tag)}.png'),
             season_tau_data, season_b_data, jra55_point=jra55_point_season
         )
 
@@ -609,7 +611,7 @@ def _plot_tau_bar_all_seasons_grouped(models, out_file, title_suffix=''):
     ax.grid(True, axis='y')
     ax.legend(fontsize=8, frameon=True, loc='upper right', ncol=2)
     ax.set_title(
-        rf'Phase-difference $\tau$ fit: All-time vs JJA vs DJF{title_suffix}', fontsize=13
+        rf'Phase-difference $\tau$ fit (native): All-time vs JJA vs DJF{title_suffix}', fontsize=13
     )
 
     fig.tight_layout()
@@ -620,19 +622,19 @@ def _plot_tau_bar_all_seasons_grouped(models, out_file, title_suffix=''):
 
 
 _plot_tau_bar_all_seasons_grouped(
-    used_models, os.path.join(subplot_dir, 'CMIP6_fig5_tau_bar_all_seasons.png')
+    used_models, os.path.join(subplot_dir, 'CMIP6_fig5native_tau_bar_all_seasons.png')
 )
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_tau_bar_all_seasons_grouped(
         [model for model in used_models if model not in _outlier_models],
-        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5_tau_bar_all_seasons.png'),
+        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5native_tau_bar_all_seasons.png'),
         title_suffix=_excluded_suffix(_outlier_models)
     )
 
 # ---------------------------------------------------------------------------
 # Combined scatter stacking all-time, JJA, and DJF b-vs-tau in one figure
 # (three rows, each sharing its own tau axis across the three variant
-# columns), each row with its own JRA55 cross.
+# columns), each row with its own JRA55 cross (when available).
 # ---------------------------------------------------------------------------
 all_seasons_scatter_models = [
     model for model in scatter_models
@@ -643,13 +645,8 @@ print(f'Scattering all-seasons b vs tau for {len(all_seasons_scatter_models)} mo
       f'{", ".join(all_seasons_scatter_models)}')
 
 
-def _plot_b_vs_tau_all_seasons_stacked(models, out_file, title_suffix='', extra_stats_exclude=None):
+def _plot_b_vs_tau_all_seasons_stacked(models, out_file, title_suffix=''):
     fig, axes = plt.subplots(3, 3, figsize=(15., 15.), sharey='row')
-    row_defs = [
-        (tau_data, b_data),
-        (season_tau_maps['JJA'], season_b_maps['JJA']),
-        (season_tau_maps['DJF'], season_b_maps['DJF']),
-    ]
     _draw_b_vs_tau_row(axes[0], models, tau_data, b_data,
                         jra55_point=jra55_point_all_time, title_suffix=title_suffix,
                         row_label='All-time', ylim=(4., 18.5))
@@ -664,21 +661,8 @@ def _plot_b_vs_tau_all_seasons_stacked(models, out_file, title_suffix='', extra_
     for label, ax in zip(panel_labels, axes.flat):
         ax.set_title(rf'$\mathbf{{({label})}}$ {ax.get_title()}', fontsize=11)
 
-    if extra_stats_exclude:
-        extra_models = [model for model in models if model not in extra_stats_exclude]
-        extra_color = model_color_map[extra_stats_exclude[0]]
-        for axes_row, (tau_map, b_map) in zip(axes, row_defs):
-            for ax, key in zip(axes_row, b_variants):
-                x = np.array([b_map[key][model] for model in extra_models])
-                y = np.array([tau_map[model] for model in extra_models])
-                if len(x) > 1:
-                    r, p = stats.pearsonr(x, y)
-                    p_str = f'p={p:.3f}' if p >= 0.001 else 'p<0.001'
-                    ax.text(0.95, 0.905, f'(r={r:.2f}, {p_str})', transform=ax.transAxes,
-                            fontsize=9, va='top', ha='right', color=extra_color,
-                            bbox=dict(boxstyle='round,pad=0.3', fc='white', alpha=0.8, ec='none'))
-
-    fig.legend(handles=_legend_handles(models, include_jra55=True),
+    include_jra55 = jra55_point_all_time is not None
+    fig.legend(handles=_legend_handles(models, include_jra55=include_jra55),
                loc='lower center', ncol=7, fontsize=7, frameon=True,
                bbox_to_anchor=(0.5, -0.03))
     fig.tight_layout(rect=(0., 0.05, 1., 1.))
@@ -689,13 +673,12 @@ def _plot_b_vs_tau_all_seasons_stacked(models, out_file, title_suffix='', extra_
 
 
 _plot_b_vs_tau_all_seasons_stacked(
-    all_seasons_scatter_models, os.path.join(plot_dir, 'CMIP6_fig5_b_vs_tau_all_seasons.png'),
-    extra_stats_exclude=['EC-Earth3-CC']
+    all_seasons_scatter_models, os.path.join(plot_dir, 'CMIP6_fig5native_b_vs_tau_all_seasons.png')
 )
 for _tag, _outlier_models in OUTLIER_SETS:
     _plot_b_vs_tau_all_seasons_stacked(
         [model for model in all_seasons_scatter_models if model not in _outlier_models],
-        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5_b_vs_tau_all_seasons.png'),
+        os.path.join(outlier_dirs[_tag], 'CMIP6_fig5native_b_vs_tau_all_seasons.png'),
         title_suffix=_excluded_suffix(_outlier_models)
     )
 
@@ -727,7 +710,7 @@ for time_label, tau_map in tau_maps_by_time.items():
             r, p = stats.pearsonr(x, y)
             corr_rows.append((time_label, variant_key, excluded_label, len(set_models), r, p))
 
-corr_csv_file = os.path.join(subplot_dir, 'CMIP6_fig5_b_vs_tau_correlations.csv')
+corr_csv_file = os.path.join(subplot_dir, 'CMIP6_fig5native_b_vs_tau_correlations.csv')
 with open(corr_csv_file, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(['time_frame', 'variant', 'excluded_models', 'n', 'r', 'p'])

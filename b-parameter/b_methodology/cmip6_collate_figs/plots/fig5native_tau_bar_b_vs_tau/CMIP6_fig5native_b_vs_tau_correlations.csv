@@ -1,0 +1,28 @@
+time_frame,variant,excluded_models,n,r,p
+All-time,full,none,28,-0.5998,0.0007416
+All-time,k1-3,none,28,0.0973,0.6225
+All-time,gt3,none,28,-0.7216,1.467e-05
+All-time,full,EC-Earth3-CC,27,-0.0335,0.8684
+All-time,k1-3,EC-Earth3-CC,27,0.1609,0.4226
+All-time,gt3,EC-Earth3-CC,27,-0.1636,0.4148
+All-time,full,"EC-Earth3-CC, FGOALS-f3-L",26,-0.0221,0.9148
+All-time,k1-3,"EC-Earth3-CC, FGOALS-f3-L",26,0.1301,0.5263
+All-time,gt3,"EC-Earth3-CC, FGOALS-f3-L",26,-0.1265,0.5381
+JJA,full,none,28,-0.3254,0.09112
+JJA,k1-3,none,28,-0.0847,0.6684
+JJA,gt3,none,28,-0.2763,0.1546
+JJA,full,EC-Earth3-CC,27,-0.1552,0.4396
+JJA,k1-3,EC-Earth3-CC,27,-0.0277,0.8909
+JJA,gt3,EC-Earth3-CC,27,-0.1318,0.5123
+JJA,full,"EC-Earth3-CC, FGOALS-f3-L",26,-0.1743,0.3943
+JJA,k1-3,"EC-Earth3-CC, FGOALS-f3-L",26,-0.0283,0.891
+JJA,gt3,"EC-Earth3-CC, FGOALS-f3-L",26,-0.1503,0.4637
+DJF,full,none,28,-0.7192,1.614e-05
+DJF,k1-3,none,28,0.1134,0.5658
+DJF,gt3,none,28,-0.7583,2.94e-06
+DJF,full,EC-Earth3-CC,27,-0.4819,0.01092
+DJF,k1-3,EC-Earth3-CC,27,0.0675,0.738
+DJF,gt3,EC-Earth3-CC,27,-0.5287,0.004578
+DJF,full,"EC-Earth3-CC, FGOALS-f3-L",26,-0.4522,0.02036
+DJF,k1-3,"EC-Earth3-CC, FGOALS-f3-L",26,0.0266,0.8974
+DJF,gt3,"EC-Earth3-CC, FGOALS-f3-L",26,-0.4820,0.01265
