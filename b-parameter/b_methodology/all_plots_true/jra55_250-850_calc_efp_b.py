@@ -41,12 +41,8 @@ else:
 if exp_type in ['jra55', 'jra55_850']:
     base_dir = '/home/links/ct715/'
     base_dir_6hourly = '/disca/share/sit204/jra_55/1958_2016_6hourly_data_efp/full_6hourly_snapshots'
-    # Overridden (rather than = exp_type) so this Simpson-method comparison run writes to its own
-    # output tree, separate from the existing 'jra55_850' baseline outputs - exp_type itself stays
-    
-    
-    # unchanged since it also drives the data-loading branches above/below.
-    exp_name = 'jra_simpson_lag'
+    # exp_type stays 'jra55_850' regardless of exp_name below - it drives pfull_slice
+    # and the data-loading branches above/below, not the output path.
 
     start_month = 1979
     end_month   = 2014
@@ -92,10 +88,20 @@ do_crosscorrelation_plots = True
 # lag_method=='simpson_sliding' - see call site below.
 do_tau_simpson_sliding = True
 
+# Full Simpson et al. (2013) / Chen et al. (2025) per-calendar-day ACF(d, l) tau, from
+# eff.compute_simpson_acf_tau. Unlike do_tau_simpson_sliding above, this only ever reads
+# the all-time continuous wind PC, so it does not depend on lag_method at all - left
+# unconditional rather than gated on lag_method=='simpson_sliding'.
+do_tau_simpson_acf = True
+
 # Simpson-style sliding-segment lag methodology vs the original method - see
 # /home/links/ct715/.claude/plans/wobbly-prancing-giraffe.md. Independent toggles.
+# Sliding-window lag construction for b and tau (do_tau_simpson_sliding below), but
+# anomalies stay non-detrended - same as the jra55_850_sit_plots baseline - so this
+# isolates the lag-construction change rather than also changing tau_fit_3's inputs
+# the way the earlier jra_simpson_lag run (detrended) did.
 use_simpson_lag_method = True
-use_detrended_anomalies = True
+use_detrended_anomalies = False
 lag_method = 'simpson_sliding' if use_simpson_lag_method else 'original'
 
 force_ep_flux_recalculate = False
@@ -104,6 +110,12 @@ force_efp_recalculate = False
 # variables the new lag_method needs, rather than silently reading stale cached .nc files.
 force_anom_recalculate = False
 force_eof_recalculate = False
+
+
+# Simpson/Chen per-calendar-day ACF tau run (eff.compute_simpson_acf_tau) - own output
+# tree, same pipeline/toggles as the sliding_b run otherwise.
+exp_name = 'acf_tau_simpson'
+
 
 plot_dir = f'./{exp_name}_sit_plots/{start_month}_{end_month}/{level_type}/'
 
@@ -291,6 +303,9 @@ for pfull_slice_loop, level_subset_loop, pressure_weighted_loop, level_suffix in
 
     if do_tau_simpson_sliding and lag_method == 'simpson_sliding':
         tau_dataset = eff.compute_simpson_sliding_tau(eof_ds, eof_plot_dir, season_month_dict, lag_len)
+
+    if do_tau_simpson_acf:
+        tau_acf_dataset = eff.compute_simpson_acf_tau(eof_ds, eof_plot_dir, season_month_dict)
 #TASKS
 
 # 6. Have subsetted EFP calculation by season, but my values don't match the published values, with mine being much lower. I think this must be the same problem that Charlie had when calculating his own EP fluxes. 

@@ -195,4 +195,48 @@ for hemisphere in HEMISPHERES:
     plt.close(fig)
     print(f'Saved figure to {out_file}')
 
+
+# ── Combined figure: NH + SH tau panels only (no div1_QG row) ─────────────────
+
+fig, axes = plt.subplots(2, 1, figsize=(14, 9), sharex=True)
+
+for ax_tau, hemisphere in zip(axes, HEMISPHERES):
+    sub = comparison_df[comparison_df['hemisphere'] == hemisphere]
+
+    n_seasons = len(SEASONS)
+    x = np.arange(n_seasons)
+    bar_width = 0.2
+
+    slots = [
+        ('tau_fit_3_original', 'native', x - 1.5 * bar_width),
+        ('tau_fit_3_original', 'va', x - 0.5 * bar_width),
+        ('tau_autocorr_efold_ucomp_simpson', 'native', x + 0.5 * bar_width),
+        ('tau_autocorr_efold_ucomp_simpson', 'va', x + 1.5 * bar_width),
+    ]
+
+    seen_labels = set()
+    for source_col, variant, offsets in slots:
+        variant_rows = sub[sub['variant'] == variant].set_index('season').loc[SEASONS]
+        label = source_label[source_col] if source_col not in seen_labels else None
+        seen_labels.add(source_col)
+        ax_tau.bar(offsets, variant_rows[source_col].values, width=bar_width,
+                   color=source_color[source_col], hatch=variant_hatch[variant],
+                   edgecolor='black', linewidth=0.5, label=label)
+
+    ax_tau.set_xticks(x)
+    ax_tau.set_xticklabels(SEASONS)
+    ax_tau.set_ylabel('tau (days)')
+    ax_tau.set_title(f'{hemisphere}H: original (tau_fit_3) vs Simpson sliding (autocorr e-fold) '
+                      '- solid=native, hatched=va')
+    ax_tau.grid(True, axis='y')
+    ax_tau.legend(fontsize=8)
+
+axes[-1].set_xlabel('season')
+plt.tight_layout()
+
+out_file = os.path.join(plot_dir, 'tau_comparison_nh_sh.png')
+plt.savefig(out_file)
+plt.close(fig)
+print(f'Saved figure to {out_file}')
+
 print('Done.')

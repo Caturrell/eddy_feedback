@@ -63,7 +63,7 @@ u_color = 'black'
 
 variant_va_str = {'va': '_va', 'native': ''}
 variant_linestyles = {'va': '-', 'native': '--'}
-variant_labels = {'va': 'vertically-averaged', 'native': 'full-field'}
+variant_labels = {'va': 'vertically-averaged', 'native': 'non-averaged'}
 
 
 def get_pc_timeseries(eof_ds, var_to_analyse, va_str):

@@ -3,6 +3,7 @@ from eofs.standard import Eof
 from tqdm import tqdm
 from scipy import signal
 from scipy import optimize as scipyo
+from scipy import ndimage
 import scipy
 import numpy as np
 import statsmodels.tsa.stattools as sm 
@@ -1266,6 +1267,115 @@ def compute_simpson_sliding_tau(eof_ds, plot_dir, season_month_dict, lag_len):
     tau_dataset.close()
 
     return xar.open_dataset(f'{plot_dir}/tau_simpson_sliding.nc')
+
+def compute_simpson_acf_tau(eof_ds, plot_dir, season_month_dict):
+    """
+    Reproduces Simpson et al. (2013) / Chen et al. (2025) Eq. (1): a per-calendar-day
+    lagged autocorrelation ACF(d, l), pooled across years only (never across days), with
+    tau fit independently for every day of year. compute_simpson_sliding_tau instead pools
+    every day of a season into a single lagged correlation and fits one exponential per
+    season - a different, coarser estimator despite the similar name. This function does
+    not modify or call that one; both remain available side by side.
+
+    Wind PC only (no div1_QG), and only the all-time, single (year-round) EOF - not the
+    per-season EOF PCs - since Simpson's method needs one continuous daily series to slide
+    the day-of-year window across, not season-restricted segments.
+
+    PC(d+l, y) is read from the continuous (leap-day-stripped) daily series, so a lag that
+    runs past 31 December pulls real data from the next calendar year rather than wrapping
+    within the same year. For the subset of (d, l) where d+l runs past the end of the
+    record, the final year is dropped from that (d, l)'s sum only (Chen et al. 2025's
+    y = 1..N-1) - not from the whole calculation, since only the last max_lag days of the
+    record are ever affected.
+
+    Assumes eof_ds['time'] starts on 1 January (checked below) - the PC(d, y) reshape is
+    a straight view into 365-day blocks, so a record starting mid-year would silently
+    misalign day-of-year with calendar day rather than raising.
+    """
+    max_lag = 50
+    sigma_days = 18
+    smooth_window_days = 181
+
+    tau_dataset = xar.Dataset()
+    tau_dataset.coords['day_of_year'] = np.arange(1, 366)
+    tau_dataset.coords['lag'] = np.arange(0, max_lag + 1)
+
+    va_str_dict = {True: '_va', False: ''}
+    all_time_season_list = list(season_month_dict.keys()) + ['all_time']
+    lags_arr = np.arange(0, max_lag + 1)
+
+    first_month = eof_ds['time'].dt.month.values[0]
+    first_day = eof_ds['time'].dt.day.values[0]
+    if not (first_month == 1 and first_day == 1):
+        raise ValueError(
+            f"eof_ds['time'] must start on 1 January for the day-of-year reshape "
+            f'(PC(d, y) grid) to be valid; record starts {first_month}/{first_day}')
+
+    for hemisphere in ['n', 's']:
+        for use_va in [True, False]:
+            va_str = va_str_dict[use_va]
+            pc_name = f'ucomp{va_str}_PCs_from_ucomp{va_str}_{hemisphere}_all_time'
+
+            pc = eof_ds[pc_name][0, :]
+            not_feb29 = ~np.logical_and(pc['time'].dt.month.values == 2, pc['time'].dt.day.values == 29)
+            pc_flat = pc.values[not_feb29]
+            months_flat = pc['time'].dt.month.values[not_feb29]
+
+            n_days_total = pc_flat.shape[0]
+            if n_days_total % 365 != 0:
+                raise ValueError(
+                    f'{pc_name}: leap-stripped record length {n_days_total} is not a '
+                    'whole number of 365-day years')
+            n_years = n_days_total // 365
+
+            # (year, day_of_year) grid, chronological order, day_of_year 0-indexed here
+            pc_grid = pc_flat.reshape(n_years, 365)
+            months_of_day = months_flat[:365]
+
+            acf = np.zeros((365, max_lag + 1))
+            for l in lags_arr:
+                split = 365 - l
+
+                # d in [0, split): d + l stays within the same year - all n_years valid
+                x_a = pc_grid[:, 0:split]
+                y_a = pc_grid[:, l:365]
+                acf[0:split, l] = (np.sum(x_a * y_a, axis=0)
+                                    / np.sqrt(np.sum(x_a**2, axis=0) * np.sum(y_a**2, axis=0)))
+
+                # d in [split, 365): d + l spills into the next year - final year dropped
+                if l > 0:
+                    x_b = pc_grid[0:n_years - 1, split:365]
+                    y_b = pc_grid[1:n_years, 0:l]
+                    acf[split:365, l] = (np.sum(x_b * y_b, axis=0)
+                                          / np.sqrt(np.sum(x_b**2, axis=0) * np.sum(y_b**2, axis=0)))
+
+            acf_smoothed = ndimage.gaussian_filter1d(
+                acf, sigma=sigma_days, axis=0, mode='wrap',
+                truncate=(smooth_window_days - 1) / 2 / sigma_days)
+
+            tau_of_day = np.zeros(365)
+            for d in range(365):
+                popt, _ = scipyo.curve_fit(
+                    exponential_decay, lags_arr, acf_smoothed[d, :],
+                    p0=[5.0], bounds=(0, np.inf))
+                tau_of_day[d] = popt[0]
+
+            tau_dataset[f'ucomp{va_str}_acf_{hemisphere}'] = (('day_of_year', 'lag'), acf)
+            tau_dataset[f'ucomp{va_str}_acf_smoothed_{hemisphere}'] = (('day_of_year', 'lag'), acf_smoothed)
+            tau_dataset[f'ucomp{va_str}_tau_of_day_{hemisphere}'] = (('day_of_year',), tau_of_day)
+
+            for time_frame in all_time_season_list:
+                if time_frame == 'all_time':
+                    tau_value = float(np.mean(tau_of_day))
+                else:
+                    season_mask = np.isin(months_of_day, season_month_dict[time_frame])
+                    tau_value = float(np.mean(tau_of_day[season_mask]))
+                tau_dataset[f'ucomp{va_str}_tau_acf_{hemisphere}_{time_frame}'] = tau_value
+
+    tau_dataset.to_netcdf(f'{plot_dir}/tau_simpson_acf.nc')
+    tau_dataset.close()
+
+    return xar.open_dataset(f'{plot_dir}/tau_simpson_acf.nc')
 
 def daily_average(dataset, output_file, force_day_av_recalculate, monthly_too=False, monthly_output_file=None):
     '''This function takes a daily average of the entire dataset, including

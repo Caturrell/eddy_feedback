@@ -54,7 +54,7 @@ frequency_name = f'frequency_{time_name}'
 
 variant_va_str = {'va': '_va', 'native': ''}
 variant_linestyles = {'va': '-', 'native': '--'}
-variant_labels = {'va': 'vertically-averaged', 'native': 'full-field'}
+variant_labels = {'va': 'vertically-averaged', 'native': 'non-averaged'}
 
 level_colors = {'250_500_850hPa': 'tab:blue', 'full_100_850': 'tab:orange'}
 level_labels = {'250_500_850hPa': '250,500,850hPa', 'full_100_850': '100-850hPa'}
@@ -113,8 +113,8 @@ for level_key in power_spec_ds_dict:
 ax_re.plot(freq, 2. * np.pi * freq, color='k', linestyle=':', label=r'$\omega = 2\pi f$')
 ax_re.legend()
 ax_re.set_xlim(0., 0.25)
-ax_re.set_ylim(0., 1.75)
-ax_re.set_yticks(np.arange(0., 1.75 + 0.25, 0.25))
+ax_re.set_ylim(0., 2.5)
+ax_re.set_yticks(np.arange(0., 2.5 + 0.5, 0.5))
 ax_re.grid(True)
 ax_re.set_title(r'$\mathbf{Real\ part}$: cospectrum of $[\overline{u}]_s$ and $[\overline{m}]_s$')
 ax_re.set_xlabel('frequency (1/days)')

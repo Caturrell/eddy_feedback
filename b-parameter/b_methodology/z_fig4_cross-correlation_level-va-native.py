@@ -53,7 +53,7 @@ lag_len = 40  # matches lag_len used to generate the original cross-correlation 
 
 variant_va_str = {'va': '_va', 'native': ''}
 variant_linestyles = {'va': '-', 'native': '--'}
-variant_labels = {'va': 'vertically-averaged', 'native': 'full-field'}
+variant_labels = {'va': 'vertically-averaged', 'native': 'non-averaged'}
 
 level_colors = {'250_500_850hPa': 'tab:blue', 'full_100_850': 'tab:orange'}
 level_labels = {'250_500_850hPa': '250,500,850hPa', 'full_100_850': '100-850hPa'}
